@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA Insight Hub — South Africa's Data, Decoded</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #080d14;
+    --bg2:      #0d1520;
+    --bg3:      #121e2e;
+    --gold:     #c9a84c;
+    --gold2:    #e8c96a;
+    --gold-dim: rgba(201,168,76,0.12);
+    --teal:     #1db896;
+    --red:      #e05c3a;
+    --text:     #e8e4d8;
+    --muted:    #6a7f94;
+    --border:   rgba(201,168,76,0.18);
+    --border2:  rgba(255,255,255,0.07);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── Grid lines background ── */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(8,13,20,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border2);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-flag {
+    font-size: 20px;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: .02em;
+  }
+
+  .logo-text span {
+    color: var(--gold);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .03em;
+    transition: color .2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--gold) !important;
+    color: var(--bg) !important;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 500 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    transition: background .2s !important;
+  }
+
+  .nav-cta:hover { background: var(--gold2) !important; }
+
+  /* ── Ticker ── */
+  .ticker-wrap {
+    position: fixed;
+    top: 62px;
+    left: 0; right: 0;
+    z-index: 99;
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+    overflow: hidden;
+    height: 32px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 0;
+    animation: ticker 40s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    border-right: 0.5px solid var(--border2);
+  }
+
+  .ticker-item .val { color: var(--text); font-weight: 500; }
+  .ticker-item .up  { color: var(--teal); }
+  .ticker-item .dn  { color: var(--red); }
+
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── Sections ── */
+  section { position: relative; }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 160px 48px 80px;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp .6s .1s forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 800;
+    line-height: .95;
+    letter-spacing: -.03em;
+    color: var(--text);
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp .7s .2s forwards;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 520px;
+    margin-top: 28px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp .7s .35s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 44px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp .7s .5s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: var(--bg);
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .btn-primary:hover {
+    background: var(--gold2);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text);
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    text-decoration: none;
+    border: 0.5px solid var(--border);
+    transition: border-color .2s, background .2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 0.5px solid var(--border2);
+    opacity: 0;
+    animation: fadeUp .7s .65s forwards;
+  }
+
+  .hero-stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .hero-stat-val span { color: var(--gold); }
+
+  .hero-stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .04em;
+  }
+
+  /* Dashboard preview */
+  .hero-preview {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-45%);
+    width: 560px;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 0.5px var(--border);
+    opacity: 0;
+    animation: slideIn .9s .4s forwards;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-45%) translateX(40px); }
+    to   { opacity: 1; transform: translateY(-45%) translateX(0); }
+  }
+
+  .preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border-bottom: 0.5px solid var(--border2);
+  }
+
+  .preview-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .preview-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: .04em;
+  }
+
+  .preview-body { padding: 20px; }
+
+  .preview-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .preview-kpi {
+    background: var(--bg3);
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .preview-kpi-label { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .06em; }
+  .preview-kpi-val   { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-top: 3px; line-height: 1; }
+  .preview-kpi-delta { font-size: 9px; margin-top: 3px; font-family: 'DM Mono', monospace; }
+  .preview-kpi-delta.up { color: var(--teal); }
+  .preview-kpi-delta.dn { color: var(--red); }
+
+  /* Bar chart in preview */
+  .preview-chart { background: var(--bg3); border: 0.5px solid var(--border2); border-radius: 8px; padding: 14px; }
+  .preview-chart-title { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-label { font-size: 9px; color: var(--muted); font-family: 'DM Mono', monospace; width: 80px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 12px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+  .bar-fill  { height: 100%; border-radius: 2px; }
+  .bar-val   { font-size: 9px; color: var(--text); font-family: 'DM Mono', monospace; width: 40px; }
+
+  /* ── Topics ── */
+  .topics {
+    padding: 120px 48px;
+    background: var(--bg2);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 60px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+  }
+
+  .section-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 320px;
+    line-height: 1.6;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2px;
+  }
+
+  .topic-card {
+    background: var(--bg3);
+    border: 0.5px solid var(--border2);
+    padding: 24px 20px;
+    cursor: default;
+    transition: background .2s, border-color .2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .topic-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s;
+  }
+
+  .topic-card:hover { background: #161f2e; border-color: var(--border); }
+  .topic-card:hover::after { transform: scaleX(1); }
+
+  .topic-icon { font-size: 22px; margin-bottom: 12px; }
+  .topic-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .topic-source { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .topic-cadence { display: inline-block; margin-top: 10px; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gold); background: var(--gold-dim); padding: 2px 8px; border-radius: 20px; border: 0.5px solid rgba(201,168,76,0.2); }
+
+  /* ── Who it's for ── */
+  .audience {
+    padding: 120px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 1px;
+    background: var(--border2);
+    border: 0.5px solid var(--border2);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 60px;
+  }
+
+  .audience-card {
+    background: var(--bg);
+    padding: 36px 32px;
+    transition: background .2s;
+  }
+
+  .audience-card:hover { background: var(--bg2); }
+
+  .audience-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--gold-dim);
+    line-height: 1;
+    margin-bottom: 16px;
+    transition: color .2s;
+  }
+
+  .audience-card:hover .audience-num { color: rgba(201,168,76,0.25); }
+
+  .audience-role {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .audience-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .audience-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .audience-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    border: 0.5px solid var(--border2);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── Pricing ── */
+  .pricing {
+    padding: 120px 48px;
+    background: var(--bg2);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 16px;
+    margin-top: 60px;
+    max-width: 1000px;
+  }
+
+  .price-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border2);
+    border-radius: 16px;
+    padding: 32px 28px;
+    position: relative;
+    transition: border-color .2s;
+  }
+
+  .price-card:hover { border-color: var(--border); }
+
+  .price-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(160deg, rgba(201,168,76,0.06) 0%, var(--bg) 60%);
+  }
+
+  .price-tag-badge {
+    position: absolute;
+    top: -12px;
+    left: 28px;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    padding: 3px 12px;
+    border-radius: 20px;
+    letter-spacing: .06em;
+  }
+
+  .price-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 16px;
+  }
+
+  .price-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .price-amount span {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .price-period {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .price-features { list-style: none; margin-bottom: 32px; }
+  .price-features li {
+    font-size: 14px;
+    color: var(--muted);
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--border2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .price-features li:last-child { border-bottom: none; }
+
+  .feat-check {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: rgba(29,184,150,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 9px;
+    color: var(--teal);
+  }
+
+  .feat-check.no {
+    background: rgba(255,255,255,0.05);
+    color: var(--border2);
+  }
+
+  .price-cta {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+    text-decoration: none;
+    transition: all .2s;
+    border: 0.5px solid var(--border);
+    color: var(--muted);
+  }
+
+  .price-cta:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+  .price-cta.primary {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  .price-cta.primary:hover { background: var(--gold2); }
+
+  /* ── AI Feature ── */
+  .ai-section {
+    padding: 120px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .ai-chat-mock {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .chat-header {
+    padding: 14px 20px;
+    background: var(--bg3);
+    border-bottom: 0.5px solid var(--border2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  .chat-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+  .chat-msg {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 85%;
+  }
+
+  .chat-msg.user {
+    background: var(--bg3);
+    color: var(--text);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #8ab4cc;
+  }
+
+  .chat-msg.ai {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
+    border: 0.5px solid rgba(201,168,76,0.2);
+    color: var(--text);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-msg.ai strong { color: var(--gold); }
+
+  .ai-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 20px; }
+
+  .ai-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    border: 0.5px solid var(--border2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .ai-chip:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+  /* ── CTA ── */
+  .final-cta {
+    padding: 140px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .final-cta h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.0;
+    position: relative;
+  }
+
+  .final-cta h2 span { color: var(--gold); }
+
+  .final-cta p {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 20px auto 44px;
+    max-width: 480px;
+    position: relative;
+  }
+
+  .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+  /* ── Footer ── */
+  footer {
+    padding: 48px;
+    border-top: 0.5px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer-logo { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--muted); }
+  .footer-logo span { color: var(--gold); }
+
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  .footer-links a { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; transition: color .2s; }
+  .footer-links a:hover { color: var(--text); }
+
+  .footer-copy { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--border); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .6s, transform .6s;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 140px 24px 60px; }
+    .hero-preview { display: none; }
+    .hero h1 { font-size: 52px; }
+    .topics { padding: 80px 24px; }
+    .topics-grid { grid-template-columns: repeat(2, 1fr); }
+    .audience { padding: 80px 24px; }
+    .audience-grid { grid-template-columns: 1fr; }
+    .pricing { padding: 80px 24px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .ai-section { padding: 80px 24px; grid-template-columns: 1fr; gap: 40px; }
+    .final-cta { padding: 80px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="logo-flag">🇿🇦</span>
+    <span class="logo-text">SA <span>Insight</span> Hub</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#audience">Who it's for</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#ai">AI Analyst</a></li>
+    <li><a href="https://YOUR-APP.streamlit.app" class="nav-cta">Launch Dashboard →</a></li>
+  </ul>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item">USD/ZAR <span class="val">R18.64</span> <span class="dn">▼ 0.3%</span></div>
+    <div class="ticker-item">Repo Rate <span class="val">6.75%</span> <span class="up">▲ cut</span></div>
+    <div class="ticker-item">Murders 2024/25 Q3 <span class="val">-8.7%</span> <span class="up">▼ YoY</span></div>
+    <div class="ticker-item">Dam Levels <span class="val">78.4%</span> <span class="up">▲ 12pp</span></div>
+    <div class="ticker-item">Load Shedding <span class="val">Stage 0</span> <span class="up">✓ clear</span></div>
+    <div class="ticker-item">CPI <span class="val">3.5%</span> <span class="up">▼ easing</span></div>
+    <div class="ticker-item">Unemployment <span class="val">32.9%</span> <span class="dn">▲ Q3 2024</span></div>
+    <div class="ticker-item">Matric Pass <span class="val">87.3%</span> <span class="up">▲ 2024</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item">USD/ZAR <span class="val">R18.64</span> <span class="dn">▼ 0.3%</span></div>
+    <div class="ticker-item">Repo Rate <span class="val">6.75%</span> <span class="up">▲ cut</span></div>
+    <div class="ticker-item">Murders 2024/25 Q3 <span class="val">-8.7%</span> <span class="up">▼ YoY</span></div>
+    <div class="ticker-item">Dam Levels <span class="val">78.4%</span> <span class="up">▲ 12pp</span></div>
+    <div class="ticker-item">Load Shedding <span class="val">Stage 0</span> <span class="up">✓ clear</span></div>
+    <div class="ticker-item">CPI <span class="val">3.5%</span> <span class="up">▼ easing</span></div>
+    <div class="ticker-item">Unemployment <span class="val">32.9%</span> <span class="dn">▲ Q3 2024</span></div>
+    <div class="ticker-item">Matric Pass <span class="val">87.3%</span> <span class="up">▲ 2024</span></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div style="max-width: 1400px; margin: 0 auto; width: 100%; position: relative;">
+    <div class="hero-eyebrow">South Africa's most complete data platform</div>
+
+    <h1>Know SA<br><em>before</em> you<br>decide.</h1>
+
+    <p class="hero-sub">Crime, property, jobs, energy, health, education — all 10 critical data categories in one dashboard, live-updated and AI-powered.</p>
+
+    <div class="hero-actions">
+      <a href="https://YOUR-APP.streamlit.app" class="btn-primary">Open free dashboard →</a>
+      <a href="#pricing" class="btn-secondary">See Pro features</a>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">10<span>×</span></div>
+        <div class="hero-stat-label">data topics tracked</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">9</div>
+        <div class="hero-stat-label">provinces covered</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">AI<span>+</span></div>
+        <div class="hero-stat-label">Claude analyst built in</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">R0</div>
+        <div class="hero-stat-label">to get started</div>
+      </div>
+    </div>
+
+    <!-- Dashboard mockup -->
+    <div class="hero-preview">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#e05c3a"></div>
+        <div class="preview-dot" style="background:#f59e0b"></div>
+        <div class="preview-dot" style="background:#27ae60"></div>
+        <span class="preview-title">🇿🇦 SA Insight Hub — Crime Statistics</span>
+      </div>
+      <div class="preview-body">
+        <div class="preview-kpis">
+          <div class="preview-kpi">
+            <div class="preview-kpi-label">Murders (Q3 2024/25)</div>
+            <div class="preview-kpi-val">4,872</div>
+            <div class="preview-kpi-delta up">▼ 8.7% YoY</div>
+          </div>
+          <div class="preview-kpi">
+            <div class="preview-kpi-label">Carjackings</div>
+            <div class="preview-kpi-val">3,241</div>
+            <div class="preview-kpi-delta dn">▲ 2.1% YoY</div>
+          </div>
+          <div class="preview-kpi">
+            <div class="preview-kpi-label">Residential Burglary</div>
+            <div class="preview-kpi-val">51,204</div>
+            <div class="preview-kpi-delta up">▼ 3.4% YoY</div>
+          </div>
+          <div class="preview-kpi">
+            <div class="preview-kpi-label">Sexual Offences</div>
+            <div class="preview-kpi-val">10,891</div>
+            <div class="preview-kpi-delta up">▼ 1.2% YoY</div>
+          </div>
+        </div>
+        <div class="preview-chart">
+          <div class="preview-chart-title">Murder rate by province</div>
+          <div class="bar-row">
+            <div class="bar-label">Gauteng</div>
+            <div class="bar-track"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#e05c3a,#c94829)"></div></div>
+            <div class="bar-val">4,912</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">KZN</div>
+            <div class="bar-track"><div class="bar-fill" style="width:74%;background:linear-gradient(90deg,#e07a3a,#c96229)"></div></div>
+            <div class="bar-val">3,801</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Eastern Cape</div>
+            <div class="bar-track"><div class="bar-fill" style="width:56%;background:linear-gradient(90deg,#c9a84c,#b8922e)"></div></div>
+            <div class="bar-val">2,890</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Western Cape</div>
+            <div class="bar-track"><div class="bar-fill" style="width:24%;background:linear-gradient(90deg,#1db896,#129e7e)"></div></div>
+            <div class="bar-val">1,204</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOPICS -->
+<section class="topics" id="topics">
+  <div style="max-width: 1400px; margin: 0 auto;">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-eyebrow">What we track</div>
+        <div class="section-title">10 topics.<br>One platform.</div>
+      </div>
+      <div class="section-sub">Every dataset auto-refreshes from official public sources — SAPS, Stats SA, SARB, Eskom, DWS, and more.</div>
+    </div>
+
+    <div class="topics-grid reveal">
+      <div class="topic-card">
+        <div class="topic-icon">🔴</div>
+        <div class="topic-name">Crime Statistics</div>
+        <div class="topic-source">SAPS quarterly reports</div>
+        <div class="topic-cadence">Quarterly</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🏠</div>
+        <div class="topic-name">Property & Rental</div>
+        <div class="topic-source">Lightstone · FNB Barometer</div>
+        <div class="topic-cadence">Monthly</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🔐</div>
+        <div class="topic-name">Bank Fraud</div>
+        <div class="topic-source">SABRIC annual report</div>
+        <div class="topic-cadence">Annual</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">📉</div>
+        <div class="topic-name">Unemployment</div>
+        <div class="topic-source">Stats SA QLFS</div>
+        <div class="topic-cadence">Quarterly</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">⚡</div>
+        <div class="topic-name">Load Shedding</div>
+        <div class="topic-source">Eskom live API</div>
+        <div class="topic-cadence">Live</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">💰</div>
+        <div class="topic-name">Interest Rates</div>
+        <div class="topic-source">SARB · Stats SA CPI</div>
+        <div class="topic-cadence">Monthly</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🏥</div>
+        <div class="topic-name">Healthcare</div>
+        <div class="topic-source">NDOH DHIS2 · SANAC</div>
+        <div class="topic-cadence">Quarterly</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🎓</div>
+        <div class="topic-name">Education</div>
+        <div class="topic-source">DBE NSC results</div>
+        <div class="topic-cadence">Annual</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">💱</div>
+        <div class="topic-name">ZAR Exchange Rate</div>
+        <div class="topic-source">open.er-api.com</div>
+        <div class="topic-cadence">Live</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">💧</div>
+        <div class="topic-name">Water & Dams</div>
+        <div class="topic-source">DWS weekly report</div>
+        <div class="topic-cadence">Weekly</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="audience" id="audience">
+  <div class="grid-bg"></div>
+  <div style="max-width: 1400px; margin: 0 auto; position: relative;">
+    <div class="reveal">
+      <div class="section-eyebrow">Who it's for</div>
+      <div class="section-title">Built for people<br>who act on data.</div>
+    </div>
+
+    <div class="audience-grid reveal">
+      <div class="audience-card">
+        <div class="audience-num">01</div>
+        <div class="audience-role">Property professionals</div>
+        <div class="audience-desc">Estate agents, developers, and investors who need suburb-level crime, property yield, and rental data before making decisions worth millions.</div>
+        <div class="audience-tags">
+          <span class="audience-tag">Estate agents</span>
+          <span class="audience-tag">Property funds</span>
+          <span class="audience-tag">Developers</span>
+        </div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">02</div>
+        <div class="audience-role">Security & risk analysts</div>
+        <div class="audience-desc">Security companies, insurers, and corporate risk teams tracking crime trends, hotspot precincts, and safety metrics by province.</div>
+        <div class="audience-tags">
+          <span class="audience-tag">Security firms</span>
+          <span class="audience-tag">Insurers</span>
+          <span class="audience-tag">Risk managers</span>
+        </div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">03</div>
+        <div class="audience-role">Financial professionals</div>
+        <div class="audience-desc">Analysts, advisors, and investors who need live forex rates, SARB rate decisions, CPI trends, and employment data in one place.</div>
+        <div class="audience-tags">
+          <span class="audience-tag">Investment analysts</span>
+          <span class="audience-tag">Financial advisors</span>
+          <span class="audience-tag">Economists</span>
+        </div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">04</div>
+        <div class="audience-role">Researchers & journalists</div>
+        <div class="audience-desc">Academic researchers, data journalists, and think tanks who need clean, consistently-sourced SA data with exportable formats.</div>
+        <div class="audience-tags">
+          <span class="audience-tag">Universities</span>
+          <span class="audience-tag">Media houses</span>
+          <span class="audience-tag">NGOs</span>
+        </div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">05</div>
+        <div class="audience-role">Government & municipalities</div>
+        <div class="audience-desc">Municipal planners, COGTA officials, and policy teams who need consolidated cross-departmental data for service delivery decisions.</div>
+        <div class="audience-tags">
+          <span class="audience-tag">Metro planners</span>
+          <span class="audience-tag">COGTA</span>
+          <span class="audience-tag">Policy teams</span>
+        </div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-num">06</div>
+        <div class="audience-role">Everyday South Africans</div>
+        <div class="audience-desc">Anyone making big life decisions — where to live, where to send kids to school, whether to buy or rent — who deserves access to real data, not guesswork.</div>
+        <div class="audience-tags">
+          <span class="audience-tag">Home buyers</span>
+          <span class="audience-tag">Parents</span>
+          <span class="audience-tag">Semigrants</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI SECTION -->
+<section class="ai-section" id="ai">
+  <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; width: 100%;">
+    <div class="reveal">
+      <div class="section-eyebrow">AI Analyst</div>
+      <div class="section-title" style="margin-bottom: 20px;">Ask anything.<br>Get real answers.</div>
+      <p style="font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 32px;">Every dashboard page has a Claude-powered analyst that knows SA's data cold. Ask it why dam levels dropped, which province is safest to invest in, or how the repo rate affects your bond repayment.</p>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px;">
+        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--muted);">
+          <span style="color: var(--gold); font-size: 16px; margin-top: 1px;">→</span>
+          Province-aware — answers change based on your active filter
+        </li>
+        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--muted);">
+          <span style="color: var(--gold); font-size: 16px; margin-top: 1px;">→</span>
+          Multi-turn memory — conversation history per topic
+        </li>
+        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--muted);">
+          <span style="color: var(--gold); font-size: 16px; margin-top: 1px;">→</span>
+          Grounded in real data — not hallucination
+        </li>
+        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--muted);">
+          <span style="color: var(--gold); font-size: 16px; margin-top: 1px;">→</span>
+          Suggested questions to get you started instantly
+        </li>
+      </ul>
+    </div>
+
+    <div class="reveal">
+      <div class="ai-chat-mock">
+        <div class="chat-header">
+          <div class="chat-dot"></div>
+          SA Insight AI — Crime Statistics · Western Cape
+        </div>
+        <div class="chat-body">
+          <div class="chat-msg user">Which Cape Town suburb has the highest murder rate?</div>
+          <div class="chat-msg ai">Based on the latest SAPS Q3 2024/25 data, <strong>Nyanga</strong> has the highest murder count in Cape Town at 221 cases this quarter, followed closely by <strong>Khayelitsha</strong> (229) and <strong>Delft</strong> (189). All three are on the Cape Flats. Compared to Q3 last year, Nyanga is down 9.4% — the largest improvement in the province.</div>
+          <div class="chat-msg user">How does WC compare to Gauteng?</div>
+          <div class="chat-msg ai">Western Cape has a <strong>lower absolute murder count</strong> (1,204 vs Gauteng's 4,912) but a <strong>higher per-capita rate</strong> due to its concentrated urban density in the Cape Flats. Gauteng's murders are more dispersed across Johannesburg, Tshwane, and Ekurhuleni precincts.</div>
+        </div>
+        <div class="ai-chips">
+          <div class="ai-chip">Is Cape Town safer than Joburg?</div>
+          <div class="ai-chip">Crime trend since 2020?</div>
+          <div class="ai-chip">Safest suburb to buy in WC?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div style="max-width: 1400px; margin: 0 auto;">
+    <div class="reveal">
+      <div class="section-eyebrow">Pricing</div>
+      <div class="section-title">Start free.<br>Upgrade when it matters.</div>
+    </div>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card">
+        <div class="price-tier">Free</div>
+        <div class="price-amount">R0<span></span></div>
+        <div class="price-period">forever</div>
+        <ul class="price-features">
+          <li><span class="feat-check">✓</span> All 10 topic dashboards</li>
+          <li><span class="feat-check">✓</span> National-level data</li>
+          <li><span class="feat-check">✓</span> Interactive charts</li>
+          <li><span class="feat-check">✓</span> Province filter</li>
+          <li><span class="feat-check no">—</span> AI Q&A analyst</li>
+          <li><span class="feat-check no">—</span> Data export (CSV/PDF)</li>
+          <li><span class="feat-check no">—</span> Email alerts</li>
+        </ul>
+        <a href="https://sainsghtsapp.streamlit.app/" class="price-cta">Get started free</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-tag-badge">MOST POPULAR</div>
+        <div class="price-tier">Pro</div>
+        <div class="price-amount">R199<span>/mo</span></div>
+        <div class="price-period">billed monthly · cancel anytime</div>
+        <ul class="price-features">
+          <li><span class="feat-check">✓</span> Everything in Free</li>
+          <li><span class="feat-check">✓</span> AI Q&A (unlimited)</li>
+          <li><span class="feat-check">✓</span> Suburb-level drill-down</li>
+          <li><span class="feat-check">✓</span> CSV & PDF export</li>
+          <li><span class="feat-check">✓</span> Email + WhatsApp alerts</li>
+          <li><span class="feat-check">✓</span> Saved comparisons</li>
+          <li><span class="feat-check">✓</span> Priority data refresh</li>
+        </ul>
+        <a href="#" class="price-cta primary">Start Pro trial</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Business</div>
+        <div class="price-amount">R899<span>/mo</span></div>
+        <div class="price-period">5 seats · API access included</div>
+        <ul class="price-features">
+          <li><span class="feat-check">✓</span> Everything in Pro</li>
+          <li><span class="feat-check">✓</span> 5 team seats</li>
+          <li><span class="feat-check">✓</span> REST API access</li>
+          <li><span class="feat-check">✓</span> White-label reports</li>
+          <li><span class="feat-check">✓</span> Slack integration</li>
+          <li><span class="feat-check">✓</span> Dedicated support</li>
+          <li><span class="feat-check">✓</span> Custom data requests</li>
+        </ul>
+        <a href="mailto:zolile@mlkcomputer.com" class="price-cta">Contact for access</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="cta-glow"></div>
+  <div class="grid-bg"></div>
+  <div style="position: relative;">
+    <h2>South Africa's data,<br><span>finally in one place.</span></h2>
+    <p>Free to use. No signup required. Open the dashboard and start exploring right now.</p>
+    <div class="cta-actions">
+      <a href="https://sainsghtsapp.streamlit.app/" class="btn-primary">Open free dashboard →</a>
+      <a href="mailto:zolile@mlkcomputer.com" class="btn-secondary">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SA <span>Insight</span> Hub</div>
+  <div class="footer-links">
+    <a href="#topics">Topics</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://github.com/ZolileN/sa_insghts_hub">GitHub</a>
+    <a href="mailto:zolile@mlkcomputer.com">Contact</a>
+  </div>
+  <div class="footer-copy">Built by Zolile Nonzapa · Cape Town</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+    });
+  });
+</script>
+</body>
+</html>
