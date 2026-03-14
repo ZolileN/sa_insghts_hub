@@ -1,0 +1,70 @@
+{
+  "source": "Eskom LoadShedding API + community calendar",
+  "scraped_at": "2026-03-14T16:20:29.576500",
+  "is_live": true,
+  "current_stage": 0,
+  "stage_label": "No load shedding",
+  "active": false,
+  "upcoming_outages": [],
+  "monthly_hours_2024": {
+    "Jan": 312,
+    "Feb": 240,
+    "Mar": 168,
+    "Apr": 120,
+    "May": 72,
+    "Jun": 96,
+    "Jul": 144,
+    "Aug": 120,
+    "Sep": 96,
+    "Oct": 72,
+    "Nov": 48,
+    "Dec": 24
+  },
+  "monthly_hours_2023": {
+    "Jan": 744,
+    "Feb": 576,
+    "Mar": 648,
+    "Apr": 576,
+    "May": 600,
+    "Jun": 552,
+    "Jul": 600,
+    "Aug": 576,
+    "Sep": 504,
+    "Oct": 576,
+    "Nov": 480,
+    "Dec": 300
+  },
+  "annual_totals": {
+    "2015": 0,
+    "2016": 0,
+    "2017": 0,
+    "2018": 0,
+    "2019": 177,
+    "2020": 859,
+    "2021": 1160,
+    "2022": 3776,
+    "2023": 6932,
+    "2024": 2140
+  },
+  "electricity_tariff_history": {
+    "2015": 112.5,
+    "2016": 135.4,
+    "2017": 151.1,
+    "2018": 170.0,
+    "2019": 186.3,
+    "2020": 207.7,
+    "2021": 252.0,
+    "2022": 328.0,
+    "2023": 388.0,
+    "2024": 436.0
+  },
+  "energy_mix_pct_2024": {
+    "Coal": 57,
+    "Nuclear": 5,
+    "Hydro": 2,
+    "Wind": 6,
+    "Solar": 10,
+    "Gas/Diesel": 8,
+    "Imports": 12
+  }
+}

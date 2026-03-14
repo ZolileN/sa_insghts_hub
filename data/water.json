@@ -1,0 +1,106 @@
+{
+  "source": "DWS Weekly State of Reservoirs",
+  "url": "https://www.dws.gov.za/Hydrology/Weekly/Province.aspx",
+  "pdf_url": "https://www.dws.gov.za/Hydrology/Weekly/Weekly.pdf",
+  "scraped_at": "2026-03-14T16:20:17.743435",
+  "report_date": null,
+  "is_live": false,
+  "national_avg_pct": 76.2,
+  "provinces": {
+    "Western Cape": {
+      "this_week_pct": 92.4,
+      "last_week_pct": 91.8,
+      "last_year_pct": 87.2
+    },
+    "Eastern Cape": {
+      "this_week_pct": 72.1,
+      "last_week_pct": 71.4,
+      "last_year_pct": 61.3
+    },
+    "KwaZulu-Natal": {
+      "this_week_pct": 81.3,
+      "last_week_pct": 80.9,
+      "last_year_pct": 74.2
+    },
+    "Gauteng": {
+      "this_week_pct": 71.2,
+      "last_week_pct": 70.8,
+      "last_year_pct": 65.1
+    },
+    "Free State": {
+      "this_week_pct": 83.1,
+      "last_week_pct": 82.4,
+      "last_year_pct": 76.8
+    },
+    "Limpopo": {
+      "this_week_pct": 68.4,
+      "last_week_pct": 67.9,
+      "last_year_pct": 58.2
+    },
+    "Mpumalanga": {
+      "this_week_pct": 74.2,
+      "last_week_pct": 73.6,
+      "last_year_pct": 62.4
+    },
+    "North West": {
+      "this_week_pct": 63.8,
+      "last_week_pct": 63.1,
+      "last_year_pct": 55.9
+    },
+    "Northern Cape": {
+      "this_week_pct": 78.9,
+      "last_week_pct": 78.2,
+      "last_year_pct": 69.3
+    }
+  },
+  "dams": [
+    {
+      "name": "Vaal Dam",
+      "this_week_pct": 71.2,
+      "last_week_pct": 70.8,
+      "capacity_mm3": 2596
+    },
+    {
+      "name": "Theewaterskloof",
+      "this_week_pct": 92.4,
+      "last_week_pct": 91.8,
+      "capacity_mm3": 480
+    },
+    {
+      "name": "Gariep Dam",
+      "this_week_pct": 88.1,
+      "last_week_pct": 87.6,
+      "capacity_mm3": 5341
+    },
+    {
+      "name": "Sterkfontein",
+      "this_week_pct": 65.3,
+      "last_week_pct": 64.9,
+      "capacity_mm3": 2617
+    },
+    {
+      "name": "Katse (Lesotho)",
+      "this_week_pct": 82.4,
+      "last_week_pct": 81.9,
+      "capacity_mm3": 1950
+    },
+    {
+      "name": "Vanderkloof",
+      "this_week_pct": 79.8,
+      "last_week_pct": 79.1,
+      "capacity_mm3": 3200
+    },
+    {
+      "name": "Pongolapoort",
+      "this_week_pct": 54.1,
+      "last_week_pct": 53.8,
+      "capacity_mm3": 2435
+    },
+    {
+      "name": "Krugersdrift",
+      "this_week_pct": 61.2,
+      "last_week_pct": 60.8,
+      "capacity_mm3": 190
+    }
+  ]
+}

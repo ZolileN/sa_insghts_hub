@@ -1,0 +1,74 @@
+name: Scrape — Quarterly (all 10 topics)
+
+on:
+  schedule:
+    # 1st of January, April, July, October at 04:00 UTC
+    # This aligns with Stats SA and SAPS quarterly release windows
+    - cron: "0 4 1 1,4,7,10 *"
+  workflow_dispatch:
+    inputs:
+      parallel:
+        description: "Run scrapers in parallel?"
+        type: boolean
+        default: true
+
+jobs:
+  scrape:
+    name: Full refresh — all 10 topics
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 30        # Fail-safe: kill if it runs > 30 min
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run all scrapers
+        run: |
+          mkdir -p data logs
+          if [ "${{ github.event.inputs.parallel }}" = "true" ]; then
+            python run_scrapers.py --parallel
+          else
+            python run_scrapers.py
+          fi
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      # Upload the full data/ folder as a downloadable artifact (for debugging)
+      - name: Upload data as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sa-insight-data-${{ github.run_number }}
+          path: data/
+          retention-days: 90
+
+      - name: Commit all updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "data: quarterly full refresh — all 10 topics [skip ci]"
+          file_pattern: "data/*.json"
+          commit_user_name: "SA Insight Bot"
+          commit_user_email: "actions@sa-insight-hub.co.za"
+          skip_dirty_check: false
+
+      # Notify on failure (optional — requires SLACK_WEBHOOK secret)
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Quarterly scrape failed. Check logs at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # Uncomment and add SLACK_WEBHOOK secret to enable Slack alerts:
+          # curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+          #   -H 'Content-type: application/json' \
+          #   --data '{"text":"⚠️ SA Insight Hub quarterly scrape failed. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View logs>"}'

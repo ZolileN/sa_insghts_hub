@@ -6,6 +6,7 @@ import numpy as np
 import requests
 import json
 from datetime import datetime, timedelta
+from pathlib import Path
 
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -460,34 +461,128 @@ def kpi(label, value, delta=None, delta_good="down"):
         {direction}
     </div>"""
 
-def source_badge(text):
-    st.markdown(f'<span class="source-badge">Source: {text}</span>', unsafe_allow_html=True)
+def source_badge(text, scraped_at=None, is_live=False):
+    live_dot = ' <span style="color:#27ae60">● live</span>' if is_live else ' <span style="color:#f59e0b">● cached</span>'
+    ts = ""
+    if scraped_at and scraped_at != "fallback":
+        try:
+            dt = datetime.fromisoformat(scraped_at.replace("Z", ""))
+            ts = f" · refreshed {dt.strftime('%d %b %Y %H:%M')} UTC"
+        except Exception:
+            pass
+    st.markdown(
+        f'<span class="source-badge">Source: {text}{ts}{live_dot}</span>',
+        unsafe_allow_html=True,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DATA LOADER — reads from data/*.json (written by scrapers), falls back to
+# hardcoded values so the app always renders even without scraped files.
+# ═══════════════════════════════════════════════════════════════════════════════
+DATA_DIR = Path(__file__).parent / "data"
+
+# Map topic selector labels → JSON file stems
+TOPIC_FILE = {
+    "🔴  Crime Statistics":           "crime",
+    "🏠  Property Prices & Rental":   "property",
+    "🔐  Bank Fraud & Financial Crime":"fraud",
+    "📉  Unemployment & Income":       "employment",
+    "⚡  Load Shedding & Energy":      "energy",
+    "💰  Interest Rates & Inflation":  "finance",
+    "🏥  Healthcare & Disease Burden": "health",
+    "🎓  Education & Matric Data":     "education",
+    "💱  ZAR Exchange Rate & Forex":   "forex",
+    "💧  Water & Service Delivery":    "water",
+}
+
+
+@st.cache_data(ttl=300, show_spinner=False)   # re-read from disk every 5 min
+def load_data(file_stem: str) -> dict:
+    """Load data/{file_stem}.json if it exists, else return empty dict."""
+    path = DATA_DIR / f"{file_stem}.json"
+    if path.exists():
+        try:
+            return json.loads(path.read_text())
+        except Exception:
+            pass
+    return {}
+
+
+def g(data: dict, *keys, default=None):
+    """Safe nested getter: g(data, 'provinces', 'Gauteng', 'murder') → value or default."""
+    val = data
+    for k in keys:
+        if isinstance(val, dict):
+            val = val.get(k)
+        else:
+            return default
+        if val is None:
+            return default
+    return val
+
+
+def prov_list_values(data: dict, path: list[str], provinces: list[str], default_list: list) -> list:
+    """Extract a list of per-province values from nested data dict, in PROVINCE_LIST order."""
+    result = []
+    for p in provinces:
+        keys = [p] + path
+        v = g(data, "provinces", *keys)
+        result.append(v)
+    # Fall back to default_list wherever None was returned
+    return [result[i] if result[i] is not None else default_list[i] for i in range(len(provinces))]
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 1. CRIME STATISTICS
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_crime(topic, province):
-    st.markdown('<div class="section-title">🔴 Crime Statistics</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-sub">SAPS quarterly crime data — murders, robbery, burglary, GBV by province and police station</div>', unsafe_allow_html=True)
+    d = load_data("crime")
+    nat = g(d, "national_totals") or {}
+    prov_data = g(d, "provinces") or {}
+    scraped_at = g(d, "scraped_at")
+    is_live = g(d, "is_live", default=False)
+    period = g(d, "period") or "2023/24"
 
-    # KPIs
+    st.markdown('<div class="section-title">🔴 Crime Statistics</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-sub">SAPS quarterly crime data — murders, robbery, burglary, GBV by province · Period: {period}</div>', unsafe_allow_html=True)
+
+    # KPIs — prefer live data, fall back to published figures
+    murder_nat   = nat.get("Murder", 19674)
+    burglary_nat = nat.get("Residential burglary", 205765)
+    carjack_nat  = nat.get("Carjacking", 15727)
+    sexual_nat   = nat.get("Sexual offences", 43604)
+
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("Murders (2023/24)", "19,674", "+3.2% YoY", "down"), unsafe_allow_html=True)
-    c2.markdown(kpi("Residential Burglaries", "205,765", "+1.8% YoY", "down"), unsafe_allow_html=True)
-    c3.markdown(kpi("Carjackings", "15,727", "+5.4% YoY", "down"), unsafe_allow_html=True)
-    c4.markdown(kpi("Sexual Offences", "43,604", "-3.1% YoY", "down"), unsafe_allow_html=True)
+    c1.markdown(kpi(f"Murders ({period})", f"{murder_nat:,}", "+3.2% YoY", "down"), unsafe_allow_html=True)
+    c2.markdown(kpi("Residential Burglaries", f"{burglary_nat:,}", "+1.8% YoY", "down"), unsafe_allow_html=True)
+    c3.markdown(kpi("Carjackings", f"{carjack_nat:,}", "+5.4% YoY", "down"), unsafe_allow_html=True)
+    c4.markdown(kpi("Sexual Offences", f"{sexual_nat:,}", "-3.1% YoY", "down"), unsafe_allow_html=True)
 
     st.divider()
 
-    # Crime by province
-    crime_prov = pd.DataFrame({
-        "Province": PROVINCE_LIST,
-        "Murder": [1204, 4912, 3801, 2890, 1102, 1450, 980, 785, 550],
-        "Burglary": [28400, 52000, 41000, 22000, 10500, 16000, 13000, 11200, 11665],
-        "Robbery": [24000, 38000, 29000, 18000, 6500, 9000, 8500, 7500, 4000],
+    # Per-province data — merge scraped + fallback
+    defaults = {
+        "Murder":          [1204, 4912, 3801, 2890, 1102, 1450, 980, 785, 550],
+        "Burglary":        [28400, 52000, 41000, 22000, 10500, 16000, 13000, 11200, 11665],
+        "Robbery":         [24000, 38000, 29000, 18000, 6500, 9000, 8500, 7500, 4000],
         "Sexual Offences": [7800, 10200, 8900, 5600, 3200, 3400, 2900, 1804, 2900],
-        "Carjacking": [2900, 6800, 2800, 1200, 450, 620, 540, 420, 197],
+        "Carjacking":      [2900, 6800, 2800, 1200, 450, 620, 540, 420, 197],
+    }
+
+    def prov_crime(cat, scraper_key, default_vals):
+        return [
+            (prov_data.get(p) or {}).get(scraper_key) or default_vals[i]
+            for i, p in enumerate(PROVINCE_LIST)
+        ]
+
+    crime_prov = pd.DataFrame({
+        "Province":        PROVINCE_LIST,
+        "Murder":          prov_crime("Murder",             "Murder",               defaults["Murder"]),
+        "Burglary":        prov_crime("Burglary",           "Residential burglary", defaults["Burglary"]),
+        "Robbery":         prov_crime("Robbery",            "Robbery aggravating",  defaults["Robbery"]),
+        "Sexual Offences": prov_crime("Sexual Offences",    "Sexual offences",      defaults["Sexual Offences"]),
+        "Carjacking":      prov_crime("Carjacking",         "Carjacking",           defaults["Carjacking"]),
     })
 
     crime_type = st.selectbox("Select crime type", ["Murder", "Burglary", "Robbery", "Sexual Offences", "Carjacking"])
@@ -529,30 +624,45 @@ def page_crime(topic, province):
     })
     st.dataframe(precincts, use_container_width=True, hide_index=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("SAPS Annual Crime Report 2023/24 · saps.gov.za")
+    source_badge("SAPS Annual Crime Report · saps.gov.za", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 2. PROPERTY PRICES & RENTAL YIELDS
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_property(topic, province):
+    d = load_data("property")
+    nat = g(d, "national") or {}
+    prov_data = g(d, "provinces") or {}
+    scraped_at = g(d, "scraped_at")
+    is_live = g(d, "is_live", default=False)
+
+    median_r    = nat.get("median_price_r", 1280000)
+    yield_pct   = nat.get("avg_rental_yield_pct", 8.4)
+    dom         = nat.get("days_on_market", 76)
+    approval    = nat.get("bond_approval_rate_pct", 62)
+    prime       = nat.get("prime_rate_pct", 10.25)
+
     st.markdown('<div class="section-title">🏠 Property Prices & Rental Yields</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">Suburb-level house prices, price growth, days on market, and rental return rates</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("National Median Price", "R1.28M", "+2.3% YoY", "up"), unsafe_allow_html=True)
-    c2.markdown(kpi("Avg Rental Yield", "8.4%", "+0.6pp YoY", "up"), unsafe_allow_html=True)
-    c3.markdown(kpi("Days on Market", "76 days", "-4 days YoY", "down"), unsafe_allow_html=True)
-    c4.markdown(kpi("Bond Approval Rate", "62%", "-3pp YoY", "down"), unsafe_allow_html=True)
+    c1.markdown(kpi("National Median Price", f"R{median_r/1e6:.2f}M", "+2.3% YoY", "up"), unsafe_allow_html=True)
+    c2.markdown(kpi("Avg Rental Yield", f"{yield_pct}%", "+0.6pp YoY", "up"), unsafe_allow_html=True)
+    c3.markdown(kpi("Days on Market", f"{dom} days", "-4 days YoY", "down"), unsafe_allow_html=True)
+    c4.markdown(kpi("Bond Approval Rate", f"{approval}%", "-3pp YoY", "down"), unsafe_allow_html=True)
 
     st.divider()
 
+    def pv(key, defaults):
+        return [(prov_data.get(p) or {}).get(key) or defaults[i] for i, p in enumerate(PROVINCE_LIST)]
+
     prop_prov = pd.DataFrame({
-        "Province": PROVINCE_LIST,
-        "Median Price (R000)": [2100, 1450, 1200, 890, 650, 720, 680, 730, 1100],
-        "YoY Growth (%)": [4.2, 2.1, 1.8, 0.9, 1.2, 1.5, 1.1, 0.8, 2.8],
-        "Rental Yield (%)": [6.8, 8.2, 9.1, 10.2, 11.0, 10.5, 10.8, 10.1, 7.4],
-        "Avg Price/m² (R)": [24500, 14200, 10800, 8200, 5100, 5800, 5400, 6100, 16800],
+        "Province":         PROVINCE_LIST,
+        "Median Price (R000)": [v/1000 for v in pv("median_price_r", [2100000,1450000,1200000,890000,650000,720000,680000,730000,1100000])],
+        "YoY Growth (%)":   pv("yoy_growth_pct",   [4.2,2.1,1.8,0.9,1.2,1.5,1.1,0.8,2.8]),
+        "Rental Yield (%)": pv("rental_yield_pct",  [6.8,8.2,9.1,10.2,11.0,10.5,10.8,10.1,7.4]),
+        "Days on Market":   pv("days_on_market",    [52,68,84,98,112,105,108,102,110]),
     })
 
     col1, col2 = st.columns(2)
@@ -573,14 +683,24 @@ def page_property(topic, province):
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
         st.plotly_chart(fig2, use_container_width=True)
 
-    # Price trend
-    quarters = ["Q1'21","Q2'21","Q3'21","Q4'21","Q1'22","Q2'22","Q3'22","Q4'22",
-                 "Q1'23","Q2'23","Q3'23","Q4'23","Q1'24","Q2'24","Q3'24","Q4'24"]
+    # Price trend — from JSON if available
+    raw_trend = g(d, "price_trend_r000") or {}
+    if raw_trend:
+        quarters = list(raw_trend.keys())
+        national_vals = list(raw_trend.values())
+    else:
+        quarters = ["Q1'21","Q2'21","Q3'21","Q4'21","Q1'22","Q2'22","Q3'22","Q4'22",
+                    "Q1'23","Q2'23","Q3'23","Q4'23","Q1'24","Q2'24","Q3'24","Q4'24"]
+        national_vals = [980,995,1010,1030,1060,1090,1120,1150,1180,1210,1240,1260,1270,1275,1280,1285]
+
+    wc_med  = (prov_data.get("Western Cape") or {}).get("median_price_r", 2100000) / 1000
+    gp_med  = (prov_data.get("Gauteng")      or {}).get("median_price_r", 1450000) / 1000
+
     price_trend = pd.DataFrame({
         "Quarter": quarters,
-        "Western Cape": [1650,1680,1720,1760,1810,1870,1930,1980,2020,2050,2070,2090,2100,2110,2100,2110],
-        "Gauteng": [1180,1190,1200,1210,1220,1230,1250,1270,1300,1340,1370,1400,1420,1440,1450,1455],
-        "National": [980,995,1010,1030,1060,1090,1120,1150,1180,1210,1240,1260,1270,1275,1280,1285],
+        "Western Cape": [wc_med] * len(quarters),
+        "Gauteng":      [gp_med] * len(quarters),
+        "National":     national_vals,
     })
     fig3 = px.line(price_trend, x="Quarter", y=["Western Cape","Gauteng","National"],
                    title="Median house price trend (R thousands)",
@@ -588,30 +708,51 @@ def page_property(topic, province):
     fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("Lightstone Property · FNB Property Barometer · PropStats 2024")
+    source_badge("Lightstone Property · FNB Property Barometer · PropStats", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 3. BANK FRAUD & FINANCIAL CRIME
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_fraud(topic, province):
+    d = load_data("fraud")
+    cats = g(d, "categories") or {}
+    trend = g(d, "trend_r_billion") or {}
+    scraped_at = g(d, "scraped_at")
+    is_live = g(d, "is_live", default=False)
+
+    total_losses = g(d, "total_losses_r_billion") or 3.3
+    sim_swaps    = g(d, "sim_swap_incidents")     or 3800
+    online_fraud = (cats.get("Online banking") or {}).get("losses_rm", 634)
+    card_losses  = ((cats.get("Card not present") or {}).get("losses_rm", 620) +
+                    (cats.get("Lost/Stolen card")  or {}).get("losses_rm", 480))
+
     st.markdown('<div class="section-title">🔐 Bank Fraud & Financial Crime</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">SABRIC annual fraud data — SIM swap, phishing, card fraud, and EFT scams</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("Total Losses (2023)", "R3.3B", "+12.4% YoY", "down"), unsafe_allow_html=True)
-    c2.markdown(kpi("SIM Swap Incidents", "3,800+", "+8.2% YoY", "down"), unsafe_allow_html=True)
-    c3.markdown(kpi("Online Banking Fraud", "R634M", "+18.1% YoY", "down"), unsafe_allow_html=True)
-    c4.markdown(kpi("Card Fraud Losses", "R1.1B", "+6.7% YoY", "down"), unsafe_allow_html=True)
+    c1.markdown(kpi("Total Losses", f"R{total_losses:.1f}B", "+12.4% YoY", "down"), unsafe_allow_html=True)
+    c2.markdown(kpi("SIM Swap Incidents", f"{sim_swaps:,}+", "+8.2% YoY", "down"), unsafe_allow_html=True)
+    c3.markdown(kpi("Online Banking Fraud", f"R{online_fraud}M", "+18.1% YoY", "down"), unsafe_allow_html=True)
+    c4.markdown(kpi("Card Fraud Losses", f"R{card_losses}M", "+6.7% YoY", "down"), unsafe_allow_html=True)
 
     st.divider()
 
-    fraud_types = pd.DataFrame({
-        "Category": ["Card not present", "Lost/Stolen card", "Online banking", "SIM swap / account takeover",
-                     "Business email compromise", "ATM fraud", "Investment scams"],
-        "Losses (R millions)": [620, 480, 634, 412, 380, 290, 484],
-        "Incidents": [142000, 89000, 54000, 3800, 2100, 67000, 8900],
-    })
+    # Build dataframe from loaded categories (fall back to hardcoded)
+    default_cats = {
+        "Card not present":          {"losses_rm": 620, "incidents": 142000},
+        "Lost/Stolen card":          {"losses_rm": 480, "incidents": 89000},
+        "Online banking":            {"losses_rm": 634, "incidents": 54000},
+        "SIM swap / account takeover":{"losses_rm": 412, "incidents": 3800},
+        "Business email compromise": {"losses_rm": 380, "incidents": 2100},
+        "ATM fraud":                 {"losses_rm": 290, "incidents": 67000},
+        "Investment scams":          {"losses_rm": 484, "incidents": 8900},
+    }
+    merged = {**default_cats, **cats}
+    fraud_types = pd.DataFrame([
+        {"Category": k, "Losses (R millions)": v.get("losses_rm", 0), "Incidents": v.get("incidents", 0)}
+        for k, v in merged.items()
+    ])
 
     col1, col2 = st.columns(2)
     with col1:
@@ -630,12 +771,12 @@ def page_fraud(topic, province):
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
         st.plotly_chart(fig2, use_container_width=True)
 
-    # Year trend
-    yrs = [2019, 2020, 2021, 2022, 2023]
+    # Year trend from JSON
+    default_trend = {"2019":2.2,"2020":1.8,"2021":2.1,"2022":2.9,"2023":3.3}
+    trend_data = trend if trend else default_trend
     fraud_trend = pd.DataFrame({
-        "Year": yrs,
-        "Total Losses (R billions)": [2.2, 1.8, 2.1, 2.9, 3.3],
-        "Online Banking (R millions)": [329, 284, 399, 537, 634],
+        "Year": [int(y) for y in trend_data.keys()],
+        "Total Losses (R billions)": list(trend_data.values()),
     })
     fig3 = px.line(fraud_trend, x="Year", y="Total Losses (R billions)",
                    title="Total fraud losses trend (R billions)",
@@ -644,29 +785,45 @@ def page_fraud(topic, province):
     fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("SABRIC Annual Report 2023 · South African Banking Risk Information Centre")
+    source_badge("SABRIC Annual Report · South African Banking Risk Information Centre", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 4. UNEMPLOYMENT & INCOME LEVELS
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_employment(topic, province):
+    d = load_data("employment")
+    prov_data  = g(d, "provinces") or {}
+    trend_data = g(d, "trend")     or {}
+    scraped_at = g(d, "scraped_at")
+    is_live    = g(d, "is_live", default=False)
+
+    unemp   = g(d, "unemployment_rate_pct")       or 32.9
+    youth   = g(d, "youth_unemployment_pct")      or 60.7
+    exp_u   = g(d, "expanded_unemployment_pct")   or 43.1
+    emp_m   = g(d, "employed_millions")           or 16.7
+    gini    = g(d, "gini_coefficient")            or 0.63
+    min_w   = g(d, "national_min_wage_hourly_r")  or 28.79
+
     st.markdown('<div class="section-title">📉 Unemployment & Income Levels</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">Stats SA quarterly labour force survey — unemployment, income inequality, sector breakdown</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("Unemployment Rate", "32.9%", "-0.4pp QoQ", "down"), unsafe_allow_html=True)
-    c2.markdown(kpi("Youth Unemployment", "60.7%", "+1.2pp QoQ", "down"), unsafe_allow_html=True)
-    c3.markdown(kpi("Gini Coefficient", "0.63", "Highest in world", "down"), unsafe_allow_html=True)
-    c4.markdown(kpi("Employed (millions)", "16.7M", "+220K QoQ", "up"), unsafe_allow_html=True)
+    c1.markdown(kpi("Unemployment Rate", f"{unemp}%", "-0.4pp QoQ", "down"), unsafe_allow_html=True)
+    c2.markdown(kpi("Youth Unemployment", f"{youth}%", "+1.2pp QoQ", "down"), unsafe_allow_html=True)
+    c3.markdown(kpi("Gini Coefficient", f"{gini}", "Highest in world", "down"), unsafe_allow_html=True)
+    c4.markdown(kpi("Employed (millions)", f"{emp_m}M", "+220K QoQ", "up"), unsafe_allow_html=True)
 
     st.divider()
 
+    def pv(key, defaults):
+        return [(prov_data.get(p) or {}).get(key) or defaults[i] for i, p in enumerate(PROVINCE_LIST)]
+
     unemp_prov = pd.DataFrame({
-        "Province": PROVINCE_LIST,
-        "Unemployment Rate (%)": [22.8, 33.2, 32.6, 39.7, 45.4, 38.8, 40.1, 35.6, 31.4],
-        "Youth Unemployment (%)": [44.1, 58.9, 57.2, 64.8, 72.1, 68.4, 69.8, 63.2, 53.1],
-        "Median Monthly Income (R)": [14800, 11200, 9800, 6400, 5200, 5800, 5400, 6100, 8900],
+        "Province":                 PROVINCE_LIST,
+        "Unemployment Rate (%)":    pv("unemployment",    [22.8,33.2,32.6,39.7,45.4,38.8,40.1,35.6,31.4]),
+        "Youth Unemployment (%)":   pv("youth_unemployment",[44.1,58.9,57.2,64.8,72.1,68.4,69.8,63.2,53.1]),
+        "Median Monthly Income (R)":pv("median_income_r", [14800,11200,9800,6400,5200,5800,5400,6100,8900]),
     })
 
     col1, col2 = st.columns(2)
@@ -688,11 +845,9 @@ def page_employment(topic, province):
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
         st.plotly_chart(fig2, use_container_width=True)
 
-    # Unemployment over time
-    quarters = ["Q1'20","Q2'20","Q3'20","Q4'20","Q1'21","Q2'21","Q3'21","Q4'21",
-                "Q1'22","Q2'22","Q3'22","Q4'22","Q1'23","Q2'23","Q3'23","Q4'23","Q1'24","Q2'24","Q3'24"]
-    rates = [30.1, 34.4, 30.8, 32.5, 32.6, 34.4, 34.9, 35.3, 34.5, 33.9, 32.9, 32.7, 32.9, 33.5, 31.9, 32.1, 33.5, 33.5, 32.9]
-    fig3 = px.area(pd.DataFrame({"Quarter": quarters, "Rate (%)": rates}),
+    default_trend_u = {"Q1'20":30.1,"Q2'20":34.4,"Q3'20":30.8,"Q4'20":32.5,"Q1'21":32.6,"Q2'21":34.4,"Q3'21":34.9,"Q4'21":35.3,"Q1'22":34.5,"Q2'22":33.9,"Q3'22":32.9,"Q4'22":32.7,"Q1'23":32.9,"Q2'23":33.5,"Q3'23":31.9,"Q4'23":32.1,"Q1'24":33.5,"Q2'24":33.5,"Q3'24":32.9}
+    td = trend_data if trend_data else default_trend_u
+    fig3 = px.area(pd.DataFrame({"Quarter": list(td.keys()), "Rate (%)": list(td.values())}),
                    x="Quarter", y="Rate (%)",
                    title="SA unemployment rate trend (%)",
                    template=PLOTLY_TEMPLATE)
@@ -700,31 +855,52 @@ def page_employment(topic, province):
     fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("Stats SA QLFS Q3 2024 · statssa.gov.za")
+    source_badge("Stats SA QLFS · statssa.gov.za", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 5. LOAD SHEDDING & ENERGY
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_energy(topic, province):
+    d = load_data("energy")
+    scraped_at = g(d, "scraped_at")
+    is_live    = g(d, "is_live", default=False)
+    stage      = g(d, "current_stage", default=0)
+    stage_lbl  = g(d, "stage_label") or ("No load shedding" if stage == 0 else f"Stage {stage}")
+    monthly_24 = g(d, "monthly_hours_2024") or {}
+    monthly_23 = g(d, "monthly_hours_2023") or {}
+    monthly_22 = g(d, "monthly_hours_2022") or {}
+    annual     = g(d, "annual_totals")       or {}
+    tariffs    = g(d, "electricity_tariff_history") or {}
+    energy_mix = g(d, "energy_mix_pct_2024") or {}
+
+    hrs_2024 = sum(monthly_24.values()) if monthly_24 else 2140
+    hrs_2023 = sum(monthly_23.values()) if monthly_23 else 6932
+
+    stage_color = "#27ae60" if stage == 0 else ("#f59e0b" if stage <= 2 else "#e05c3a")
+    stage_html = f'<span style="color:{stage_color};font-weight:700">{stage_lbl}</span>'
+
     st.markdown('<div class="section-title">⚡ Load Shedding & Energy</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-sub">Eskom stage data, unplanned capacity losses, renewable energy uptake, and energy cost trends</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-sub">Eskom stage data · Current status: {stage_html}&nbsp;&nbsp;{"🟢 live" if is_live else "🟡 cached"}</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("Loadshedding Hours 2023", "6,932 hrs", "Worst year on record", "down"), unsafe_allow_html=True)
-    c2.markdown(kpi("Loadshedding Hours 2024", "2,140 hrs", "-69% vs 2023", "up"), unsafe_allow_html=True)
-    c3.markdown(kpi("Eskom Generation Capacity", "~34 GW", "vs 44 GW installed", "down"), unsafe_allow_html=True)
+    c1.markdown(kpi("Loadshedding Hours 2023", f"{hrs_2023:,} hrs", "Worst year on record", "down"), unsafe_allow_html=True)
+    c2.markdown(kpi("Loadshedding Hours 2024", f"{hrs_2024:,} hrs", f"-{round((hrs_2023-hrs_2024)/hrs_2023*100)}% vs 2023", "up"), unsafe_allow_html=True)
+    c3.markdown(kpi("Current Stage", stage_lbl, "Live from Eskom" if is_live else "Last known", "neutral"), unsafe_allow_html=True)
     c4.markdown(kpi("Rooftop Solar Installed", "5.7 GW", "+2.1 GW in 2023", "up"), unsafe_allow_html=True)
 
     st.divider()
 
-    # Monthly load shedding hours 2023 vs 2024
     months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    default_24 = [312,240,168,120,72,96,144,120,96,72,48,24]
+    default_23 = [744,576,648,576,600,552,600,576,504,576,480,300]
+    default_22 = [0,24,144,168,312,360,288,408,336,240,264,480]
+
     ls_data = pd.DataFrame({
         "Month": months,
-        "2022": [0, 24, 144, 168, 312, 360, 288, 408, 336, 240, 264, 480],
-        "2023": [744, 576, 648, 576, 600, 552, 600, 576, 504, 576, 480, 300],
-        "2024": [312, 240, 168, 120, 72, 96, 144, 120, 96, 72, 48, 24],
+        "2022": [monthly_22.get(m, default_22[i]) for i,m in enumerate(months)],
+        "2023": [monthly_23.get(m, default_23[i]) for i,m in enumerate(months)],
+        "2024": [monthly_24.get(m, default_24[i]) for i,m in enumerate(months)],
     })
 
     col1, col2 = st.columns([3, 2])
@@ -737,22 +913,21 @@ def page_energy(topic, province):
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        # Energy mix
-        energy_mix = pd.DataFrame({
-            "Source": ["Coal", "Nuclear", "Hydro", "Wind", "Solar PV", "Gas/Diesel", "Imports"],
-            "Percentage": [57, 5, 2, 6, 10, 8, 12],
+        mix_default = {"Coal":57,"Nuclear":5,"Hydro":2,"Wind":6,"Solar":10,"Gas/Diesel":8,"Imports":12}
+        mix_data = energy_mix if energy_mix else mix_default
+        energy_mix_df = pd.DataFrame({
+            "Source": list(mix_data.keys()),
+            "Percentage": list(mix_data.values()),
         })
-        fig2 = px.pie(energy_mix, values="Percentage", names="Source",
+        fig2 = px.pie(energy_mix_df, values="Percentage", names="Source",
                       title="SA electricity generation mix (2024)",
                       template=PLOTLY_TEMPLATE, hole=0.35,
                       color_discrete_sequence=px.colors.qualitative.Set3)
         fig2.update_layout(paper_bgcolor=CHART_BG)
         st.plotly_chart(fig2, use_container_width=True)
-
-    # Electricity tariff trend
-    tariff_years = list(range(2015, 2025))
-    tariffs = [112.5, 135.4, 151.1, 170.0, 186.3, 207.7, 252.0, 328.0, 388.0, 436.0]
-    fig3 = px.line(pd.DataFrame({"Year": tariff_years, "Tariff (c/kWh)": tariffs}),
+    default_tariffs = {2015:112.5,2016:135.4,2017:151.1,2018:170.0,2019:186.3,2020:207.7,2021:252.0,2022:328.0,2023:388.0,2024:436.0}
+    td = {int(k):v for k,v in tariffs.items()} if tariffs else default_tariffs
+    fig3 = px.line(pd.DataFrame({"Year": list(td.keys()), "Tariff (c/kWh)": list(td.values())}),
                    x="Year", y="Tariff (c/kWh)",
                    title="Average Eskom residential tariff (cents/kWh)",
                    markers=True, template=PLOTLY_TEMPLATE)
@@ -760,33 +935,45 @@ def page_energy(topic, province):
     fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("Eskom · EskomSePush · NERSA 2024")
+    source_badge("Eskom · EskomSePush · NERSA", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 6. INTEREST RATES & INFLATION
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_finance(topic, province):
+    d = load_data("finance")
+    scraped_at  = g(d, "scraped_at")
+    is_live     = g(d, "is_live", default=False)
+    repo        = g(d, "repo_rate_pct")       or 6.75
+    prime       = g(d, "prime_rate_pct")      or 10.25
+    cpi         = g(d, "cpi_headline_pct")    or 3.5
+    repo_hist   = g(d, "repo_history")        or {}
+    cpi_hist    = g(d, "cpi_history")         or {}
+
     st.markdown('<div class="section-title">💰 Interest Rates & Inflation</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">SARB repo rate decisions, CPI by category, food inflation, and prime lending rate</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("Repo Rate", "8.00%", "-0.25pp (Jan 2025)", "up"), unsafe_allow_html=True)
-    c2.markdown(kpi("Prime Rate", "11.50%", "Repo + 3.5pp", "neutral"), unsafe_allow_html=True)
-    c3.markdown(kpi("CPI (Jan 2025)", "3.2%", "Lowest since 2021", "up"), unsafe_allow_html=True)
+    c1.markdown(kpi("Repo Rate", f"{repo}%", "Latest SARB decision", "up"), unsafe_allow_html=True)
+    c2.markdown(kpi("Prime Rate", f"{prime}%", "Repo + 3.5pp", "neutral"), unsafe_allow_html=True)
+    c3.markdown(kpi("CPI Headline", f"{cpi}%", "Latest Stats SA release", "up"), unsafe_allow_html=True)
     c4.markdown(kpi("Food Inflation", "4.1%", "-6.1pp from peak", "up"), unsafe_allow_html=True)
 
     st.divider()
 
-    # Repo rate history
-    quarters = ["Q1'20","Q2'20","Q3'20","Q4'20","Q1'21","Q2'21","Q3'21","Q4'21",
-                "Q1'22","Q2'22","Q3'22","Q4'22","Q1'23","Q2'23","Q3'23","Q4'23","Q1'24","Q2'24","Q3'24","Q4'24","Q1'25"]
-    repo = [6.25,3.75,3.5,3.5,3.5,3.5,3.5,3.75,4.0,4.75,5.5,7.0,7.25,8.25,8.25,8.25,8.25,8.25,8.0,8.0,8.0]
-    cpi  = [4.1,2.2,3.0,3.1,2.9,4.9,4.9,5.9,5.9,6.5,7.8,7.2,7.0,6.3,5.4,5.5,5.3,5.1,4.4,3.8,3.2]
+    # Repo + CPI trend from loaded data
+    default_repo = {"Q1'20":6.25,"Q2'20":3.75,"Q3'20":3.5,"Q4'20":3.5,"Q1'21":3.5,"Q2'21":3.5,"Q3'21":3.5,"Q4'21":3.75,"Q1'22":4.0,"Q2'22":4.75,"Q3'22":5.5,"Q4'22":7.0,"Q1'23":7.25,"Q2'23":8.25,"Q3'23":8.25,"Q4'23":8.25,"Q1'24":8.25,"Q2'24":8.25,"Q3'24":8.0,"Q4'24":7.75,"Q1'25":7.5}
+    default_cpi  = {"Q1'20":4.1,"Q2'20":2.2,"Q3'20":3.0,"Q4'20":3.1,"Q1'21":2.9,"Q2'21":4.9,"Q3'21":4.9,"Q4'21":5.9,"Q1'22":5.9,"Q2'22":6.5,"Q3'22":7.8,"Q4'22":7.2,"Q1'23":7.0,"Q2'23":6.3,"Q3'23":5.4,"Q4'23":5.5,"Q1'24":5.3,"Q2'24":5.1,"Q3'24":4.4,"Q4'24":3.8,"Q1'25":3.5}
+
+    # Merge scraped history with defaults (scraped values win)
+    rh = {**default_repo, **{k.replace("-","'"): v for k,v in repo_hist.items()}}
+    ch = {**default_cpi,  **{k.replace("-","'"): v for k,v in cpi_hist.items()}}
+    quarters = sorted(set(list(rh.keys()) + list(ch.keys())))
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=quarters, y=repo, name="Repo Rate (%)", line=dict(color="#3b82f6", width=2.5)))
-    fig.add_trace(go.Scatter(x=quarters, y=cpi, name="CPI (%)", line=dict(color="#e05c3a", width=2.5, dash="dash")))
+    fig.add_trace(go.Scatter(x=quarters, y=[rh.get(q) for q in quarters], name="Repo Rate (%)", line=dict(color="#3b82f6", width=2.5)))
+    fig.add_trace(go.Scatter(x=quarters, y=[ch.get(q) for q in quarters], name="CPI (%)", line=dict(color="#e05c3a", width=2.5, dash="dash")))
     fig.update_layout(title="SARB Repo Rate vs CPI Inflation", template=PLOTLY_TEMPLATE,
                       paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
     st.plotly_chart(fig, use_container_width=True)
@@ -818,31 +1005,50 @@ def page_finance(topic, province):
         fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
         st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("SARB Monetary Policy · Stats SA CPI · 2025")
+    source_badge("SARB Monetary Policy · Stats SA CPI", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 7. HEALTHCARE ACCESS & DISEASE BURDEN
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_health(topic, province):
+    d = load_data("health")
+    prov_data  = g(d, "provinces")  or {}
+    hiv        = g(d, "hiv")        or {}
+    tb         = g(d, "tb")         or {}
+    plhiv_t    = g(d, "plhiv_trend") or {}
+    art_t      = g(d, "art_trend")   or {}
+    scraped_at = g(d, "scraped_at")
+    is_live    = g(d, "is_live", default=False)
+
+    plhiv  = hiv.get("plhiv_millions", 7.8)
+    prev   = hiv.get("prevalence_15_49_pct", 18.3)
+    on_art = hiv.get("on_art_millions", 5.7)
+    art_c  = hiv.get("art_coverage_pct", 73.0)
+    tb_inc = tb.get("incidence_per_100k", 468)
+    mat_m  = (g(d, "health_system") or {}).get("maternal_mortality_per_100k", 118)
+
     st.markdown('<div class="section-title">🏥 Healthcare Access & Disease Burden</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">TB/HIV prevalence by district, public hospital capacity, NHI progress, and health outcomes</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("People Living with HIV", "7.8M", "18.3% prevalence (15-49)", "down"), unsafe_allow_html=True)
-    c2.markdown(kpi("TB Incidence (per 100K)", "468", "-5.2% YoY", "up"), unsafe_allow_html=True)
-    c3.markdown(kpi("On ART", "5.7M", "73% of PLHIV", "up"), unsafe_allow_html=True)
-    c4.markdown(kpi("Maternal Mortality", "118/100K", "-8% from 2022", "up"), unsafe_allow_html=True)
+    c1.markdown(kpi("People Living with HIV", f"{plhiv}M", f"{prev}% prevalence (15-49)", "down"), unsafe_allow_html=True)
+    c2.markdown(kpi("TB Incidence (per 100K)", f"{tb_inc}", "-5.2% YoY", "up"), unsafe_allow_html=True)
+    c3.markdown(kpi("On ART", f"{on_art}M", f"{art_c}% of PLHIV", "up"), unsafe_allow_html=True)
+    c4.markdown(kpi("Maternal Mortality", f"{mat_m}/100K", "-8% from 2022", "up"), unsafe_allow_html=True)
 
     st.divider()
 
+    def pv(key, defaults):
+        return [(prov_data.get(p) or {}).get(key) or defaults[i] for i, p in enumerate(PROVINCE_LIST)]
+
     health_prov = pd.DataFrame({
-        "Province": PROVINCE_LIST,
-        "HIV Prevalence (%)": [12.8, 11.9, 25.2, 15.4, 10.3, 15.8, 12.1, 11.6, 6.1],
-        "TB Incidence (per 100K)": [720, 620, 480, 520, 290, 310, 340, 380, 560],
-        "Public Hospitals": [54, 34, 72, 62, 44, 31, 28, 26, 16],
-        "Doctors per 100K": [82, 74, 38, 32, 18, 22, 19, 21, 41],
-        "ART Coverage (%)": [72, 68, 71, 65, 58, 64, 61, 60, 70],
+        "Province":               PROVINCE_LIST,
+        "HIV Prevalence (%)":     pv("hiv_prevalence_pct", [12.8,11.9,25.2,15.4,10.3,15.8,12.1,11.6,6.1]),
+        "TB Incidence (per 100K)":pv("tb_per_100k",        [720,620,480,520,290,310,340,380,560]),
+        "Public Hospitals":       [54,34,72,62,44,31,28,26,16],
+        "Doctors per 100K":       pv("doctors_per_100k",   [82,74,38,32,18,22,19,21,41]),
+        "ART Coverage (%)":       pv("art_coverage_pct",   [72,68,71,65,58,64,61,60,70]),
     })
 
     col1, col2 = st.columns(2)
@@ -863,130 +1069,176 @@ def page_health(topic, province):
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
         st.plotly_chart(fig2, use_container_width=True)
 
-    # HIV trend
-    years = list(range(2010, 2025))
-    hiv_trend = pd.DataFrame({
-        "Year": years,
-        "PLHIV (millions)": [5.8,6.0,6.2,6.4,6.6,6.8,7.1,7.3,7.5,7.6,7.7,7.75,7.8,7.8,7.8],
-        "On ART (millions)": [1.0,1.6,2.0,2.4,2.9,3.4,4.0,4.6,5.0,5.2,5.4,5.5,5.65,5.7,5.75],
-    })
+    # HIV trend — use loaded data if available
+    default_plhiv = {2010:5.8,2012:6.2,2014:6.6,2016:7.1,2018:7.5,2020:7.7,2022:7.8,2024:7.8}
+    default_art   = {2010:1.0,2012:2.0,2014:2.9,2016:4.0,2018:5.0,2020:5.4,2022:5.6,2024:5.7}
+    plhiv_data = {int(k):v for k,v in plhiv_t.items()} if plhiv_t else default_plhiv
+    art_data   = {int(k):v for k,v in art_t.items()}   if art_t   else default_art
+    all_years  = sorted(set(list(plhiv_data.keys()) + list(art_data.keys())))
+
     fig3 = go.Figure()
-    fig3.add_trace(go.Scatter(x=years, y=hiv_trend["PLHIV (millions)"], name="PLHIV", fill="tozeroy",
+    fig3.add_trace(go.Scatter(x=all_years, y=[plhiv_data.get(y) for y in all_years],
+                              name="PLHIV", fill="tozeroy",
                               fillcolor="rgba(224,92,58,0.15)", line=dict(color="#e05c3a")))
-    fig3.add_trace(go.Scatter(x=years, y=hiv_trend["On ART (millions)"], name="On ART", fill="tozeroy",
+    fig3.add_trace(go.Scatter(x=all_years, y=[art_data.get(y) for y in all_years],
+                              name="On ART", fill="tozeroy",
                               fillcolor="rgba(39,174,96,0.2)", line=dict(color="#27ae60")))
-    fig3.update_layout(title="HIV burden vs ART coverage (2010–2024, millions)",
+    fig3.update_layout(title="HIV burden vs ART coverage (millions)",
                        template=PLOTLY_TEMPLATE, paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("SANAC · DHIS2 · Stats SA · NDOH 2024")
+    source_badge("SANAC · DHIS2 · Stats SA · NDOH", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 8. EDUCATION QUALITY & MATRIC DATA
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_education(topic, province):
+    d          = load_data("education")
+    prov_data  = g(d, "provinces")  or {}
+    subj_data  = g(d, "subjects")   or {}
+    trend_data = g(d, "trend")      or {}
+    scraped_at = g(d, "scraped_at")
+    is_live    = g(d, "is_live", default=False)
+    exam_year  = g(d, "exam_year")  or 2024
+
+    pass_rate  = g(d, "national_pass_rate_pct") or 87.3
+    bachelor   = g(d, "bachelor_pass_pct")      or 45.6
+    wrote      = g(d, "total_wrote")            or 756000
+    distinction= g(d, "distinction_rate_pct")   or 7.2
+
     st.markdown('<div class="section-title">🎓 Education Quality & Matric Data</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-sub">Matric pass rates by province, bachelor passes, subject performance, and university access</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-sub">Matric pass rates by province, bachelor passes, subject performance · Exam year: {exam_year}</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("National Pass Rate 2024", "87.3%", "+2.1pp YoY", "up"), unsafe_allow_html=True)
-    c2.markdown(kpi("Bachelor Passes", "45.6%", "+1.8pp YoY", "up"), unsafe_allow_html=True)
-    c3.markdown(kpi("Wrote Matric 2024", "756,000", "+14K vs 2023", "up"), unsafe_allow_html=True)
-    c4.markdown(kpi("Distinction Rate", "7.2%", "+0.5pp YoY", "up"), unsafe_allow_html=True)
+    c1.markdown(kpi(f"National Pass Rate {exam_year}", f"{pass_rate}%", "+2.1pp YoY", "up"), unsafe_allow_html=True)
+    c2.markdown(kpi("Bachelor Passes", f"{bachelor}%",  "+1.8pp YoY", "up"), unsafe_allow_html=True)
+    c3.markdown(kpi(f"Wrote Matric {exam_year}", f"{wrote:,}", "+14K vs prev year", "up"), unsafe_allow_html=True)
+    c4.markdown(kpi("Distinction Rate", f"{distinction}%", "+0.5pp YoY", "up"), unsafe_allow_html=True)
 
     st.divider()
 
+    def pv(key, defaults):
+        return [(prov_data.get(p) or {}).get(key) or defaults[i] for i, p in enumerate(PROVINCE_LIST)]
+
     edu_prov = pd.DataFrame({
-        "Province": PROVINCE_LIST,
-        "Pass Rate 2024 (%)": [83.6, 92.2, 80.4, 71.9, 65.4, 74.8, 79.2, 77.3, 88.1],
-        "Bachelor Pass (%)": [54.2, 58.8, 39.2, 31.4, 22.8, 31.0, 35.6, 33.2, 48.8],
-        "Wrote Matric": [88000, 132000, 148000, 94000, 58000, 62000, 47000, 38000, 20000],
+        "Province":          PROVINCE_LIST,
+        "Pass Rate (%)":     pv("pass_rate",    [83.6,92.2,80.4,71.9,65.4,74.8,79.2,77.3,88.1]),
+        "Bachelor Pass (%)": pv("bachelor_pct", [54.2,58.8,39.2,31.4,22.8,31.0,35.6,33.2,48.8]),
+        "Wrote Matric":      pv("wrote",        [88000,132000,148000,94000,58000,62000,47000,38000,20000]),
     })
 
     col1, col2 = st.columns(2)
     with col1:
-        fig = px.bar(edu_prov.sort_values("Pass Rate 2024 (%)", ascending=True),
-                     x="Pass Rate 2024 (%)", y="Province", orientation="h",
-                     color="Pass Rate 2024 (%)", color_continuous_scale="YlGn",
-                     title="Matric pass rate by province (2024)",
+        fig = px.bar(edu_prov.sort_values("Pass Rate (%)", ascending=True),
+                     x="Pass Rate (%)", y="Province", orientation="h",
+                     color="Pass Rate (%)", color_continuous_scale="YlGn",
+                     title=f"Matric pass rate by province ({exam_year})",
                      template=PLOTLY_TEMPLATE)
-        fig.add_vline(x=87.3, line_dash="dash", line_color="#e05c3a", annotation_text="National avg")
+        fig.add_vline(x=pass_rate, line_dash="dash", line_color="#e05c3a",
+                      annotation_text=f"National avg {pass_rate}%")
         fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        subj = pd.DataFrame({
-            "Subject": ["Life Sciences", "Geography", "History", "Mathematics", "Physical Sciences",
-                        "Accounting", "Mathematical Literacy", "Business Studies"],
-            "Pass Rate (%)": [71.2, 64.8, 68.9, 52.3, 50.1, 58.8, 80.2, 74.6],
-        })
+        default_subj = {
+            "Life Sciences":         {"pass_rate": 71.2},
+            "Geography":             {"pass_rate": 64.8},
+            "History":               {"pass_rate": 68.9},
+            "Mathematics":           {"pass_rate": 52.3},
+            "Physical Sciences":     {"pass_rate": 50.1},
+            "Accounting":            {"pass_rate": 58.8},
+            "Mathematical Literacy": {"pass_rate": 80.2},
+            "Business Studies":      {"pass_rate": 74.6},
+        }
+        merged_subj = {**default_subj, **subj_data}
+        subj = pd.DataFrame([
+            {"Subject": k, "Pass Rate (%)": v.get("pass_rate", 0)}
+            for k, v in merged_subj.items()
+        ])
         fig2 = px.bar(subj.sort_values("Pass Rate (%)"),
                       x="Pass Rate (%)", y="Subject", orientation="h",
                       color="Pass Rate (%)", color_continuous_scale="Blues",
-                      title="Subject pass rates — national (2024)",
+                      title=f"Subject pass rates — national ({exam_year})",
                       template=PLOTLY_TEMPLATE)
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
         st.plotly_chart(fig2, use_container_width=True)
 
-    # Pass rate trend
-    years = list(range(2015, 2025))
+    # Pass rate trend — from JSON
+    default_trend_e = {
+        2015:{"pass_rate":70.7,"bachelor":35.5}, 2016:{"pass_rate":72.5,"bachelor":36.4},
+        2017:{"pass_rate":75.1,"bachelor":37.8}, 2018:{"pass_rate":78.2,"bachelor":39.1},
+        2019:{"pass_rate":81.3,"bachelor":40.8}, 2020:{"pass_rate":76.2,"bachelor":38.1},
+        2021:{"pass_rate":77.2,"bachelor":39.2}, 2022:{"pass_rate":80.1,"bachelor":41.0},
+        2023:{"pass_rate":82.9,"bachelor":43.8}, 2024:{"pass_rate":87.3,"bachelor":45.6},
+    }
+    td = {int(k):v for k,v in trend_data.items()} if trend_data else default_trend_e
+    trend_years = sorted(td.keys())
     pass_trend = pd.DataFrame({
-        "Year": years,
-        "National Pass Rate (%)": [70.7, 72.5, 75.1, 78.2, 81.3, 76.2, 77.2, 80.1, 82.9, 87.3],
-        "Bachelor Pass (%)": [35.5, 36.4, 37.8, 39.1, 40.8, 38.1, 39.2, 41.0, 43.8, 45.6],
+        "Year":                trend_years,
+        "National Pass Rate (%)": [td[y].get("pass_rate", 0) for y in trend_years],
+        "Bachelor Pass (%)":      [td[y].get("bachelor",  0) for y in trend_years],
     })
     fig3 = px.line(pass_trend, x="Year", y=["National Pass Rate (%)", "Bachelor Pass (%)"],
-                   title="Matric pass rate trend (2015–2024)",
-                   markers=True, template=PLOTLY_TEMPLATE)
+                   title="Matric pass rate trend", markers=True, template=PLOTLY_TEMPLATE)
     fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("Department of Basic Education — 2024 NSC Results")
+    source_badge("Department of Basic Education — NSC Results", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 9. ZAR EXCHANGE RATE & CAPITAL FLOWS
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_forex(topic, province):
+    d          = load_data("forex")
+    rates      = g(d, "live_rates") or {}
+    scraped_at = g(d, "scraped_at")
+    is_live    = g(d, "is_live", default=False)
+
+    usd_zar = rates.get("usd_zar", 18.64)
+    eur_zar = rates.get("eur_zar", 20.21)
+    gbp_zar = rates.get("gbp_zar", 23.48)
+    ts      = rates.get("timestamp", "")
+
     st.markdown('<div class="section-title">💱 ZAR Exchange Rate & Capital Flows</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-sub">Rand vs major currencies, FDI trends, portfolio flows, and offshore investment appetite</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-sub">Rand vs major currencies, FDI trends, portfolio flows · {"🟢 Live rates" if is_live else "🟡 Cached rates"}</div>', unsafe_allow_html=True)
 
-    # Try live rate
-    live_rate = None
-    try:
-        r = requests.get("https://open.er-api.com/v6/latest/USD", timeout=4)
-        data = r.json()
-        if data.get("result") == "success":
-            live_rate = round(data["rates"].get("ZAR", 18.5), 2)
-    except Exception:
-        pass
-
-    rate_display = f"R{live_rate}" if live_rate else "R18.64"
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("USD/ZAR" + (" 🟢 Live" if live_rate else ""), rate_display, "+1.2% MTD", "down"), unsafe_allow_html=True)
-    c2.markdown(kpi("EUR/ZAR", "R20.21", "+0.8% MTD", "down"), unsafe_allow_html=True)
-    c3.markdown(kpi("GBP/ZAR", "R23.48", "+1.5% MTD", "down"), unsafe_allow_html=True)
+    c1.markdown(kpi(f"USD/ZAR {'🟢' if is_live else ''}", f"R{usd_zar}", "+1.2% MTD", "down"), unsafe_allow_html=True)
+    c2.markdown(kpi("EUR/ZAR", f"R{eur_zar}", "+0.8% MTD", "down"), unsafe_allow_html=True)
+    c3.markdown(kpi("GBP/ZAR", f"R{gbp_zar}", "+1.5% MTD", "down"), unsafe_allow_html=True)
     c4.markdown(kpi("FDI Inflows (2024)", "R214B", "+8.4% YoY", "up"), unsafe_allow_html=True)
 
     st.divider()
 
-    # ZAR/USD historical
-    dates = pd.date_range("2020-01-01", "2025-01-01", freq="ME")
-    np.random.seed(42)
-    noise = np.cumsum(np.random.randn(len(dates)) * 0.15)
-    base_rates = np.interp(range(len(dates)), [0, 12, 24, 36, 48, 60],
-                            [14.5, 18.8, 15.2, 17.8, 19.2, 18.6])
-    rates = base_rates + noise * 0.5
-
-    forex_df = pd.DataFrame({"Date": dates, "USD/ZAR": rates.clip(13.5, 21.0)})
+    # All available pairs from loaded data
+    all_rates = rates.get("all_vs_usd", {})
+    if all_rates:
+        pairs_df = pd.DataFrame([
+            {"Currency pair": f"USD/{c}", "Rate": round(v, 4)}
+            for c, v in all_rates.items() if c not in ("USD",)
+        ]).sort_values("Rate")
 
     col1, col2 = st.columns([3, 2])
     with col1:
+        # ZAR/USD historical — realistic interpolated series
+        dates = pd.date_range("2020-01-01", "2025-03-01", freq="ME")
+        np.random.seed(42)
+        noise = np.cumsum(np.random.randn(len(dates)) * 0.15)
+        base = np.interp(range(len(dates)), [0,12,24,36,48,63],
+                         [14.5,18.8,15.2,17.8,19.2,usd_zar])
+        hist_rates = (base + noise * 0.5).clip(13.5, 21.5)
+        forex_df = pd.DataFrame({"Date": dates, "USD/ZAR": hist_rates})
+
         fig = px.line(forex_df, x="Date", y="USD/ZAR",
-                      title="USD/ZAR exchange rate (2020–2025)",
+                      title="USD/ZAR exchange rate history (2020–present)",
                       template=PLOTLY_TEMPLATE)
         fig.update_traces(line_color="#f59e0b")
+        # Mark today's live rate if available
+        if is_live:
+            fig.add_hline(y=usd_zar, line_dash="dot", line_color="#27ae60",
+                          annotation_text=f"Live: R{usd_zar}")
         fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -996,7 +1248,8 @@ def page_forex(topic, province):
             "FDI Inflows (R billions)": [138, 89, 154, 178, 197, 214],
             "Portfolio Outflows (R billions)": [-45, -82, -38, -67, -52, -41],
         })
-        fig2 = px.bar(fdi, x="Year", y=["FDI Inflows (R billions)", "Portfolio Outflows (R billions)"],
+        fig2 = px.bar(fdi, x="Year",
+                      y=["FDI Inflows (R billions)", "Portfolio Outflows (R billions)"],
                       title="FDI inflows vs portfolio outflows (R billions)",
                       template=PLOTLY_TEMPLATE, barmode="relative",
                       color_discrete_map={"FDI Inflows (R billions)": "#27ae60",
@@ -1004,76 +1257,113 @@ def page_forex(topic, province):
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
         st.plotly_chart(fig2, use_container_width=True)
 
-    # Rate vs key events
-    st.info("📌 Key rate events: COVID lockdown (Apr 2020) → R19.3 | Zuma unrest (Jul 2021) → R15.2 | Load shedding peak (Jun 2023) → R19.8 | FATF grey-listing (Oct 2023) → R19.1 | FATF removal (Feb 2025) → R18.1")
+    # Show live multi-currency rates table if available
+    if all_rates and is_live:
+        st.subheader("Live rates vs USD (all available pairs)")
+        st.dataframe(
+            pd.DataFrame([{"Currency": c, "Rate vs USD": v}
+                          for c, v in sorted(all_rates.items())]),
+            use_container_width=True, hide_index=True
+        )
+
+    st.info("📌 Key events: COVID lockdown Apr 2020 → R19.3 · Zuma unrest Jul 2021 → R15.2 · LS peak Jun 2023 → R19.8 · FATF grey-listing Oct 2023 → R19.1 · FATF removal Feb 2025 → R18.1")
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("SARB · open.er-api.com · Investec 2024")
+    source_badge("SARB · open.er-api.com · Investec", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 10. WATER SCARCITY & SERVICE DELIVERY
 # ═══════════════════════════════════════════════════════════════════════════════
 def page_water(topic, province):
+    d          = load_data("water")
+    prov_data  = g(d, "provinces") or {}
+    dams_raw   = g(d, "dams")      or []
+    scraped_at = g(d, "scraped_at")
+    is_live    = g(d, "is_live", default=False)
+    report_dt  = g(d, "report_date")
+
+    nat_avg    = g(d, "national_avg_pct") or 78.4
+
     st.markdown('<div class="section-title">💧 Water Scarcity & Service Delivery</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-sub">Dam levels, municipal water quality failures, sewage spillage, and service delivery protests</div>', unsafe_allow_html=True)
+    sub = f"DWS weekly dam levels · {'Report date: ' + report_dt if report_dt else 'Cached data'}"
+    st.markdown(f'<div class="section-sub">{sub}</div>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(kpi("National Dam Level", "78.4%", "+12.1pp YoY", "up"), unsafe_allow_html=True)
+    c1.markdown(kpi("National Dam Level", f"{nat_avg}%", "+12.1pp YoY", "up"), unsafe_allow_html=True)
     c2.markdown(kpi("Metros with Water Crisis", "4 / 8", "Tshwane, Joburg, EC, Msunduzi", "down"), unsafe_allow_html=True)
     c3.markdown(kpi("Service Delivery Protests", "848", "+18% in 2024", "down"), unsafe_allow_html=True)
     c4.markdown(kpi("Municipalities in Distress", "163 / 257", "63%", "down"), unsafe_allow_html=True)
 
     st.divider()
 
-    # Dam levels by catchment
-    dams = pd.DataFrame({
-        "Dam / System": ["Vaal Dam", "Theewaterskloof", "Gariep Dam", "Sterkfontein", "Katse (Lesotho)",
-                         "Vanderkloof", "Pongolapoort", "Krugersdrift"],
-        "Province Served": ["GP/NW", "WC", "FS/NC", "FS", "GP/FS", "NC/FS", "KZN", "FS"],
-        "Level (%)": [71.2, 92.4, 88.1, 65.3, 82.4, 79.8, 54.1, 61.2],
-        "Capacity (Mm³)": [2596, 480, 5341, 2617, 1950, 3200, 2435, 190],
-    })
+    # Dam levels — prefer scraped individual dams, fall back to hardcoded
+    default_dams = [
+        {"name":"Vaal Dam",        "this_week_pct":71.2, "capacity_mm3":2596, "Province Served":"GP/NW"},
+        {"name":"Theewaterskloof", "this_week_pct":92.4, "capacity_mm3":480,  "Province Served":"WC"},
+        {"name":"Gariep Dam",      "this_week_pct":88.1, "capacity_mm3":5341, "Province Served":"FS/NC"},
+        {"name":"Sterkfontein",    "this_week_pct":65.3, "capacity_mm3":2617, "Province Served":"FS"},
+        {"name":"Katse (Lesotho)", "this_week_pct":82.4, "capacity_mm3":1950, "Province Served":"GP/FS"},
+        {"name":"Vanderkloof",     "this_week_pct":79.8, "capacity_mm3":3200, "Province Served":"NC/FS"},
+        {"name":"Pongolapoort",    "this_week_pct":54.1, "capacity_mm3":2435, "Province Served":"KZN"},
+        {"name":"Krugersdrift",    "this_week_pct":61.2, "capacity_mm3":190,  "Province Served":"FS"},
+    ]
+    dam_rows = dams_raw[:10] if dams_raw else default_dams
+    dam_names  = [r.get("name","") for r in dam_rows]
+    dam_levels = [r.get("this_week_pct") or 0 for r in dam_rows]
 
     col1, col2 = st.columns(2)
     with col1:
-        colors = ["#e05c3a" if v < 40 else "#f59e0b" if v < 60 else "#27ae60" for v in dams["Level (%)"]]
+        colors = ["#e05c3a" if v < 40 else "#f59e0b" if v < 60 else "#27ae60" for v in dam_levels]
         fig = go.Figure(go.Bar(
-            x=dams["Level (%)"], y=dams["Dam / System"], orientation="h",
-            marker_color=colors, text=[f'{v:.0f}%' for v in dams["Level (%)"]],
-            textposition="outside"
+            x=dam_levels, y=dam_names, orientation="h",
+            marker_color=colors,
+            text=[f"{v:.0f}%" for v in dam_levels],
+            textposition="outside",
         ))
-        fig.update_layout(title="Major dam levels (%)", template=PLOTLY_TEMPLATE,
-                          paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG,
-                          xaxis_range=[0, 110])
+        fig.update_layout(
+            title=f"Major dam levels — {'Live' if is_live else 'Latest published'} (%)",
+            template=PLOTLY_TEMPLATE, paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG,
+            xaxis_range=[0, 115]
+        )
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
+        def pv(key, defaults):
+            return [(prov_data.get(p) or {}).get(key) or defaults[i] for i, p in enumerate(PROVINCE_LIST)]
+
         delivery = pd.DataFrame({
-            "Province": PROVINCE_LIST,
-            "Protest Count (2024)": [98, 182, 141, 112, 88, 76, 71, 54, 26],
-            "Blue Drop Score": [72, 88, 61, 54, 38, 44, 42, 48, 65],
+            "Province":            PROVINCE_LIST,
+            "Protest Count (2024)":[98,182,141,112,88,76,71,54,26],
+            "Blue Drop Score":     [72,88,61,54,38,44,42,48,65],
+            "Dam Level (%)":       pv("this_week_pct", [92.4,71.2,81.3,72.1,68.4,74.2,63.8,83.1,78.9]),
         })
         fig2 = px.scatter(delivery, x="Blue Drop Score", y="Protest Count (2024)",
                           size="Protest Count (2024)", color="Province",
+                          hover_data=["Dam Level (%)"],
                           title="Water quality (Blue Drop) vs service delivery protests",
                           template=PLOTLY_TEMPLATE, size_max=40)
         fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
         st.plotly_chart(fig2, use_container_width=True)
 
-    # Dam trend
-    months = pd.date_range("2022-01-01", "2025-01-01", freq="ME")
-    np.random.seed(7)
-    dam_national = 55 + np.cumsum(np.random.randn(len(months)) * 1.5)
-    dam_national = np.clip(dam_national, 30, 98)
-    fig3 = px.area(pd.DataFrame({"Month": months, "National Average (%)": dam_national}),
-                   x="Month", y="National Average (%)",
-                   title="National dam level average (2022–2025)",
-                   template=PLOTLY_TEMPLATE)
-    fig3.update_traces(fillcolor="rgba(59,130,246,0.2)", line_color="#3b82f6")
-    fig3.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
+    # Province dam level bar — from scraped data
+    prov_levels = pd.DataFrame({
+        "Province": PROVINCE_LIST,
+        "Dam Level (%)": pv("this_week_pct", [92.4,71.2,81.3,72.1,68.4,74.2,63.8,83.1,78.9]),
+        "Last Week (%)": pv("last_week_pct", [91.8,70.8,80.9,71.4,67.9,73.6,63.1,82.4,78.2]),
+    })
+    fig3 = go.Figure()
+    fig3.add_trace(go.Bar(name="This week", x=prov_levels["Province"],
+                          y=prov_levels["Dam Level (%)"], marker_color="#3b82f6"))
+    fig3.add_trace(go.Bar(name="Last week", x=prov_levels["Province"],
+                          y=prov_levels["Last Week (%)"], marker_color="#1e3a52"))
+    fig3.update_layout(
+        title=f"Province dam levels — week-on-week ({'Live' if is_live else 'Cached'})",
+        barmode="group", template=PLOTLY_TEMPLATE,
+        paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title=""
+    )
     st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
-    source_badge("Dept of Water & Sanitation · DWS Dam Levels · COGTA 2024")
+    source_badge("Dept of Water & Sanitation · dws.gov.za · COGTA", scraped_at, is_live)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1107,16 +1397,29 @@ with st.sidebar:
     province = st.selectbox("FILTER BY PROVINCE", PROVINCES)
 
     st.markdown("<hr style='border-color:#2a3a52; margin:12px 0;'>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style="font-size:11px; color:#5a7a8a; line-height:1.6;">
-        <b style="color:#7a8fa6;">Data refreshed:</b><br>
-        Crime — SAPS Q4 2024<br>
-        Property — Dec 2024<br>
-        Economy — Jan 2025<br>
-        Health — DHIS2 2024<br>
-        Forex — Live (when available)
-    </div>
-    """, unsafe_allow_html=True)
+
+    # Dynamic data freshness from manifest.json
+    manifest = load_data("manifest")
+    if manifest and manifest.get("topics"):
+        st.markdown('<div style="font-size:11px;color:#5a7a8a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">📡 Data freshness</div>', unsafe_allow_html=True)
+        topic_file = TOPIC_FILE.get(topic, "")
+        topic_meta = manifest["topics"].get(topic_file, {})
+        if topic_meta:
+            live_dot   = "🟢" if topic_meta.get("is_live") else "🟡"
+            status     = topic_meta.get("status", "unknown")
+            cadence    = topic_meta.get("cadence", "")
+            st.markdown(f'<div style="font-size:11px;color:#7a8fa6;line-height:1.8;">'
+                        f'{live_dot} Status: <b>{status}</b><br>'
+                        f'⏱ Cadence: {cadence}<br>'
+                        f'Last run: {manifest.get("last_run","unknown")[:10]}'
+                        f'</div>', unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="font-size:11px; color:#5a7a8a; line-height:1.6;">
+            <b style="color:#7a8fa6;">Run scrapers to refresh:</b><br>
+            <code style="font-size:10px;">python run_scrapers.py</code>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("<hr style='border-color:#2a3a52; margin:12px 0;'>", unsafe_allow_html=True)
     st.markdown('<div style="font-size:11px;color:#5a7a8a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">🤖 AI Q&A KEY</div>', unsafe_allow_html=True)

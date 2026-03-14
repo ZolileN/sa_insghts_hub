@@ -1,0 +1,44 @@
+{
+  "source": "SABRIC Annual Report 2023",
+  "scraped_at": "2026-03-14T16:23:52.247428",
+  "is_live": true,
+  "total_losses_r_billion": 3.3,
+  "sim_swap_incidents": 39,
+  "categories": {
+    "Card not present": {
+      "losses_rm": 620,
+      "incidents": 142000
+    },
+    "Lost/Stolen card": {
+      "losses_rm": 480,
+      "incidents": 89000
+    },
+    "Online banking": {
+      "losses_rm": 634,
+      "incidents": 54000
+    },
+    "SIM swap/account takeover": {
+      "losses_rm": 412,
+      "incidents": 3800
+    },
+    "Business email compromise": {
+      "losses_rm": 380,
+      "incidents": 2100
+    },
+    "ATM fraud": {
+      "losses_rm": 290,
+      "incidents": 67000
+    },
+    "Investment scams": {
+      "losses_rm": 484,
+      "incidents": 8900
+    }
+  },
+  "trend_r_billion": {
+    "2019": 2.2,
+    "2020": 1.8,
+    "2021": 2.1,
+    "2022": 2.9,
+    "2023": 3.3
+  }
+}

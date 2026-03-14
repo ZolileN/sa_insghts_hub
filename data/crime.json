@@ -1,0 +1,68 @@
+{
+  "source": "SAPS",
+  "url": "https://www.saps.gov.zadownloads/2025/2025-2026_-_3rd_Quarter_WEB.xlsx",
+  "scraped_at": "2026-03-14T16:20:15.756580",
+  "period": "2025-2026 - 3rd Quarter",
+  "provinces": {
+    "Gauteng": {
+      "Murder": 4912,
+      "Carjacking": 6800,
+      "Residential burglary": 52000,
+      "Sexual offences": 10200
+    },
+    "KwaZulu-Natal": {
+      "Murder": 3801,
+      "Carjacking": 2800,
+      "Residential burglary": 41000,
+      "Sexual offences": 8900
+    },
+    "Western Cape": {
+      "Murder": 1204,
+      "Carjacking": 2900,
+      "Residential burglary": 28400,
+      "Sexual offences": 7800
+    },
+    "Eastern Cape": {
+      "Murder": 2890,
+      "Carjacking": 1200,
+      "Residential burglary": 22000,
+      "Sexual offences": 5600
+    },
+    "Limpopo": {
+      "Murder": 1102,
+      "Carjacking": 450,
+      "Residential burglary": 10500,
+      "Sexual offences": 3200
+    },
+    "Mpumalanga": {
+      "Murder": 1450,
+      "Carjacking": 620,
+      "Residential burglary": 16000,
+      "Sexual offences": 3400
+    },
+    "North West": {
+      "Murder": 980,
+      "Carjacking": 540,
+      "Residential burglary": 13000,
+      "Sexual offences": 2900
+    },
+    "Free State": {
+      "Murder": 785,
+      "Carjacking": 420,
+      "Residential burglary": 11200,
+      "Sexual offences": 1804
+    },
+    "Northern Cape": {
+      "Murder": 550,
+      "Carjacking": 197,
+      "Residential burglary": 11665,
+      "Sexual offences": 2900
+    }
+  },
+  "national_totals": {
+    "Murder": 17674,
+    "Carjacking": 15927,
+    "Residential burglary": 205765,
+    "Sexual offences": 46704
+  }
+}

@@ -1,73 +1,44 @@
 # 🇿🇦 SA Insight Hub
 
-**South Africa's top 10 most valuable data categories — one interactive dashboard with an AI analyst built in.**
+> South Africa's 10 most valuable data categories — one interactive dashboard, live scrapers, and a built-in AI analyst.
 
-## Topics Covered
-
-| # | Topic | Key Data |
-|---|-------|----------|
-| 1 | 🔴 Crime Statistics | SAPS annual crime by precinct & province |
-| 2 | 🏠 Property Prices & Rental | Median prices, yield, price growth |
-| 3 | 🔐 Bank Fraud & Financial Crime | SABRIC fraud categories & losses |
-| 4 | 📉 Unemployment & Income | Stats SA QLFS — unemployment, income |
-| 5 | ⚡ Load Shedding & Energy | Hours per month, tariffs, energy mix |
-| 6 | 💰 Interest Rates & Inflation | SARB repo rate, CPI basket |
-| 7 | 🏥 Healthcare & Disease Burden | HIV/TB prevalence, ART coverage |
-| 8 | 🎓 Education & Matric Data | Pass rates by province & subject |
-| 9 | 💱 ZAR Exchange Rate & Forex | Live USD/ZAR, FDI inflows |
-| 10 | 💧 Water & Service Delivery | Dam levels, Blue Drop scores |
+![Python](https://img.shields.io/badge/Python-3.11-blue?style=flat-square)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.35-red?style=flat-square)
+![Claude AI](https://img.shields.io/badge/Claude-AI%20Q%26A-purple?style=flat-square)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-Automated-green?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)
 
 ---
 
-## 🤖 AI Q&A Layer
+## What It Does
 
-Every topic page has a **Claude-powered chat panel** at the bottom. Users can:
-- Ask plain English questions: *"Which province has the safest suburbs?"*
-- Click suggested questions for instant answers
-- Have a multi-turn conversation with full history per topic
-- Get province-aware answers when a province filter is active
+SA Insight Hub pulls real South African public data across 10 critical topics, visualises it with interactive charts, and lets users ask plain-English questions answered by Claude AI — all in a single dark-themed Streamlit dashboard.
 
-**To enable AI Q&A:**
-1. Get a free API key at [console.anthropic.com](https://console.anthropic.com)
-2. Paste it into the **🤖 AI Q&A KEY** field in the sidebar
-3. Your key is stored in the session only — never saved to disk
-
----
-
-## Quick Start (Local)
-
-```bash
-git clone https://github.com/YOUR_USERNAME/sa-insight-hub
-cd sa-insight-hub
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-Visit `http://localhost:8501` in your browser.
+| # | Topic | Live Source | Cadence |
+|---|-------|-------------|---------|
+| 1 | 🔴 Crime Statistics | SAPS `.xlsx` download | Quarterly |
+| 2 | 🏠 Property Prices & Rental | FNB Barometer · Lightstone | Monthly |
+| 3 | 🔐 Bank Fraud & Financial Crime | SABRIC Annual Report PDF | Annual |
+| 4 | 📉 Unemployment & Income | Stats SA QLFS | Quarterly |
+| 5 | ⚡ Load Shedding & Energy | Eskom API · EskomSePush | Real-time |
+| 6 | 💰 Interest Rates & Inflation | SARB Web API · Stats SA CPI | Monthly |
+| 7 | 🏥 Healthcare & Disease Burden | NDOH DHIS2 · SANAC | Quarterly |
+| 8 | 🎓 Education & Matric Data | DBE NSC Results | Annual |
+| 9 | 💱 ZAR Exchange Rate & Forex | open.er-api.com (live) · SARB | Real-time |
+| 10 | 💧 Water & Service Delivery | DWS weekly dam levels | Weekly |
 
 ---
 
-## Deploy to Streamlit Cloud (Free, ~2 min)
+## Key Features
 
-1. Push this repo to GitHub (include the `.streamlit/` folder)
-2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app**
-3. Select your repo → Branch: `main` → Main file: `app.py`
-4. Click **Deploy**
-
-**API key on Streamlit Cloud — use Secrets management:**
-- App Settings → Secrets → add: `ANTHROPIC_API_KEY = "sk-ant-..."`
-- Or let users paste their own key in the sidebar (current default)
-
----
-
-## Secrets Management (Optional)
-
-To pre-load the API key from Streamlit secrets, add this after the imports in `app.py`:
-
-```python
-if "ANTHROPIC_API_KEY" in st.secrets:
-    st.session_state.setdefault("api_key", st.secrets["ANTHROPIC_API_KEY"])
-```
+- **10 topic dashboards** — KPI cards, interactive Plotly charts, province filter, data tables
+- **Live data scrapers** — 10 Python scrapers in `scrapers/` that write to `data/*.json`
+- **Smart fallback** — every page renders with hardcoded published figures if scrapers haven't run yet
+- **🤖 AI Q&A panel** — Claude-powered chat at the bottom of every page, with 4 suggested questions per topic and full multi-turn conversation history
+- **Province-aware AI** — answers are contextualised to whichever province you have filtered
+- **Live/cached indicator** — 🟢 live or 🟡 cached badge on every source, with scrape timestamp
+- **GitHub Actions automation** — three scheduled workflows that auto-commit fresh `data/*.json` to the repo
+- **Dark theme** — full dark UI via `.streamlit/config.toml`
 
 ---
 
@@ -75,45 +46,204 @@ if "ANTHROPIC_API_KEY" in st.secrets:
 
 ```
 sa-insight-hub/
-├── app.py                  # Main Streamlit app (1,150 lines)
-├── requirements.txt        # Python dependencies
-├── README.md
-└── .streamlit/
-    └── config.toml         # Dark theme + server config
+├── app.py                          # Main Streamlit app (1,453 lines)
+├── run_scrapers.py                 # CLI orchestrator — run all or selected scrapers
+├── requirements.txt                # Python dependencies
+│
+├── scrapers/                       # One scraper per topic
+│   ├── __init__.py
+│   ├── crime.py                    # SAPS Excel download
+│   ├── forex.py                    # open.er-api.com live rates
+│   ├── water.py                    # DWS dam levels HTML scrape
+│   ├── finance.py                  # SARB API + Stats SA CPI scrape
+│   ├── energy.py                   # Eskom status API
+│   ├── employment.py               # Stats SA QLFS scrape
+│   ├── health.py                   # DHIS2 public API
+│   ├── education.py                # DBE media releases scrape
+│   └── property_and_fraud.py       # FNB/PayProp press releases + SABRIC PDF
+│
+├── data/                           # Auto-generated by scrapers (git-ignored raw data)
+│   ├── crime.json
+│   ├── forex.json
+│   ├── water.json
+│   ├── finance.json
+│   ├── energy.json
+│   ├── employment.json
+│   ├── health.json
+│   ├── education.json
+│   ├── property.json
+│   ├── fraud.json
+│   └── manifest.json               # Scrape status + timestamps for sidebar display
+│
+├── .github/
+│   └── workflows/
+│       ├── scrape_realtime.yml     # Every 30 min → forex + energy
+│       ├── scrape_weekly.yml       # Every Monday → water + finance + property
+│       └── scrape_quarterly.yml    # Jan/Apr/Jul/Oct → all 10 topics
+│
+├── .streamlit/
+│   ├── config.toml                 # Dark theme + server config
+│   └── secrets.toml                # API keys — NEVER commit this file
+│
+├── logs/                           # Scraper logs (git-ignored)
+├── .gitignore
+└── README.md
 ```
+
+---
+
+## Quick Start (Local)
+
+```bash
+# 1. Clone and install
+git clone https://github.com/ZolileN/sa_insghts_hub
+cd sa_insghts_hub
+pip install -r requirements.txt
+
+# 2. Run the scrapers to populate data/
+python run_scrapers.py
+
+# 3. Launch the dashboard
+streamlit run app.py
+```
+
+Open `http://localhost:8501` in your browser.
+
+### Scraper CLI options
+
+```bash
+python run_scrapers.py                          # all 10 topics
+python run_scrapers.py --topics forex energy    # specific topics only
+python run_scrapers.py --parallel               # run all concurrently (faster)
+python run_scrapers.py --dry-run                # check what would run without fetching
+python run_scrapers.py --schedule               # print the recommended cadence table
+```
+
+---
+
+## Deploy to Streamlit Cloud (Free, ~2 min)
+
+1. Push this repo to GitHub — include `.streamlit/config.toml` and `.github/workflows/`
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app**
+3. Select your repo → Branch: `main` → Main file path: `app.py`
+4. Under **Advanced settings**, add your secrets (see below)
+5. Click **Deploy**
+
+Streamlit Cloud redeploys automatically on every push — so every time GitHub Actions commits fresh `data/*.json`, your live app updates within ~60 seconds.
+
+---
+
+## 🤖 AI Q&A Setup
+
+Every topic page has a Claude-powered chat panel. To enable it:
+
+**Option A — Users bring their own key (default):**
+Users paste their Anthropic API key into the **🤖 AI Q&A KEY** field in the sidebar. The key is stored in their browser session only and never saved anywhere.
+
+**Option B — Pre-load via Streamlit secrets (recommended for production):**
+
+Create `.streamlit/secrets.toml` locally (never commit this file):
+```toml
+ANTHROPIC_API_KEY = "sk-ant-your-key-here"
+```
+
+Then add to `app.py` right after the imports:
+```python
+if "ANTHROPIC_API_KEY" in st.secrets:
+    st.session_state.setdefault("api_key", st.secrets["ANTHROPIC_API_KEY"])
+```
+
+On Streamlit Cloud: **App Settings → Secrets** → paste `ANTHROPIC_API_KEY = "sk-ant-..."`.
+
+Get your key at [console.anthropic.com](https://console.anthropic.com).
+
+---
+
+## GitHub Actions Automation
+
+Three separate workflows handle different cadences. All commit fresh JSON back to the repo, which triggers a Streamlit Cloud redeploy.
+
+| Workflow | File | Schedule | Topics |
+|---|---|---|---|
+| Realtime | `scrape_realtime.yml` | Every 30 min | `forex` `energy` |
+| Weekly | `scrape_weekly.yml` | Monday 08:00 SAST | `water` `finance` `property` |
+| Quarterly | `scrape_quarterly.yml` | 1 Jan · Apr · Jul · Oct | All 10 |
+
+### One-time setup required
+
+1. Push the repo to GitHub
+2. Go to **Settings → Actions → General → Workflow permissions**
+3. Select **Read and write permissions** → Save
+4. The workflows activate automatically — verify under the **Actions** tab
+5. Run any workflow manually first: **Actions → [workflow name] → Run workflow**
+
+### Manual trigger
+
+Any workflow can be triggered on demand from the Actions tab without waiting for the schedule. Useful for testing or forcing a refresh after a SAPS quarterly release.
 
 ---
 
 ## Data Sources
 
-| Topic | Source |
-|-------|--------|
-| Crime | SAPS Annual Crime Report 2023/24 |
-| Property | Lightstone · FNB Property Barometer · PropStats |
-| Fraud | SABRIC Annual Report 2023 |
-| Employment | Stats SA QLFS Q3 2024 |
-| Energy | Eskom · EskomSePush · NERSA |
-| Finance | SARB Monetary Policy · Stats SA CPI |
-| Health | SANAC · DHIS2 · NDOH |
-| Education | Department of Basic Education NSC 2024 |
-| Forex | open.er-api.com (live) · SARB |
-| Water | DWS Dam Levels · COGTA |
+| Topic | Primary Source | URL |
+|-------|---------------|-----|
+| Crime | SAPS Annual Crime Report | [saps.gov.za](https://www.saps.gov.za/services/crimestats.php) |
+| Property | Lightstone · FNB Property Barometer | [fnb.co.za](https://www.fnb.co.za/downloads/property/property-barometer.html) |
+| Fraud | SABRIC Annual Report | [sabric.co.za](https://www.sabric.co.za/media-and-news/annual-reports/) |
+| Employment | Stats SA QLFS | [statssa.gov.za](https://www.statssa.gov.za/?page_id=1854&PPN=P0211) |
+| Energy | Eskom LoadShedding API | [loadshedding.eskom.co.za](https://loadshedding.eskom.co.za/LoadShedding/GetStatus) |
+| Finance | SARB Web API · Stats SA CPI | [resbank.co.za](https://www.resbank.co.za) |
+| Health | NDOH DHIS2 · SANAC | [dhis.gov.za](https://dhis.gov.za) |
+| Education | DBE NSC Results | [education.gov.za](https://www.education.gov.za) |
+| Forex | open.er-api.com | [open.er-api.com](https://open.er-api.com/v6/latest/USD) |
+| Water | DWS Weekly Reservoir Report | [dws.gov.za](https://www.dws.gov.za/Hydrology/Weekly/Province.aspx) |
+
+All sources are **free and publicly available**. No paid API keys required to run the scrapers.
 
 ---
 
 ## Roadmap
 
-- [x] All 10 topic dashboards with charts & KPIs
-- [x] AI Q&A panel per topic (Claude API)
-- [x] Suggested questions per topic
-- [x] Multi-turn conversation with session history
+- [x] All 10 topic dashboards with KPI cards, charts, and data tables
+- [x] Province filter across all pages
+- [x] Dark theme
+- [x] 10 live Python scrapers in `scrapers/`
+- [x] `run_scrapers.py` CLI orchestrator with `--parallel`, `--dry-run`, `--schedule`
+- [x] All 10 `app.py` pages wired to `data/*.json` with graceful fallback
+- [x] 🟢 live / 🟡 cached indicator on every source badge with scrape timestamp
+- [x] Dynamic data freshness panel in sidebar (reads `manifest.json`)
+- [x] AI Q&A panel on every page (Claude API)
+- [x] 4 suggested questions per topic
+- [x] Multi-turn chat with per-topic session history
 - [x] Province-aware AI responses
-- [x] Dark theme (config.toml)
-- [ ] Live SAPS API scraper (quarterly update)
-- [ ] Suburb-level crime heat map (Folium/pydeck)
-- [ ] Email/WhatsApp alerts for dam levels & crime spikes
-- [ ] User accounts + saved comparisons
+- [x] GitHub Actions — realtime, weekly, quarterly automation
+- [ ] Suburb-level crime heat map (Folium / pydeck)
+- [ ] WhatsApp / email alerts for dam level drops and crime spikes
+- [ ] User accounts + saved province comparisons
+- [ ] Embed SAPS precinct-level GeoJSON for choropleth maps
+- [ ] Public API endpoint so third parties can query `data/*.json`
 
 ---
 
-Built by **Zolile Nonzapa** | SA Insight Hub v2.0
+## Contributing
+
+Pull requests welcome. To add a new topic:
+
+1. Create `scrapers/your_topic.py` with a `fetch(output_dir: Path) -> dict` function
+2. Register it in `run_scrapers.py` under `SCRAPERS`
+3. Add a `page_your_topic(topic, province)` function in `app.py`
+4. Add topic context to `TOPIC_CONTEXT` and questions to `SUGGESTED_QUESTIONS`
+5. Add it to the sidebar selectbox and `pages` dict
+
+---
+
+## License
+
+MIT — free to use, fork, and build on. Attribution appreciated.
+
+---
+
+Built by **Zolile Nonzapa** | Cape Town, South Africa
+[GitHub](https://github.com/ZolileN/sa_insghts_hub) · [Email](mailto:zolile@mlkcomputer.com)
+
+*SA Insight Hub v3.0 — dashboard + scrapers + AI + automation*
