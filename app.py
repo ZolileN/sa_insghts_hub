@@ -8,6 +8,10 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
+# Auto-load API key from Streamlit secrets if available
+if hasattr(st, "secrets") and "ANTHROPIC_API_KEY" in st.secrets:
+    st.session_state.setdefault("api_key", st.secrets["ANTHROPIC_API_KEY"])
+    
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="SA Insight Hub",
