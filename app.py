@@ -589,17 +589,36 @@ def page_crime(topic, province):
         "Carjacking":      prov_crime("Carjacking",         "Carjacking",           defaults["Carjacking"]),
     })
 
+    # Filter by province if not "All Provinces"
+    if province != "All Provinces":
+        crime_prov = crime_prov[crime_prov["Province"] == province]
+
     crime_type = st.selectbox("Select crime type", ["Murder", "Burglary", "Robbery", "Sexual Offences", "Carjacking"])
 
     col1, col2 = st.columns([3, 2])
     with col1:
-        fig = px.bar(
-            crime_prov.sort_values(crime_type, ascending=True),
-            x=crime_type, y="Province", orientation="h",
-            title=f"{crime_type} by Province (2023/24)",
-            color=crime_type, color_continuous_scale="Reds",
-            template=PLOTLY_TEMPLATE
-        )
+        if province == "All Provinces":
+            fig = px.bar(
+                crime_prov.sort_values(crime_type, ascending=True),
+                x=crime_type, y="Province", orientation="h",
+                title=f"{crime_type} by Province (2023/24)",
+                color=crime_type, color_continuous_scale="Reds",
+                template=PLOTLY_TEMPLATE
+            )
+        else:
+            # For single province, show a gauge or simple metric
+            value = crime_prov[crime_type].iloc[0] if not crime_prov.empty else 0
+            fig = go.Figure(go.Indicator(
+                mode="gauge+number",
+                value=value,
+                title={'text': f"{crime_type} in {province} (2023/24)"},
+                gauge={'axis': {'range': [0, max(crime_prov[crime_type].max() * 1.2, 100)]},
+                       'bar': {'color': "darkred"},
+                       'bgcolor': "white",
+                       'borderwidth': 2,
+                       'bordercolor': "gray"}
+            ))
+            fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
         fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, showlegend=False, coloraxis_showscale=False)
         st.plotly_chart(fig, use_container_width=True)
 
