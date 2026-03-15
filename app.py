@@ -8,14 +8,10 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
-# Auto-load API key from Streamlit secrets if available
-if hasattr(st, "secrets") and "ANTHROPIC_API_KEY" in st.secrets:
-    st.session_state.setdefault("api_key", st.secrets["ANTHROPIC_API_KEY"])
-    
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="SA Insight Hub",
-    page_icon="🇿🇦",
+    page_title="Libo Insights — Area intelligence for smarter South African decisions.",
+    page_icon="data:image/svg+xml,<svg viewBox='0 0 50 62' xmlns='http://www.w3.org/2000/svg'><path d='M25 58 L9 31 A18 18 0 1 0 41 31 Z' fill='%230d1520' stroke='%23c9a84c' stroke-width='2.8' stroke-linejoin='round'/><circle cx='25' cy='22' r='6.5' fill='%23c9a84c'/></svg>",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -407,7 +403,7 @@ def render_qa_panel(topic: str, province: str, api_key: str):
 
         # Build system prompt with topic context + province filter
         province_note = f" The user is currently viewing data filtered to {province}." if province != "All Provinces" else ""
-        system = f"""You are a knowledgeable South African data analyst embedded in the SA Insight Hub dashboard.
+        system = f"""You are a knowledgeable South African data analyst embedded in the Libo Insights dashboard.
 You answer questions about South African data clearly, concisely, and accurately.
 Always ground your answers in the specific data and context provided below.
 Use bullet points for lists, bold for key numbers, and keep answers under 200 words unless a detailed explanation is needed.
@@ -536,7 +532,6 @@ def prov_list_values(data: dict, path: list[str], provinces: list[str], default_
     # Fall back to default_list wherever None was returned
     return [result[i] if result[i] is not None else default_list[i] for i in range(len(provinces))]
 
-
 def show_data_freshness():
     """Show when data was last updated from manifest.json"""
     manifest = load_data("manifest")
@@ -547,6 +542,7 @@ def show_data_freshness():
             st.markdown(f'<div style="font-size:12px; color:#7a8fa6; margin-bottom:16px;">📅 {freshness}</div>', unsafe_allow_html=True)
         except:
             pass
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -603,36 +599,17 @@ def page_crime(topic, province):
         "Carjacking":      prov_crime("Carjacking",         "Carjacking",           defaults["Carjacking"]),
     })
 
-    # Filter by province if not "All Provinces"
-    if province != "All Provinces":
-        crime_prov = crime_prov[crime_prov["Province"] == province]
-
-    crime_type = st.selectbox("Select crime type", ["Murder", "Burglary", "Robbery", "Sexual Offences", "Carjacking"], index=0)
+    crime_type = st.selectbox("Select crime type", ["Murder", "Burglary", "Robbery", "Sexual Offences", "Carjacking"])
 
     col1, col2 = st.columns([3, 2])
     with col1:
-        if province == "All Provinces":
-            fig = px.bar(
-                crime_prov.sort_values(crime_type, ascending=True),
-                x=crime_type, y="Province", orientation="h",
-                title=f"{crime_type} by Province (2023/24)",
-                color=crime_type, color_continuous_scale="Reds",
-                template=PLOTLY_TEMPLATE
-            )
-        else:
-            # For single province, show a gauge or simple metric
-            value = crime_prov[crime_type].iloc[0] if not crime_prov.empty else 0
-            fig = go.Figure(go.Indicator(
-                mode="gauge+number",
-                value=value,
-                title={'text': f"{crime_type} in {province} (2023/24)"},
-                gauge={'axis': {'range': [0, max(crime_prov[crime_type].max() * 1.2, 100)]},
-                       'bar': {'color': "darkred"},
-                       'bgcolor': "white",
-                       'borderwidth': 2,
-                       'bordercolor': "gray"}
-            ))
-            fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
+        fig = px.bar(
+            crime_prov.sort_values(crime_type, ascending=True),
+            x=crime_type, y="Province", orientation="h",
+            title=f"{crime_type} by Province (2023/24)",
+            color=crime_type, color_continuous_scale="Reds",
+            template=PLOTLY_TEMPLATE
+        )
         fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, showlegend=False, coloraxis_showscale=False)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -651,6 +628,7 @@ def page_crime(topic, province):
         st.plotly_chart(fig2, use_container_width=True)
 
     # Top precincts
+    st.subheader("Top 10 highest-crime police precincts")
     precincts = pd.DataFrame({
         "Precinct": ["Inanda (KZN)", "Khayelitsha (WC)", "Nyanga (WC)", "Johannesburg Central", "Delft (WC)",
                      "Umlazi (KZN)", "Soweto", "Mitchells Plain (WC)", "Krugersdorp (GP)", "Tembisa (GP)"],
@@ -658,20 +636,7 @@ def page_crime(topic, province):
         "Murders": [234, 229, 221, 201, 189, 176, 164, 152, 141, 138],
         "Total Crimes": [8920, 12440, 10280, 14220, 7650, 9340, 10800, 9120, 7230, 8410],
     })
-    
-    # Filter precincts by province if not "All Provinces"
-    if province != "All Provinces":
-        prov_abbr = PROVINCE_ABBR.get(province, province)
-        precincts = precincts[precincts["Province"] == prov_abbr]
-        if not precincts.empty:
-            st.subheader(f"Top highest-crime police precincts in {province}")
-        else:
-            st.subheader(f"No precinct data available for {province}")
-    else:
-        st.subheader("Top 10 highest-crime police precincts")
-    
-    if not precincts.empty:
-        st.dataframe(precincts, use_container_width=True, hide_index=True)
+    st.dataframe(precincts, use_container_width=True, hide_index=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
     source_badge("SAPS Annual Crime Report · saps.gov.za", scraped_at, is_live)
 
@@ -716,49 +681,23 @@ def page_property(topic, province):
         "Days on Market":   pv("days_on_market",    [52,68,84,98,112,105,108,102,110]),
     })
 
-    # Filter by province if not "All Provinces"
-    if province != "All Provinces":
-        prop_prov = prop_prov[prop_prov["Province"] == province]
-
     col1, col2 = st.columns(2)
     with col1:
-        if province == "All Provinces":
-            fig = px.scatter(prop_prov, x="Rental Yield (%)", y="YoY Growth (%)",
-                             size="Median Price (R000)", color="Province",
-                             title="Rental Yield vs Price Growth by Province",
-                             template=PLOTLY_TEMPLATE, size_max=40)
-        else:
-            # For single province, show key metrics
-            if not prop_prov.empty:
-                row = prop_prov.iloc[0]
-                st.metric("Median Price", f"R{row['Median Price (R000)']*1000:,.0f}")
-                st.metric("YoY Growth", f"{row['YoY Growth (%)']}%")
-                st.metric("Rental Yield", f"{row['Rental Yield (%)']}%")
-                st.metric("Days on Market", f"{int(row['Days on Market'])} days")
-            fig = None  # No chart for single province
-        if fig:
-            fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = px.scatter(prop_prov, x="Rental Yield (%)", y="YoY Growth (%)",
+                         size="Median Price (R000)", color="Province",
+                         title="Rental Yield vs Price Growth by Province",
+                         template=PLOTLY_TEMPLATE, size_max=40)
+        fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        if province == "All Provinces":
-            fig2 = px.bar(prop_prov.sort_values("Median Price (R000)", ascending=False),
-                          x="Province", y="Median Price (R000)",
-                          title="Median house price by province (R thousands)",
-                          color="Median Price (R000)", color_continuous_scale="Blues",
-                          template=PLOTLY_TEMPLATE)
-        else:
-            # For single province, show a simple bar
-            if not prop_prov.empty:
-                fig2 = px.bar(prop_prov, x="Province", y="Median Price (R000)",
-                              title=f"Median house price in {province} (R thousands)",
-                              color="Median Price (R000)", color_continuous_scale="Blues",
-                              template=PLOTLY_TEMPLATE)
-            else:
-                fig2 = None
-        if fig2:
-            fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
-            st.plotly_chart(fig2, use_container_width=True)
+        fig2 = px.bar(prop_prov.sort_values("Median Price (R000)", ascending=False),
+                      x="Province", y="Median Price (R000)",
+                      title="Median house price by province (R thousands)",
+                      color="Median Price (R000)", color_continuous_scale="Blues",
+                      template=PLOTLY_TEMPLATE)
+        fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
+        st.plotly_chart(fig2, use_container_width=True)
 
     # Price trend — from JSON if available
     raw_trend = g(d, "price_trend_r000") or {}
@@ -907,49 +846,24 @@ def page_employment(topic, province):
         "Median Monthly Income (R)":pv("median_income_r", [14800,11200,9800,6400,5200,5800,5400,6100,8900]),
     })
 
-    # Filter by province if not "All Provinces"
-    if province != "All Provinces":
-        unemp_prov = unemp_prov[unemp_prov["Province"] == province]
-
     col1, col2 = st.columns(2)
     with col1:
-        if province == "All Provinces":
-            fig = px.bar(unemp_prov.sort_values("Unemployment Rate (%)", ascending=False),
-                         x="Province", y=["Unemployment Rate (%)", "Youth Unemployment (%)"],
-                         title="Unemployment vs Youth Unemployment by Province",
-                         barmode="group", template=PLOTLY_TEMPLATE,
-                         color_discrete_map={"Unemployment Rate (%)": "#3b82f6", "Youth Unemployment (%)": "#e05c3a"})
-        else:
-            # For single province, show metrics
-            if not unemp_prov.empty:
-                row = unemp_prov.iloc[0]
-                st.metric("Unemployment Rate", f"{row['Unemployment Rate (%)']}%")
-                st.metric("Youth Unemployment", f"{row['Youth Unemployment (%)']}%")
-                st.metric("Median Monthly Income", f"R{row['Median Monthly Income (R)']:,}")
-            fig = None
-        if fig:
-            fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
-            st.plotly_chart(fig, use_container_width=True)
+        fig = px.bar(unemp_prov.sort_values("Unemployment Rate (%)", ascending=False),
+                     x="Province", y=["Unemployment Rate (%)", "Youth Unemployment (%)"],
+                     title="Unemployment vs Youth Unemployment by Province",
+                     barmode="group", template=PLOTLY_TEMPLATE,
+                     color_discrete_map={"Unemployment Rate (%)": "#3b82f6", "Youth Unemployment (%)": "#e05c3a"})
+        fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title="")
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        if province == "All Provinces":
-            fig2 = px.bar(unemp_prov.sort_values("Median Monthly Income (R)", ascending=True),
-                          x="Median Monthly Income (R)", y="Province", orientation="h",
-                          title="Median monthly income by province (R)",
-                          color="Median Monthly Income (R)", color_continuous_scale="Greens",
-                          template=PLOTLY_TEMPLATE)
-        else:
-            # For single province, show a simple bar
-            if not unemp_prov.empty:
-                fig2 = px.bar(unemp_prov, x="Province", y="Median Monthly Income (R)",
-                              title=f"Median monthly income in {province} (R)",
-                              color="Median Monthly Income (R)", color_continuous_scale="Greens",
-                              template=PLOTLY_TEMPLATE)
-            else:
-                fig2 = None
-        if fig2:
-            fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
-            st.plotly_chart(fig2, use_container_width=True)
+        fig2 = px.bar(unemp_prov.sort_values("Median Monthly Income (R)", ascending=True),
+                      x="Median Monthly Income (R)", y="Province", orientation="h",
+                      title="Median monthly income by province (R)",
+                      color="Median Monthly Income (R)", color_continuous_scale="Greens",
+                      template=PLOTLY_TEMPLATE)
+        fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
+        st.plotly_chart(fig2, use_container_width=True)
 
     default_trend_u = {"Q1'20":30.1,"Q2'20":34.4,"Q3'20":30.8,"Q4'20":32.5,"Q1'21":32.6,"Q2'21":34.4,"Q3'21":34.9,"Q4'21":35.3,"Q1'22":34.5,"Q2'22":33.9,"Q3'22":32.9,"Q4'22":32.7,"Q1'23":32.9,"Q2'23":33.5,"Q3'23":31.9,"Q4'23":32.1,"Q1'24":33.5,"Q2'24":33.5,"Q3'24":32.9}
     td = trend_data if trend_data else default_trend_u
@@ -1163,50 +1077,23 @@ def page_health(topic, province):
         "ART Coverage (%)":       pv("art_coverage_pct",   [72,68,71,65,58,64,61,60,70]),
     })
 
-    # Filter by province if not "All Provinces"
-    if province != "All Provinces":
-        health_prov = health_prov[health_prov["Province"] == province]
-
     col1, col2 = st.columns(2)
     with col1:
-        if province == "All Provinces":
-            fig = px.scatter(health_prov, x="HIV Prevalence (%)", y="TB Incidence (per 100K)",
-                             size="Public Hospitals", color="Province",
-                             title="HIV Prevalence vs TB Incidence by Province",
-                             template=PLOTLY_TEMPLATE, size_max=40)
-        else:
-            # For single province, show metrics
-            if not health_prov.empty:
-                row = health_prov.iloc[0]
-                st.metric("HIV Prevalence", f"{row['HIV Prevalence (%)']}%")
-                st.metric("TB Incidence", f"{row['TB Incidence (per 100K)']}/100K")
-                st.metric("Public Hospitals", row['Public Hospitals'])
-                st.metric("Doctors per 100K", row['Doctors per 100K'])
-                st.metric("ART Coverage", f"{row['ART Coverage (%)']}%")
-            fig = None
-        if fig:
-            fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = px.scatter(health_prov, x="HIV Prevalence (%)", y="TB Incidence (per 100K)",
+                         size="Public Hospitals", color="Province",
+                         title="HIV Prevalence vs TB Incidence by Province",
+                         template=PLOTLY_TEMPLATE, size_max=40)
+        fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        if province == "All Provinces":
-            fig2 = px.bar(health_prov.sort_values("Doctors per 100K"),
-                          x="Province", y="Doctors per 100K",
-                          title="Doctors per 100,000 population by province",
-                          color="Doctors per 100K", color_continuous_scale="Greens",
-                          template=PLOTLY_TEMPLATE)
-        else:
-            # For single province, show a simple bar
-            if not health_prov.empty:
-                fig2 = px.bar(health_prov, x="Province", y="Doctors per 100K",
-                              title=f"Doctors per 100,000 in {province}",
-                              color="Doctors per 100K", color_continuous_scale="Greens",
-                              template=PLOTLY_TEMPLATE)
-            else:
-                fig2 = None
-        if fig2:
-            fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
-            st.plotly_chart(fig2, use_container_width=True)
+        fig2 = px.bar(health_prov.sort_values("Doctors per 100K"),
+                      x="Province", y="Doctors per 100K",
+                      title="Doctors per 100,000 population by province",
+                      color="Doctors per 100K", color_continuous_scale="Greens",
+                      template=PLOTLY_TEMPLATE)
+        fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
+        st.plotly_chart(fig2, use_container_width=True)
 
     # HIV trend — use loaded data if available
     default_plhiv = {2010:5.8,2012:6.2,2014:6.6,2016:7.1,2018:7.5,2020:7.7,2022:7.8,2024:7.8}
@@ -1269,31 +1156,17 @@ def page_education(topic, province):
         "Wrote Matric":      pv("wrote",        [88000,132000,148000,94000,58000,62000,47000,38000,20000]),
     })
 
-    # Filter by province if not "All Provinces"
-    if province != "All Provinces":
-        edu_prov = edu_prov[edu_prov["Province"] == province]
-
     col1, col2 = st.columns(2)
     with col1:
-        if province == "All Provinces":
-            fig = px.bar(edu_prov.sort_values("Pass Rate (%)", ascending=True),
-                         x="Pass Rate (%)", y="Province", orientation="h",
-                         color="Pass Rate (%)", color_continuous_scale="YlGn",
-                         title=f"Matric pass rate by province ({exam_year})",
-                         template=PLOTLY_TEMPLATE)
-            fig.add_vline(x=pass_rate, line_dash="dash", line_color="#e05c3a",
-                          annotation_text=f"National avg {pass_rate}%")
-        else:
-            # For single province, show metrics
-            if not edu_prov.empty:
-                row = edu_prov.iloc[0]
-                st.metric("Pass Rate", f"{row['Pass Rate (%)']}%")
-                st.metric("Bachelor Pass", f"{row['Bachelor Pass (%)']}%")
-                st.metric("Wrote Matric", f"{row['Wrote Matric']:,}")
-            fig = None
-        if fig:
-            fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = px.bar(edu_prov.sort_values("Pass Rate (%)", ascending=True),
+                     x="Pass Rate (%)", y="Province", orientation="h",
+                     color="Pass Rate (%)", color_continuous_scale="YlGn",
+                     title=f"Matric pass rate by province ({exam_year})",
+                     template=PLOTLY_TEMPLATE)
+        fig.add_vline(x=pass_rate, line_dash="dash", line_color="#e05c3a",
+                      annotation_text=f"National avg {pass_rate}%")
+        fig.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, coloraxis_showscale=False)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         default_subj = {
@@ -1496,28 +1369,13 @@ def page_water(topic, province):
             "Blue Drop Score":     [72,88,61,54,38,44,42,48,65],
             "Dam Level (%)":       pv("this_week_pct", [92.4,71.2,81.3,72.1,68.4,74.2,63.8,83.1,78.9]),
         })
-
-        # Filter by province if not "All Provinces"
-        if province != "All Provinces":
-            delivery = delivery[delivery["Province"] == province]
-
-        if province == "All Provinces":
-            fig2 = px.scatter(delivery, x="Blue Drop Score", y="Protest Count (2024)",
-                              size="Protest Count (2024)", color="Province",
-                              hover_data=["Dam Level (%)"],
-                              title="Water quality (Blue Drop) vs service delivery protests",
-                              template=PLOTLY_TEMPLATE, size_max=40)
-        else:
-            # For single province, show metrics
-            if not delivery.empty:
-                row = delivery.iloc[0]
-                st.metric("Blue Drop Score", row['Blue Drop Score'])
-                st.metric("Protest Count (2024)", row['Protest Count (2024)'])
-                st.metric("Dam Level", f"{row['Dam Level (%)']}%")
-            fig2 = None
-        if fig2:
-            fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
-            st.plotly_chart(fig2, use_container_width=True)
+        fig2 = px.scatter(delivery, x="Blue Drop Score", y="Protest Count (2024)",
+                          size="Protest Count (2024)", color="Province",
+                          hover_data=["Dam Level (%)"],
+                          title="Water quality (Blue Drop) vs service delivery protests",
+                          template=PLOTLY_TEMPLATE, size_max=40)
+        fig2.update_layout(paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG)
+        st.plotly_chart(fig2, use_container_width=True)
 
     # Province dam level bar — from scraped data
     prov_levels = pd.DataFrame({
@@ -1525,39 +1383,17 @@ def page_water(topic, province):
         "Dam Level (%)": pv("this_week_pct", [92.4,71.2,81.3,72.1,68.4,74.2,63.8,83.1,78.9]),
         "Last Week (%)": pv("last_week_pct", [91.8,70.8,80.9,71.4,67.9,73.6,63.1,82.4,78.2]),
     })
-
-    # Filter by province if not "All Provinces"
-    if province != "All Provinces":
-        prov_levels = prov_levels[prov_levels["Province"] == province]
-
-    if province == "All Provinces":
-        fig3 = go.Figure()
-        fig3.add_trace(go.Bar(name="This week", x=prov_levels["Province"],
-                              y=prov_levels["Dam Level (%)"], marker_color="#3b82f6"))
-        fig3.add_trace(go.Bar(name="Last week", x=prov_levels["Province"],
-                              y=prov_levels["Last Week (%)"], marker_color="#1e3a52"))
-        fig3.update_layout(
-            title=f"Province dam levels — week-on-week ({'Live' if is_live else 'Cached'})",
-            barmode="group", template=PLOTLY_TEMPLATE,
-            paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title=""
-        )
-    else:
-        # For single province, show a simple bar
-        if not prov_levels.empty:
-            fig3 = go.Figure()
-            fig3.add_trace(go.Bar(name="This week", x=[province],
-                                  y=[prov_levels["Dam Level (%)"].iloc[0]], marker_color="#3b82f6"))
-            fig3.add_trace(go.Bar(name="Last week", x=[province],
-                                  y=[prov_levels["Last Week (%)"].iloc[0]], marker_color="#1e3a52"))
-            fig3.update_layout(
-                title=f"Dam levels in {province} — week-on-week ({'Live' if is_live else 'Cached'})",
-                barmode="group", template=PLOTLY_TEMPLATE,
-                paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title=""
-            )
-        else:
-            fig3 = None
-    if fig3:
-        st.plotly_chart(fig3, use_container_width=True)
+    fig3 = go.Figure()
+    fig3.add_trace(go.Bar(name="This week", x=prov_levels["Province"],
+                          y=prov_levels["Dam Level (%)"], marker_color="#3b82f6"))
+    fig3.add_trace(go.Bar(name="Last week", x=prov_levels["Province"],
+                          y=prov_levels["Last Week (%)"], marker_color="#1e3a52"))
+    fig3.update_layout(
+        title=f"Province dam levels — week-on-week ({'Live' if is_live else 'Cached'})",
+        barmode="group", template=PLOTLY_TEMPLATE,
+        paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG, legend_title=""
+    )
+    st.plotly_chart(fig3, use_container_width=True)
     render_qa_panel(topic, province, st.session_state.get("api_key", ""))
     source_badge("Dept of Water & Sanitation · dws.gov.za · COGTA", scraped_at, is_live)
 
@@ -1567,12 +1403,25 @@ def page_water(topic, province):
 # ═══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown("""
-    <div style="text-align:center; padding: 16px 0 8px;">
-        <div style="font-size:28px">🇿🇦</div>
-        <div style="font-size:18px; font-weight:700; color:#e8e4d8; margin-top:4px;">SA Insight Hub</div>
-        <div style="font-size:11px; color:#5a7a8a; margin-top:2px;">South Africa's data, decoded</div>
+    <div style="padding: 20px 0 12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <svg viewBox="0 0 50 62" width="28" height="35" xmlns="http://www.w3.org/2000/svg">
+                <defs><clipPath id="sb-clip"><circle cx="25" cy="22" r="18"/></clipPath></defs>
+                <path d="M25 58 L9 31 A18 18 0 1 0 41 31 Z" fill="#0d1520"/>
+                <g clip-path="url(#sb-clip)">
+                    <circle cx="25" cy="22" r="14" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".28"/>
+                    <circle cx="25" cy="22" r="9"  fill="none" stroke="#c9a84c" stroke-width="1.3" opacity=".55"/>
+                </g>
+                <circle cx="25" cy="22" r="4.5" fill="#c9a84c"/>
+                <path d="M25 58 L9 31 A18 18 0 1 0 41 31 Z" fill="none" stroke="#c9a84c" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+            <div>
+                <div style="font-size:16px; font-weight:800; color:#e8e4d8; letter-spacing:-.02em; line-height:1;">Libo<span style="font-weight:300; color:#c9a84c;"> Insights</span></div>
+                <div style="font-size:9px; color:rgba(201,168,76,.45); letter-spacing:.06em; text-transform:uppercase; margin-top:3px;">Area intelligence</div>
+            </div>
+        </div>
     </div>
-    <hr style="border-color:#2a3a52; margin:12px 0;">
+    <hr style="border-color:#2a3a52; margin:4px 0 12px;">
     """, unsafe_allow_html=True)
 
     topic = st.selectbox("SELECT TOPIC", [
