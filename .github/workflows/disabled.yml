@@ -1,0 +1,2 @@
+# This file disables all GitHub Actions workflows
+# To re-enable, delete this file or rename it to .github/workflows/disabled.yml
