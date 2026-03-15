@@ -1,0 +1,19 @@
+# SA Insight Hub - Cron Jobs Configuration
+# This file contains the cron jobs that replace GitHub Actions
+# 
+# To install: crontab cron_setup.txt
+# To view current cron jobs: crontab -l
+# To edit: crontab -e
+# To remove: crontab -r
+
+# Realtime scrapers (forex + energy) - Every 30 minutes
+*/30 * * * * /home/zolile/Documents/insights_hub/cron_realtime.sh
+
+# Weekly scrapers (water + finance + property) - Every Monday at 06:00 UTC (08:00 SAST)
+0 6 * * 1 /home/zolile/Documents/insights_hub/cron_weekly.sh
+
+# Quarterly scrapers (all 10 topics) - 1st of January, April, July, October at 04:00 UTC
+0 4 1 1,4,7,10 * /home/zolile/Documents/insights_hub/cron_quarterly.sh
+
+# Optional: Log cleanup - Delete logs older than 30 days (runs daily at 02:00)
+0 2 * * * find /home/zolile/Documents/insights_hub/logs -name "*.log" -mtime +30 -delete

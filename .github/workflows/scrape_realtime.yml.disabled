@@ -1,0 +1,58 @@
+name: Scrape — Realtime (forex + energy)
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # Every 30 minutes, 24/7
+  workflow_dispatch:          # Also runnable manually from GitHub UI
+    inputs:
+      topics:
+        description: "Topics to scrape (default: forex energy)"
+        required: false
+        default: "forex energy"
+
+jobs:
+  scrape:
+    name: Forex + Energy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # Needed to push data/*.json back to repo
+
+    steps:
+      # 1. Check out the repo (with write access so we can push back)
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Set up Python 3.11 with pip caching (faster runs)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # 3. Install dependencies from requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 4. Create data/ and logs/ dirs, then run the scrapers
+      - name: Run scrapers
+        run: |
+          mkdir -p data logs
+          TOPICS="${{ github.event.inputs.topics || 'forex energy' }}"
+          python run_scrapers.py --topics $TOPICS
+        env:
+          # If any scraper ever needs an API key, add it here as a secret
+          # SOME_API_KEY: ${{ secrets.SOME_API_KEY }}
+          PYTHONUNBUFFERED: "1"
+
+      # 5. Commit the updated JSON files back to the repo
+      #    [skip ci] in the message prevents this commit from re-triggering workflows
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "data: realtime update — forex + energy [skip ci]"
+          file_pattern: "data/forex.json data/energy.json data/manifest.json"
+          commit_user_name: "SA Insight Bot"
+          commit_user_email: "actions@sa-insight-hub.co.za"
+          skip_dirty_check: false   # Only commit if files actually changed
