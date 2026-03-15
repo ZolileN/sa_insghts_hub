@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SA Insight Hub — South Africa's Data, Decoded</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>Libo Insights — Area intelligence for smarter South African decisions.</title><link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg viewBox='0 0 50 62' xmlns='http://www.w3.org/2000/svg'><path d='M25 58 L9 31 A18 18 0 1 0 41 31 Z' fill='%230d1520' stroke='%23c9a84c' stroke-width='2.8' stroke-linejoin='round'/><circle cx='25' cy='22' r='6.5' fill='%23c9a84c'/></svg>">
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml,<svg viewBox='0 0 50 62' xmlns='http://www.w3.org/2000/svg'><path d='M25 58 L9 31 A18 18 0 1 0 41 31 Z' fill='%230d1520' stroke='%23c9a84c' stroke-width='2.8' stroke-linejoin='round'/><circle cx='25' cy='22' r='6.5' fill='%23c9a84c'/></svg>">
+<meta name="theme-color" content="#080d14">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -839,10 +841,22 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
-    <span class="logo-flag">🇿🇦</span>
-    <span class="logo-text">SA <span>Insight</span> Hub</span>
-  </a>
+  <a href="#" class="nav-logo" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+  <svg viewBox="0 0 50 62" width="22" height="27" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <clipPath id="nav-clip">
+        <circle cx="25" cy="22" r="18"/>
+      </clipPath>
+    </defs>
+    <path d="M25 58 L9 31 A18 18 0 1 0 41 31 Z" fill="#0d1520"/>
+    <g clip-path="url(#nav-clip)">
+      <circle cx="25" cy="22" r="9" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/>
+    </g>
+    <circle cx="25" cy="22" r="4.5" fill="#c9a84c"/>
+    <path d="M25 58 L9 31 A18 18 0 1 0 41 31 Z" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linejoin="round"/>
+  </svg>
+  <span style="font-size:15px;font-weight:800;color:#e8e4d8;letter-spacing:-.01em;">Libo<span style="font-weight:300;color:#c9a84c;"> Insights</span></span>
+</a>
   <ul class="nav-links">
     <li><a href="#topics">Topics</a></li>
     <li><a href="#audience">Who it's for</a></li>
@@ -1246,8 +1260,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">SA <span>Insight</span> Hub</div>
-  <div class="footer-links">
+<div class="footer-logo">Libo <span>Insights</span></div>  <div class="footer-links">
     <a href="#topics">Topics</a>
     <a href="#pricing">Pricing</a>
     <a href="https://github.com/ZolileN/sa_insghts_hub">GitHub</a>
