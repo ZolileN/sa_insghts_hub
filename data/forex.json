@@ -1,6 +1,6 @@
 {
   "source": "open.er-api.com + SARB",
-  "scraped_at": "2026-03-19T14:30:10.152216",
+  "scraped_at": "2026-03-19T15:30:17.335563",
   "live_rates": {
     "usd_zar": 16.939,
     "eur_zar": 19.4416,
@@ -20,7 +20,7 @@
       "BWP": 13.9125
     },
     "timestamp": "Thu, 19 Mar 2026 09:37:31 +0000",
-    "next_update": "Fri, 20 Mar 2026 09:45:21 +0000"
+    "next_update": "Fri, 20 Mar 2026 09:46:41 +0000"
   },
   "sarb_data": null,
   "is_live": true
