@@ -1,9 +1,9 @@
 {
   "source": "Eskom LoadShedding API + community calendar",
-  "scraped_at": "2026-04-08T18:30:56.475887",
-  "is_live": true,
+  "scraped_at": "2026-04-08T19:01:33.931895",
+  "is_live": false,
   "current_stage": 0,
-  "stage_label": "No load shedding",
+  "stage_label": "Unknown",
   "active": false,
   "upcoming_outages": [],
   "monthly_hours_2024": {
