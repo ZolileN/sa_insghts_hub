@@ -1,26 +1,26 @@
 {
   "source": "open.er-api.com + SARB",
-  "scraped_at": "2026-04-09T00:30:02.646650",
+  "scraped_at": "2026-04-09T01:00:02.433675",
   "live_rates": {
-    "usd_zar": 16.7607,
-    "eur_zar": 19.4734,
-    "gbp_zar": 22.2857,
-    "usd_bwp": 13.9333,
-    "usd_ngn": 1380.6485,
-    "usd_kes": 130.0835,
+    "usd_zar": 16.3991,
+    "eur_zar": 19.1489,
+    "gbp_zar": 22.0015,
+    "usd_bwp": 13.6671,
+    "usd_ngn": 1371.7266,
+    "usd_kes": 129.5807,
     "all_vs_usd": {
-      "ZAR": 16.7607,
-      "EUR": 0.8607,
-      "GBP": 0.7521,
-      "JPY": 159.2413,
-      "AUD": 1.4311,
-      "CNY": 6.8722,
-      "NGN": 1380.6485,
-      "KES": 130.0835,
-      "BWP": 13.9333
+      "ZAR": 16.3991,
+      "EUR": 0.8564,
+      "GBP": 0.7454,
+      "JPY": 158.5291,
+      "AUD": 1.4194,
+      "CNY": 6.8436,
+      "NGN": 1371.7266,
+      "KES": 129.5807,
+      "BWP": 13.6671
     },
-    "timestamp": "Wed, 08 Apr 2026 00:02:31 +0000",
-    "next_update": "Thu, 09 Apr 2026 00:35:41 +0000"
+    "timestamp": "Thu, 09 Apr 2026 00:02:31 +0000",
+    "next_update": "Fri, 10 Apr 2026 00:06:21 +0000"
   },
   "sarb_data": null,
   "is_live": true
