@@ -1,11 +1,11 @@
 {
-  "last_run": "2026-04-12T01:00:03.066693",
+  "last_run": "2026-04-12T01:30:02.665416",
   "topics": {
     "forex": {
       "label": "\ud83d\udcb1 ZAR Exchange Rate",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 0.48,
+      "elapsed_s": 0.53,
       "cadence": "realtime",
       "schedule": "Every 15 min (forex) / hourly (energy stage)"
     },
