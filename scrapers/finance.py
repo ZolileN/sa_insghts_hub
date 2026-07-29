@@ -22,6 +22,7 @@ from scrapers._common import (
     parse_sa_decimal,
     utc_now_iso,
 )
+from scrapers.sources.vulekamali import fetch_budget_summary
 
 log = logging.getLogger(__name__)
 
@@ -192,6 +193,23 @@ def fetch(output_dir: Path) -> dict:
         period_key = result["cpi_period"].replace(" ", "-").lower()
         if "june" in period_key or "2026" in period_key:
             result["cpi_history"]["2026-06"] = result["cpi_headline_pct"]
+
+    budget_live = fetch_budget_summary()
+    if budget_live:
+        result["budget"] = budget_live
+        result["ingestion"]["vulekamali"] = True
+        result["is_live"] = True
+    else:
+        result["budget"] = existing.get(
+            "budget",
+            {
+                "portal": "https://vulekamali.gov.za",
+                "datastore": "https://data.vulekamali.gov.za",
+                "latest_financial_year": "2025-26",
+                "packages_found": 0,
+                "note": "CKAN API unreachable — use SA-hosted cron for live budget datasets",
+            },
+        )
 
     out = output_dir / "finance.json"
     out.write_text(json.dumps(result, indent=2))

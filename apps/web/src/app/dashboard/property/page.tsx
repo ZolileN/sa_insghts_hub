@@ -47,6 +47,14 @@ type PropertyData = {
   price_trend?: Record<string, Record<string, number>>;
   price_trend_r000?: Record<string, number>;
   metros?: Record<string, Record<string, PropertyMetro>>;
+  cape_town_open?: {
+    portal?: string;
+    gv_roll?: string;
+    gv_implementation_year?: number;
+    dataset_count?: number;
+    total_records?: number;
+    ingestion_source?: string;
+  };
 };
 
 function scopeMetrics(
@@ -245,6 +253,8 @@ export default async function PropertyPage({
     Gauteng: d?.price_trend?.Gauteng?.[q] ?? 0,
   }));
 
+  const capeTownOpen = d?.cape_town_open;
+
   const mapMarkers = buildMapMarkers(d ?? {}, province, city);
   const mapDescription =
     province === "All Provinces"
@@ -344,6 +354,35 @@ export default async function PropertyPage({
           trend={metrics.yoy > 0 ? `Prices +${metrics.yoy}% YoY` : "Flat prices"}
         />
       </div>
+
+      {capeTownOpen?.dataset_count != null && (
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <KpiCard
+            label="Cape Town open datasets"
+            value={formatNumber(capeTownOpen.dataset_count)}
+            hint={capeTownOpen.ingestion_source ?? "ArcGIS Open Data Hub"}
+          />
+          <KpiCard
+            label="Open data records"
+            value={formatNumber(capeTownOpen.total_records ?? 0)}
+            hint="Valuation, property, and municipal layers"
+          />
+          <KpiCard
+            label="GV roll context"
+            value={capeTownOpen.gv_roll ?? "GV2025"}
+            hint={
+              capeTownOpen.gv_implementation_year
+                ? `Implementation ${capeTownOpen.gv_implementation_year}`
+                : "General valuation cycle"
+            }
+          />
+          <KpiCard
+            label="Cape Town portal"
+            value="ArcGIS Hub"
+            hint={capeTownOpen.portal ?? "City of Cape Town open data"}
+          />
+        </div>
+      )}
 
       {(metrics.airbnb != null || metrics.buildingPlans != null) && (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

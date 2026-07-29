@@ -50,6 +50,15 @@ type HealthData = {
   >;
   plhiv_trend?: Record<string, number>;
   art_trend?: Record<string, number>;
+  surveillance?: {
+    report_week?: number;
+    report_period?: string;
+    measles_confirmed_ytd?: number;
+    measles_new_since_prior_report?: number;
+    rubella_confirmed_ytd?: number;
+    top_province_measles?: string;
+    latest_reports?: Array<{ title: string; url: string; date: string }>;
+  };
 };
 
 export default async function HealthPage({
@@ -89,6 +98,8 @@ export default async function HealthPage({
     art: artTrendData[y] ?? 0,
   }));
 
+  const surv = d?.surveillance ?? {};
+
   return (
     <div>
       <PageHeader
@@ -122,6 +133,32 @@ export default async function HealthPage({
           hint={system.nhi_implementation ?? "NHI Phase 1"}
         />
       </div>
+
+      {(surv.measles_confirmed_ytd != null || surv.latest_reports?.length) && (
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <KpiCard
+            label="Measles confirmed (YTD)"
+            value={formatNumber(surv.measles_confirmed_ytd ?? 0)}
+            hint={surv.report_period ?? "NICD laboratory surveillance"}
+            trendPositive={(surv.measles_confirmed_ytd ?? 9999) < 3500}
+          />
+          <KpiCard
+            label="New measles cases"
+            value={formatNumber(surv.measles_new_since_prior_report ?? 0)}
+            hint="Since prior NICD sitrep"
+          />
+          <KpiCard
+            label="Rubella confirmed (YTD)"
+            value={formatNumber(surv.rubella_confirmed_ytd ?? 0)}
+            hint="NICD weekly surveillance"
+          />
+          <KpiCard
+            label="NICD report week"
+            value={surv.report_week != null ? `Week ${surv.report_week}` : "—"}
+            hint={surv.top_province_measles ?? "Provincial outbreak tracking"}
+          />
+        </div>
+      )}
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard

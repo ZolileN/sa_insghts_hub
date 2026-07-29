@@ -1,6 +1,6 @@
 {
   "source": "SARB + Stats SA",
-  "scraped_at": "2026-07-29T19:01:30.417089+00:00",
+  "scraped_at": "2026-07-29T19:17:25.049093+00:00",
   "is_live": true,
   "repo_rate_pct": 7.0,
   "prime_rate_pct": 10.5,
@@ -80,5 +80,12 @@
     "stats_sa_cpi": "https://www.statssa.gov.za/?page_id=1854&PPN=P0141",
     "vulekamali": "https://vulekamali.gov.za",
     "etenders": "https://www.etenders.gov.za"
+  },
+  "budget": {
+    "portal": "https://vulekamali.gov.za",
+    "datastore": "https://data.vulekamali.gov.za",
+    "latest_financial_year": "2025-26",
+    "packages_found": 0,
+    "note": "CKAN API unreachable \u2014 use SA-hosted cron for live budget datasets"
   }
 }

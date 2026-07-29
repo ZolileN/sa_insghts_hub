@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 from scrapers._common import HEADERS, utc_now_iso
 from scrapers.sources.finance_sync import read_prime_rate_pct
 from scrapers.sources.payprop import fetch_rental_growth_pct
+from scrapers.sources.cape_town_arcgis import fetch_cape_town_open_data
 
 log = logging.getLogger(__name__)
 
@@ -107,6 +108,12 @@ def fetch(output_dir: Path) -> dict:
     prime = read_prime_rate_pct(output_dir)
     if prime is not None:
         result["national"]["prime_rate_pct"] = prime
+
+    cape_town = fetch_cape_town_open_data()
+    if cape_town:
+        result["cape_town_open"] = cape_town
+        ingestion["cape_town_open_data"] = True
+        result["is_live"] = True
 
     result["ingestion"] = ingestion
 

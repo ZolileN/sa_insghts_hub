@@ -21,6 +21,12 @@ type FinanceData = {
   repo_history?: Record<string, number>;
   cpi_history?: Record<string, number>;
   cpi_basket?: Record<string, number>;
+  budget?: {
+    portal?: string;
+    latest_financial_year?: string;
+    packages_found?: number;
+    note?: string;
+  };
 };
 
 export default async function FinancePage() {
@@ -58,6 +64,7 @@ export default async function FinancePage() {
   }));
 
   const hottestCategory = cpiBasket.sort((a, b) => b.cpi - a.cpi)[0];
+  const budget = d?.budget ?? {};
 
   return (
     <div>
@@ -117,6 +124,30 @@ export default async function FinancePage() {
           value={hottestCategory?.category ?? "Food"}
           hint={`${hottestCategory?.cpi ?? "—"}% annual change`}
           trendPositive={(hottestCategory?.cpi ?? 6) <= 5}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Budget data portal"
+          value={budget.packages_found != null ? `${budget.packages_found} datasets` : "Vulekamali"}
+          hint={budget.latest_financial_year ?? "National Treasury open budget"}
+        />
+        <KpiCard
+          label="Open budget FY"
+          value={budget.latest_financial_year ?? "2025-26"}
+          hint={budget.portal ?? "https://vulekamali.gov.za"}
+        />
+        <KpiCard
+          label="eTenders procurement"
+          value="National Treasury"
+          hint="https://www.etenders.gov.za"
+        />
+        <KpiCard
+          label="Budget feed status"
+          value={budget.packages_found ? "CKAN live" : "Cached"}
+          hint={budget.note ?? "Division of revenue & ENE datasets"}
+          trendPositive={Boolean(budget.packages_found)}
         />
       </div>
 

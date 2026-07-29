@@ -1,7 +1,7 @@
 {
   "source": "Lightstone \u00b7 FNB Property Barometer \u00b7 PayProp \u00b7 Inside Airbnb \u00b7 Stats SA P0142 \u00b7 Cape Town Open Data",
-  "scraped_at": "2026-07-29T19:01:30.418246+00:00",
-  "is_live": false,
+  "scraped_at": "2026-07-29T19:17:25.051506+00:00",
+  "is_live": true,
   "national": {
     "median_price_r": 1320000,
     "yoy_growth_pct": 2.8,
@@ -396,11 +396,69 @@
     "wazimap": "https://wazimap.co.za",
     "stats_sa": "https://www.statssa.gov.za"
   },
+  "cape_town_open": {
+    "portal": "https://opendata-cctegis.opendata.arcgis.com",
+    "gv_roll": "GV2025",
+    "gv_implementation_year": 2026,
+    "dataset_count": 8,
+    "total_records": 0,
+    "datasets": [
+      {
+        "id": "ad787c5c276c4151a47d65886af1c3b8",
+        "record_count": null,
+        "description": "The population density of Cape Town, along with the six close major dams",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "b37a7ba4d1624511acba245a1d431198",
+        "record_count": null,
+        "description": "This map is used for showing the difference over time in Cape town from 2014 - 2022",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "cb44ad31ccef4a1992c887f0fc6193be",
+        "record_count": null,
+        "description": "Cape Town economic or industrial activity at erf level.\u00a0 read more",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "9b5ec7f452ef45658ccf5309a0366a5e",
+        "record_count": null,
+        "description": "Cape Town economic or industrial activity at erf level.\u00a0  read more",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "e479ac7fa5df43efaedc0094956115c6",
+        "record_count": null,
+        "description": "Map of Cape Town, South Africa illustrating the general &quot;greenness&quot; trends by NDVI (Normalized Difference Vegetation Index) values of 10 hectares of h",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "49d21a6fedab412ab97492f8cd92f612",
+        "record_count": null,
+        "description": "Distribution of mean NVDI by 10-ha hexagons for Cape Town, South Africa derived from Sentinel-2 imagery (Captured February 23, 2025)   Darker hexagons are assoc",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "03ae9fdb46264edaa46696751b3da406",
+        "record_count": null,
+        "description": "This map shows the distribution of mean Normalized Difference Vegetation Index (NDVI) by 10 ha hexagons for Cape Town, South Africa. The data used was dervied f",
+        "query": "cape town valuation"
+      },
+      {
+        "id": "054f46a6a3ba47d6b04e2f57cb12132c",
+        "record_count": null,
+        "description": "This map shows the distribution of mean Normalized Difference Vegetation Index (NDVI) by 10 ha hexagons for Cape Town, South Africa. The data used was dervied f",
+        "query": "cape town valuation"
+      }
+    ],
+    "ingestion_source": "ArcGIS Hub API"
+  },
   "ingestion": {
     "fnb_barometer": false,
     "payprop": false,
     "inside_airbnb": false,
-    "cape_town_open_data": false,
+    "cape_town_open_data": true,
     "csg_dlrrd": false
   }
 }

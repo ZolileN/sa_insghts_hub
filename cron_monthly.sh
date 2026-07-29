@@ -11,15 +11,15 @@ fi
 
 mkdir -p data logs
 
-echo "$(date): Starting monthly scrapers (finance, property, employment)"
-python3 run_scrapers.py --topics finance property employment >> logs/monthly_cron.log 2>&1
+echo "$(date): Starting monthly scrapers (finance, property, employment, health)"
+python3 run_scrapers.py --topics finance property employment health >> logs/monthly_cron.log 2>&1
 
 if git diff --quiet data/; then
     echo "$(date): No changes to commit"
 else
     echo "$(date): Committing changes"
-    git add data/finance.json data/property.json data/employment.json data/manifest.json
-    git commit -m "data: monthly update — finance, property, employment [skip ci]"
+    git add data/finance.json data/property.json data/employment.json data/health.json data/manifest.json
+    git commit -m "data: monthly update — finance, property, employment, health [skip ci]"
     git push origin master
 fi
 
