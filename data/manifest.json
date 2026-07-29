@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-07-29T19:02:27.766243+00:00",
+  "last_run": "2026-07-29T19:03:10.261461+00:00",
   "topics": {
     "forex": {
       "label": "\ud83d\udcb1 ZAR Exchange Rate",
@@ -37,7 +37,7 @@
       "label": "\ud83d\udcc9 Stats SA QLFS",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 3.8,
+      "elapsed_s": 19.99,
       "cadence": "quarterly",
       "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
     }

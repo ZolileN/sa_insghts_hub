@@ -173,7 +173,19 @@ def fetch(output_dir: Path) -> dict:
         "Limpopo": {"unemployment": 31.7, "expanded_unemployment": 47.0},
     }
 
-    merged_provincial = {**fallback_provinces, **parsed_provinces}
+    merged_provincial: dict[str, dict[str, float]] = {
+        name: dict(figures) for name, figures in fallback_provinces.items()
+    }
+    for name, figures in parsed_provinces.items():
+        if name not in merged_provincial:
+            merged_provincial[name] = dict(figures)
+            continue
+        if figures.get("unemployment", 0) > 0:
+            merged_provincial[name]["unemployment"] = figures["unemployment"]
+        if figures.get("expanded_unemployment", 0) > 0:
+            merged_provincial[name]["expanded_unemployment"] = figures[
+                "expanded_unemployment"
+            ]
 
     provinces: dict[str, dict] = {}
     for name, figures in merged_provincial.items():
