@@ -1,6 +1,6 @@
 {
-  "source": "NICD \u00b7 SAMRC \u00b7 SANAC \u00b7 NDOH DHIS2",
-  "scraped_at": "2026-07-29T23:16:09.885228+00:00",
+  "source": "NICD \u00b7 SANAC annual \u00b7 NDOH TB Recovery Plan \u00b7 NDOH DHIS2",
+  "scraped_at": "2026-07-29T23:37:11.912794+00:00",
   "is_live": true,
   "dhis2_connected": false,
   "hiv": {
@@ -14,23 +14,45 @@
       "2023": {
         "new_infections": 140000,
         "aids_deaths": 57000
+      },
+      "2022": {
+        "aids_deaths": 51152,
+        "new_infections": 157676
       }
     },
-    "report_year": "2023"
+    "report_year": "2022",
+    "sanac_report_period": "FY 2023/24 (SANAC annual report)",
+    "sanac_source_url": "https://sanac.org.za/wp-content/uploads/2025/01/Annual-Report-South-African-National-AIDS-Council-Trust_V1.9_Compress.pdf"
   },
   "tb": {
     "incidence_per_100k": 468,
     "notifications_2023": 257000,
-    "treatment_success_pct": 81,
+    "treatment_success_pct": 73.8,
     "tb_hiv_coinfection_pct": 60,
     "dr_tb_cases_2023": 6800,
     "annual": {
       "2023": {
-        "notifications": 257000,
+        "notifications": 222119,
         "dr_tb_cases": 6800
+      },
+      "2024": {
+        "notifications": 217275,
+        "dr_tb_cases": 6448
       }
     },
-    "report_year": "2023"
+    "report_year": "2024",
+    "treatment_success_source": "https://sanac.org.za/wp-content/uploads/2025/01/Annual-Report-South-African-National-AIDS-Council-Trust_V1.9_Compress.pdf",
+    "ndoh_tb_sources": [
+      {
+        "year": "2024",
+        "url": "https://www.health.gov.za/wp-content/uploads/2025/05/TB-Recovery-Plan-4_final_250526-1.pdf"
+      },
+      {
+        "year": "2023",
+        "url": "https://tbthinktank.org/wp-content/uploads/2024/06/TB-Recovery-Plan-3.0-2024-25-ver010624.pdf"
+      }
+    ],
+    "ndoh_tb_source": "NDOH TB Recovery Plan"
   },
   "health_system": {
     "maternal_mortality_per_100k": 118,
@@ -162,11 +184,15 @@
     "nicd_api": true,
     "nicd_pdf": true,
     "dhis2": false,
+    "sanac_annual": true,
+    "ndoh_tb": true,
     "samrc": false,
     "healthsites": false
   },
   "data_sources": {
     "nicd": "https://www.nicd.ac.za",
+    "sanac": "https://sanac.org.za/reports/sa-nasa/",
+    "ndoh_tb": "https://www.health.gov.za/tb-recovery-plan/",
     "samrc": "https://www.samrc.ac.za",
     "healthsites": "https://healthsites.io",
     "dhis2": "https://dhis.gov.za"
