@@ -1,6 +1,6 @@
 {
   "source": "SARB + Stats SA",
-  "scraped_at": "2026-07-29T16:20:45.944022+00:00",
+  "scraped_at": "2026-07-29T19:01:30.417089+00:00",
   "is_live": true,
   "repo_rate_pct": 7.0,
   "prime_rate_pct": 10.5,
@@ -68,5 +68,17 @@
     "Medical care": 5.4,
     "Education": 4.8,
     "Miscellaneous": 3.9
+  },
+  "ingestion": {
+    "sarb_mpc": true,
+    "stats_sa_cpi": true,
+    "vulekamali": false,
+    "etenders": false
+  },
+  "data_sources": {
+    "sarb": "https://www.resbank.co.za",
+    "stats_sa_cpi": "https://www.statssa.gov.za/?page_id=1854&PPN=P0141",
+    "vulekamali": "https://vulekamali.gov.za",
+    "etenders": "https://www.etenders.gov.za"
   }
 }

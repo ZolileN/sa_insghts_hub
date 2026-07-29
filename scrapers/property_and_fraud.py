@@ -12,6 +12,8 @@ import requests
 from bs4 import BeautifulSoup
 
 from scrapers._common import HEADERS, utc_now_iso
+from scrapers.sources.finance_sync import read_prime_rate_pct
+from scrapers.sources.payprop import fetch_rental_growth_pct
 
 log = logging.getLogger(__name__)
 
@@ -82,13 +84,34 @@ def fetch(output_dir: Path) -> dict:
         ),
     }
 
+    ingestion: dict[str, bool | str] = {
+        "fnb_barometer": False,
+        "payprop": False,
+        "inside_airbnb": False,
+        "cape_town_open_data": False,
+        "csg_dlrrd": False,
+    }
+
     yoy = _scrape_page_for_rate(FNB_URL, r"growth[^\d]*(\d+[.,]\d+)\s*%")
     if yoy:
         result["national"]["yoy_growth_pct"] = yoy
         result["is_live"] = True
+        ingestion["fnb_barometer"] = True
+
+    payprop_growth = fetch_rental_growth_pct()
+    if payprop_growth is not None:
+        ingestion["payprop"] = True
+        result["is_live"] = True
+        result["national"]["rental_growth_yoy_pct"] = payprop_growth
+
+    prime = read_prime_rate_pct(output_dir)
+    if prime is not None:
+        result["national"]["prime_rate_pct"] = prime
+
+    result["ingestion"] = ingestion
 
     (output_dir / "property.json").write_text(json.dumps(result, indent=2))
-    log.info("Property data saved")
+    log.info("Property data saved | live=%s ingestion=%s", result["is_live"], ingestion)
     return result
 
 

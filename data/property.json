@@ -1,6 +1,6 @@
 {
-  "source": "Lightstone · FNB Property Barometer · PayProp · Inside Airbnb · Stats SA P0142 · Cape Town Open Data",
-  "scraped_at": "2026-07-29T18:40:00+00:00",
+  "source": "Lightstone \u00b7 FNB Property Barometer \u00b7 PayProp \u00b7 Inside Airbnb \u00b7 Stats SA P0142 \u00b7 Cape Town Open Data",
+  "scraped_at": "2026-07-29T19:01:30.418246+00:00",
   "is_live": false,
   "national": {
     "median_price_r": 1320000,
@@ -79,41 +79,6 @@
     "Q3-2024": 1280,
     "Q1-2025": 1300,
     "Q1-2026": 1320
-  },
-  "price_trend": {
-    "National": {
-      "Q1-2024": 1270,
-      "Q2-2024": 1275,
-      "Q3-2024": 1280,
-      "Q4-2024": 1285,
-      "Q1-2025": 1300,
-      "Q2-2025": 1310,
-      "Q3-2025": 1315,
-      "Q4-2025": 1320,
-      "Q1-2026": 1320
-    },
-    "Western Cape": {
-      "Q1-2024": 1980,
-      "Q2-2024": 2010,
-      "Q3-2024": 2040,
-      "Q4-2024": 2060,
-      "Q1-2025": 2080,
-      "Q2-2025": 2090,
-      "Q3-2025": 2095,
-      "Q4-2025": 2100,
-      "Q1-2026": 2100
-    },
-    "Gauteng": {
-      "Q1-2024": 1380,
-      "Q2-2024": 1390,
-      "Q3-2024": 1400,
-      "Q4-2024": 1410,
-      "Q1-2025": 1420,
-      "Q2-2025": 1430,
-      "Q3-2025": 1440,
-      "Q4-2025": 1445,
-      "Q1-2026": 1450
-    }
   },
   "metros": {
     "Western Cape": {
@@ -384,6 +349,41 @@
       }
     }
   },
+  "price_trend": {
+    "National": {
+      "Q1-2024": 1270,
+      "Q2-2024": 1275,
+      "Q3-2024": 1280,
+      "Q4-2024": 1285,
+      "Q1-2025": 1300,
+      "Q2-2025": 1310,
+      "Q3-2025": 1315,
+      "Q4-2025": 1320,
+      "Q1-2026": 1320
+    },
+    "Western Cape": {
+      "Q1-2024": 1980,
+      "Q2-2024": 2010,
+      "Q3-2024": 2040,
+      "Q4-2024": 2060,
+      "Q1-2025": 2080,
+      "Q2-2025": 2090,
+      "Q3-2025": 2095,
+      "Q4-2025": 2100,
+      "Q1-2026": 2100
+    },
+    "Gauteng": {
+      "Q1-2024": 1380,
+      "Q2-2024": 1390,
+      "Q3-2024": 1400,
+      "Q4-2024": 1410,
+      "Q1-2025": 1420,
+      "Q2-2025": 1430,
+      "Q3-2025": 1440,
+      "Q4-2025": 1445,
+      "Q1-2026": 1450
+    }
+  },
   "data_sources": {
     "inside_airbnb": "https://insideairbnb.com/get-the-data/",
     "airroi": "https://airroi.com/data-portal",
@@ -395,5 +395,12 @@
     "housing_finance_africa": "https://housingfinanceafrica.org",
     "wazimap": "https://wazimap.co.za",
     "stats_sa": "https://www.statssa.gov.za"
+  },
+  "ingestion": {
+    "fnb_barometer": false,
+    "payprop": false,
+    "inside_airbnb": false,
+    "cape_town_open_data": false,
+    "csg_dlrrd": false
   }
 }
