@@ -120,7 +120,7 @@ export default async function EnergyPage() {
         <KpiCard
           label="Upcoming schedules"
           value={formatNumber(upcoming)}
-          hint="EskomSePush calendar entries"
+          hint="Planned outage windows ahead"
           trendPositive={upcoming === 0}
         />
         <KpiCard
@@ -170,7 +170,7 @@ export default async function EnergyPage() {
       </div>
 
       <SourceBadge
-        source={`${d?.source ?? "Eskom"} · EskomSePush · CSIR`}
+        source="Eskom · CSIR · DMRE fuel prices"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

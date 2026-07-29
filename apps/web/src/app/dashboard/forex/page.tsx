@@ -74,10 +74,9 @@ export default async function ForexPage() {
         <KpiCard label="EUR/ZAR" value={`R${eurZar.toFixed(2)}`} />
         <KpiCard label="GBP/ZAR" value={`R${gbpZar.toFixed(2)}`} />
         <KpiCard
-          label="Data status"
-          value={d?.is_live ? "Live feed" : "Cached"}
-          hint="open.er-api.com + SARB"
-          trendPositive={d?.is_live}
+          label="£1,000 UK remittance"
+          value={`R${formatNumber(Math.round(gbpZar * 1000))}`}
+          hint="Sterling inflow at today's rate"
         />
       </div>
 
@@ -139,7 +138,7 @@ export default async function ForexPage() {
       </div>
 
       <SourceBadge
-        source={`${d?.source ?? "open.er-api.com · SARB"} · Frankfurter API`}
+        source="South African Reserve Bank · Frankfurter · open.er-api.com"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

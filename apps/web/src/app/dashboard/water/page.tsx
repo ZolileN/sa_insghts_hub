@@ -84,6 +84,14 @@ export default async function WaterPage({
     (p) => (d?.provinces?.[p]?.this_week_pct ?? 100) < 60,
   ).length;
 
+  const lowestDam = (d?.dams ?? []).reduce<{ name: string; level: number }>(
+    (min, dam) => {
+      const level = dam.this_week_pct ?? 100;
+      return level < min.level ? { name: dam.name, level } : min;
+    },
+    { name: "—", level: 100 },
+  );
+
   return (
     <div>
       <PageHeader
@@ -143,10 +151,11 @@ export default async function WaterPage({
           trendPositive={droughtStress === 0}
         />
         <KpiCard
-          label="Report freshness"
-          value={d?.is_live ? "Live DWS feed" : "Cached snapshot"}
-          hint={d?.report_date ?? "Weekly state of reservoirs"}
-          trendPositive={d?.is_live ?? false}
+          label="Most stressed major dam"
+          value={lowestDam.name}
+          hint={`${lowestDam.level}% full this week`}
+          trendPositive={lowestDam.level >= 60}
+          trend={lowestDam.level < 60 ? "Below comfort threshold" : "Adequate storage"}
         />
       </div>
 
@@ -180,7 +189,7 @@ export default async function WaterPage({
       </div>
 
       <SourceBadge
-        source={`${d?.source ?? "DWS NIWIS"} · OpenUp · Cape Town open data`}
+        source="Department of Water & Sanitation · OpenUp · Cape Town open data"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

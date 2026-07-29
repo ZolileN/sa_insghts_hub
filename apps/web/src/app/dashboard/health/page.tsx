@@ -145,7 +145,7 @@ export default async function HealthPage({
           <KpiCard
             label="New measles cases"
             value={formatNumber(surv.measles_new_since_prior_report ?? 0)}
-            hint="Since prior NICD sitrep"
+            hint="Since prior weekly outbreak report"
           />
           <KpiCard
             label="Rubella confirmed (YTD)"
@@ -205,10 +205,10 @@ export default async function HealthPage({
           hint={`${system.private_hospitals ?? 211} private hospitals`}
         />
         <KpiCard
-          label="DHIS2 facility feed"
-          value={d?.dhis2_connected ? "Connected" : "Cached"}
-          hint="Facility-level indicators (planned)"
-          trendPositive={d?.dhis2_connected ?? false}
+          label="Drug-resistant TB (2023)"
+          value={formatNumber(tb.dr_tb_cases_2023 ?? 1200)}
+          hint="Cases needing specialised treatment"
+          trendPositive={(tb.dr_tb_cases_2023 ?? 1200) < 1500}
         />
       </div>
 
@@ -247,7 +247,7 @@ export default async function HealthPage({
       )}
 
       <SourceBadge
-        source={`${d?.source ?? "NDOH · SANAC"} · SAMRC · NICD · Healthsites.io`}
+        source="National Department of Health · SANAC · SAMRC · NICD"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

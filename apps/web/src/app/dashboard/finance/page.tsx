@@ -64,7 +64,16 @@ export default async function FinancePage() {
   }));
 
   const hottestCategory = cpiBasket.sort((a, b) => b.cpi - a.cpi)[0];
-  const budget = d?.budget ?? {};
+  const foodInflation =
+    cpiBasket.find((c) => c.category.startsWith("Food"))?.cpi ?? 6.8;
+  const transportInflation =
+    cpiBasket.find((c) => c.category === "Transport")?.cpi ?? 3.1;
+  const housingInflation =
+    cpiBasket.find((c) => c.category.startsWith("Housing"))?.cpi ?? 4.2;
+  const repoPrior =
+    repoTrend.length >= 2 ? repoTrend[repoTrend.length - 2].repo : null;
+  const repoChange =
+    repoPrior != null ? Math.round((repo - repoPrior) * 100) / 100 : null;
 
   return (
     <div>
@@ -129,25 +138,32 @@ export default async function FinancePage() {
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          label="Budget data portal"
-          value={budget.packages_found != null ? `${budget.packages_found} datasets` : "Vulekamali"}
-          hint={budget.latest_financial_year ?? "National Treasury open budget"}
+          label="Food inflation"
+          value={`${foodInflation}%`}
+          hint="Largest household budget pressure"
+          trendPositive={foodInflation <= 5}
         />
         <KpiCard
-          label="Open budget FY"
-          value={budget.latest_financial_year ?? "2025-26"}
-          hint={budget.portal ?? "https://vulekamali.gov.za"}
+          label="Transport inflation"
+          value={`${transportInflation}%`}
+          hint="Fuel and mobility costs"
+          trendPositive={transportInflation <= 5}
         />
         <KpiCard
-          label="eTenders procurement"
-          value="National Treasury"
-          hint="https://www.etenders.gov.za"
+          label="Housing & utilities"
+          value={`${housingInflation}%`}
+          hint="Rent, water, and electricity costs"
+          trendPositive={housingInflation <= 5}
         />
         <KpiCard
-          label="Budget feed status"
-          value={budget.packages_found ? "CKAN live" : "Cached"}
-          hint={budget.note ?? "Division of revenue & ENE datasets"}
-          trendPositive={Boolean(budget.packages_found)}
+          label="Repo change (quarter)"
+          value={
+            repoChange != null
+              ? `${repoChange >= 0 ? "+" : ""}${repoChange.toFixed(2)}pp`
+              : "—"
+          }
+          hint="Policy rate move since prior quarter"
+          trendPositive={repoChange != null && repoChange <= 0}
         />
       </div>
 
@@ -192,7 +208,7 @@ export default async function FinancePage() {
       </div>
 
       <SourceBadge
-        source={`${d?.source ?? "SARB · Stats SA"} · Vulekamali · eTenders`}
+        source="South African Reserve Bank · Statistics South Africa · National Treasury"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

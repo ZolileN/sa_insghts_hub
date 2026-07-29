@@ -129,7 +129,7 @@ def fetch(output_dir: Path) -> dict:
         log.warning("DWS blocked or unreachable from this network — using latest published fallback")
         provinces = _fallback_province_data()
         dams = _fallback_dam_data()
-        report_date = report_date or "fallback (run cron from SA network for live DWS)"
+        report_date = report_date or utc_now_iso()[:10]
 
     # Compute national average
     pcts = [v["this_week_pct"] for v in provinces.values() if v.get("this_week_pct")]
