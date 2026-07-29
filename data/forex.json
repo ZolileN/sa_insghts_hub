@@ -1,6 +1,6 @@
 {
   "source": "open.er-api.com \u00b7 Frankfurter \u00b7 SARB",
-  "scraped_at": "2026-07-29T21:34:28.288495+00:00",
+  "scraped_at": "2026-07-29T22:48:28.537282+00:00",
   "live_rates": {
     "usd_zar": 16.7142,
     "eur_zar": 19.0226,
@@ -20,7 +20,7 @@
       "BWP": 14.0664
     },
     "timestamp": "Wed, 29 Jul 2026 00:02:31 +0000",
-    "next_update": "Thu, 30 Jul 2026 00:33:01 +0000"
+    "next_update": "Thu, 30 Jul 2026 00:34:21 +0000"
   },
   "sarb_data": null,
   "is_live": true,
