@@ -9,6 +9,7 @@ import {
   SimpleLineChart,
   SimplePieChart,
 } from "@/components/charts/recharts";
+import { estimateMonthlyElectricityBill, pctChange } from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
 import { formatNumber } from "@/shared/utils";
 
@@ -19,6 +20,7 @@ type EnergyData = {
   current_stage?: number;
   stage_label?: string;
   active?: boolean;
+  upcoming_outages?: unknown[];
   monthly_hours_2024?: Record<string, number>;
   monthly_hours_2023?: Record<string, number>;
   annual_totals?: Record<string, number>;
@@ -37,7 +39,13 @@ export default async function EnergyPage() {
     (a, b) => a + b,
     0,
   );
+  const hoursReductionPct = pctChange(hours2024, hours2023);
   const tariff2024 = d?.electricity_tariff_history?.["2024"] ?? 436;
+  const mix = d?.energy_mix_pct_2024 ?? {};
+  const renewablePct =
+    (mix.Solar ?? 0) + (mix.Wind ?? 0) + (mix.Hydro ?? 0) + (mix.Other ?? 0);
+  const upcoming = d?.upcoming_outages?.length ?? 0;
+  const monthlyBill = estimateMonthlyElectricityBill(400, tariff2024);
 
   const monthlyCompare = Object.keys(d?.monthly_hours_2024 ?? {}).map((m) => ({
     month: m,
@@ -50,7 +58,7 @@ export default async function EnergyPage() {
     hours: h,
   }));
 
-  const mix = Object.entries(d?.energy_mix_pct_2024 ?? {}).map(([name, pct]) => ({
+  const mixChart = Object.entries(mix).map(([name, pct]) => ({
     name,
     pct,
   }));
@@ -63,7 +71,7 @@ export default async function EnergyPage() {
     <div>
       <PageHeader
         title="Load Shedding & Energy"
-        description="Eskom stage, outage hours, tariffs, and generation mix — operational risk for every area."
+        description="Eskom stage, outage hours, tariffs, and generation mix. Sources: EskomSePush, CSIR, DMRE fuel prices."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -88,8 +96,43 @@ export default async function EnergyPage() {
         />
         <KpiCard
           label="Solar in mix"
-          value={`${d?.energy_mix_pct_2024?.Solar ?? 10}%`}
-          hint={`Coal still ${d?.energy_mix_pct_2024?.Coal ?? 57}%`}
+          value={`${mix.Solar ?? 10}%`}
+          hint={`Coal still ${mix.Coal ?? 57}%`}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Outage reduction vs 2023"
+          value={
+            hoursReductionPct != null
+              ? `${hoursReductionPct.toFixed(0)}%`
+              : "—"
+          }
+          hint="Fewer scheduled hours in 2024"
+          trendPositive={hoursReductionPct != null && hoursReductionPct < 0}
+          trend={
+            hoursReductionPct != null && hoursReductionPct < -50
+              ? "Major improvement"
+              : "Still elevated risk"
+          }
+        />
+        <KpiCard
+          label="Upcoming schedules"
+          value={formatNumber(upcoming)}
+          hint="EskomSePush calendar entries"
+          trendPositive={upcoming === 0}
+        />
+        <KpiCard
+          label="Est. monthly bill (400 kWh)"
+          value={`R${formatNumber(monthlyBill)}`}
+          hint={`At ${tariff2024} c/kWh — household proxy`}
+        />
+        <KpiCard
+          label="Renewable share"
+          value={`${renewablePct}%`}
+          hint="Solar + wind + hydro + other"
+          trendPositive={renewablePct >= 15}
         />
       </div>
 
@@ -105,7 +148,7 @@ export default async function EnergyPage() {
           />
         </ChartPanel>
         <ChartPanel title="Energy generation mix 2024">
-          <SimplePieChart data={mix} nameKey="name" valueKey="pct" />
+          <SimplePieChart data={mixChart} nameKey="name" valueKey="pct" />
         </ChartPanel>
       </div>
 
@@ -127,7 +170,7 @@ export default async function EnergyPage() {
       </div>
 
       <SourceBadge
-        source={d?.source ?? "Eskom"}
+        source={`${d?.source ?? "Eskom"} · EskomSePush · CSIR`}
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

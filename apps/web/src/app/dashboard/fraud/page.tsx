@@ -9,6 +9,11 @@ import {
   SimpleLineChart,
   SimplePieChart,
 } from "@/components/charts/recharts";
+import {
+  digitalFraudSharePct,
+  lastTwoFromRecord,
+  pctChange,
+} from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
 import { formatNumber } from "@/shared/utils";
 
@@ -47,18 +52,36 @@ export default async function FraudPage() {
 
   const topCategory = pieData.sort((a, b) => b.losses - a.losses)[0];
 
+  const trendPair = lastTwoFromRecord(d?.trend_r_billion ?? {});
+  const yoyLossPct =
+    trendPair != null ? pctChange(trendPair[3], trendPair[1]) : null;
+
+  const digitalShare = digitalFraudSharePct(categories);
+  const totalIncidents = Object.values(categories).reduce(
+    (a, c) => a + (c.incidents ?? 0),
+    0,
+  );
+  const lossPerIncident =
+    totalIncidents > 0 ? Math.round((totalB * 1000) / totalIncidents) : 0;
+
+  const simSwap = categories["SIM swap/account takeover"];
+  const simLossPerIncident =
+    simSwap?.incidents
+      ? Math.round((simSwap.losses_rm ?? 0) / simSwap.incidents)
+      : 0;
+
   return (
     <div>
       <PageHeader
         title="Bank Fraud & Financial Crime"
-        description="SABRIC banking fraud — where digital crime concentrates and how losses are trending."
+        description="SABRIC banking fraud — digital threat vectors, loss momentum, and category risk. Sources: SABRIC, FSCA warnings, SIU reports."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Total banking fraud losses"
           value={`R${totalB}bn`}
-          hint="Annual reported losses"
+          hint="SABRIC annual reported losses"
         />
         <KpiCard
           label="SIM swap incidents"
@@ -74,6 +97,45 @@ export default async function FraudPage() {
           label="Fraud categories tracked"
           value={formatNumber(Object.keys(categories).length)}
           hint="SABRIC annual taxonomy"
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="YoY loss momentum"
+          value={
+            yoyLossPct != null
+              ? `${yoyLossPct >= 0 ? "+" : ""}${yoyLossPct.toFixed(1)}%`
+              : "—"
+          }
+          hint={
+            trendPair
+              ? `${trendPair[0]} → ${trendPair[2]} (R bn)`
+              : "Annual trend"
+          }
+          trendPositive={yoyLossPct != null ? yoyLossPct <= 5 : undefined}
+          trend={
+            yoyLossPct != null && yoyLossPct > 10
+              ? "Losses accelerating"
+              : "Moderate growth"
+          }
+        />
+        <KpiCard
+          label="Digital fraud share"
+          value={`${digitalShare}%`}
+          hint="Card-not-present, online, SIM swap, BEC, scams"
+          trendPositive={digitalShare < 70}
+        />
+        <KpiCard
+          label="Avg loss per incident"
+          value={`R${formatNumber(lossPerIncident)}`}
+          hint="Across all reported categories"
+        />
+        <KpiCard
+          label="SIM swap loss / incident"
+          value={`R${formatNumber(simLossPerIncident)}`}
+          hint="Highest-impact takeover events"
+          trendPositive={simLossPerIncident < 50000}
         />
       </div>
 
@@ -103,7 +165,7 @@ export default async function FraudPage() {
       </div>
 
       <SourceBadge
-        source={d?.source ?? "SABRIC"}
+        source={`${d?.source ?? "SABRIC"} · FSCA public warnings · SIU reports`}
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

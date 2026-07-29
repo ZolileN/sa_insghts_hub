@@ -23,5 +23,17 @@
     "next_update": "Thu, 30 Jul 2026 00:29:01 +0000"
   },
   "sarb_data": null,
-  "is_live": true
+  "is_live": true,
+  "usd_zar_history": {
+    "2026-03": 18.95,
+    "2026-04": 18.42,
+    "2026-05": 17.88,
+    "2026-06": 17.35,
+    "2026-07": 16.71
+  },
+  "intelligence": {
+    "sarb_official_url": "https://www.resbank.co.za/en/home/what-we-do/statistics/key-statistics/selected-historical-rates",
+    "frankfurter_api": "https://api.frankfurter.app",
+    "import_cost_per_usd_1000_r": 16714
+  }
 }

@@ -17,6 +17,7 @@ type HealthData = {
   source?: string;
   scraped_at?: string;
   is_live?: boolean;
+  dhis2_connected?: boolean;
   hiv?: {
     plhiv_millions?: number;
     prevalence_15_49_pct?: number;
@@ -29,10 +30,13 @@ type HealthData = {
     incidence_per_100k?: number;
     treatment_success_pct?: number;
     tb_hiv_coinfection_pct?: number;
+    dr_tb_cases_2023?: number;
   };
   health_system?: {
     maternal_mortality_per_100k?: number;
     under5_mortality_per_1000?: number;
+    public_hospitals?: number;
+    private_hospitals?: number;
     nhi_implementation?: string;
   };
   provinces?: Record<
@@ -44,7 +48,7 @@ type HealthData = {
       art_coverage_pct?: number;
     }
   >;
-  hiv_trend?: Record<string, number>;
+  plhiv_trend?: Record<string, number>;
   art_trend?: Record<string, number>;
 };
 
@@ -58,9 +62,12 @@ export default async function HealthPage({
   const d = await loadJson<HealthData>("health");
   const hiv = d?.hiv ?? {};
   const tb = d?.tb ?? {};
+  const system = d?.health_system ?? {};
   const prov = province !== "All Provinces" ? d?.provinces?.[province] : null;
 
   const hivPrev = prov?.hiv_prevalence_pct ?? hiv.prevalence_15_49_pct ?? 18.3;
+  const artCoverage =
+    prov?.art_coverage_pct ?? hiv.art_coverage_pct ?? 73;
   const doctors = prov?.doctors_per_100k ?? 0;
 
   const doctorsByProv = PROVINCE_LIST.map((p) => ({
@@ -73,18 +80,20 @@ export default async function HealthPage({
     tb: d?.provinces?.[p]?.tb_per_100k ?? 0,
   }));
 
-  const years = Object.keys(d?.hiv_trend ?? {}).sort();
+  const plhivTrend = d?.plhiv_trend ?? {};
+  const artTrendData = d?.art_trend ?? {};
+  const years = Object.keys(plhivTrend).sort();
   const epidemicTrend = years.map((y) => ({
     year: y,
-    plhiv: d?.hiv_trend?.[y] ?? 0,
-    art: d?.art_trend?.[y] ?? 0,
+    plhiv: plhivTrend[y] ?? 0,
+    art: artTrendData[y] ?? 0,
   }));
 
   return (
     <div>
       <PageHeader
         title="Healthcare & Disease Burden"
-        description="HIV, TB, and health system capacity — provincial pressure on clinics and outcomes."
+        description="HIV, TB, and health system capacity. Sources: SAMRC, NICD, Healthsites.io, SANAC, DHIS2."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -105,8 +114,64 @@ export default async function HealthPage({
         />
         <KpiCard
           label="Doctors per 100k"
-          value={province !== "All Provinces" ? formatNumber(doctors) : "Varies"}
-          hint={d?.health_system?.nhi_implementation ?? "NHI Phase 1"}
+          value={
+            province !== "All Provinces"
+              ? formatNumber(doctors)
+              : "Varies"
+          }
+          hint={system.nhi_implementation ?? "NHI Phase 1"}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="New HIV infections (2023)"
+          value={formatNumber(hiv.new_infections_2023 ?? 140000)}
+          hint="Annual new infections estimate"
+          trendPositive={(hiv.new_infections_2023 ?? 140000) < 150000}
+        />
+        <KpiCard
+          label="AIDS deaths (2023)"
+          value={formatNumber(hiv.aids_deaths_2023 ?? 57000)}
+          hint="Mortality burden"
+          trendPositive={(hiv.aids_deaths_2023 ?? 57000) < 60000}
+        />
+        <KpiCard
+          label="Maternal mortality"
+          value={`${system.maternal_mortality_per_100k ?? 118}`}
+          hint="Per 100,000 live births"
+          trendPositive={(system.maternal_mortality_per_100k ?? 118) < 120}
+        />
+        <KpiCard
+          label={`ART coverage (${provinceLabel(province)})`}
+          value={`${artCoverage}%`}
+          hint={`TB treatment success: ${tb.treatment_success_pct ?? 81}%`}
+          trendPositive={artCoverage >= 70}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Under-5 mortality"
+          value={`${system.under5_mortality_per_1000 ?? 34}`}
+          hint="Per 1,000 live births"
+          trendPositive={(system.under5_mortality_per_1000 ?? 34) < 35}
+        />
+        <KpiCard
+          label="TB–HIV co-infection"
+          value={`${tb.tb_hiv_coinfection_pct ?? 60}%`}
+          hint="Of TB patients co-infected"
+        />
+        <KpiCard
+          label="Hospital beds (public)"
+          value={formatNumber(system.public_hospitals ?? 407)}
+          hint={`${system.private_hospitals ?? 211} private hospitals`}
+        />
+        <KpiCard
+          label="DHIS2 facility feed"
+          value={d?.dhis2_connected ? "Connected" : "Cached"}
+          hint="Facility-level indicators (planned)"
+          trendPositive={d?.dhis2_connected ?? false}
         />
       </div>
 
@@ -145,7 +210,7 @@ export default async function HealthPage({
       )}
 
       <SourceBadge
-        source={d?.source ?? "NDOH · SANAC"}
+        source={`${d?.source ?? "NDOH · SANAC"} · SAMRC · NICD · Healthsites.io`}
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

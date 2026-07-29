@@ -60,5 +60,13 @@
     "2026-01": 3.5,
     "2026-04": 4.5,
     "2026-06": 5.0
+  },
+  "cpi_basket": {
+    "Food & non-alcoholic beverages": 6.8,
+    "Housing & utilities": 4.2,
+    "Transport": 3.1,
+    "Medical care": 5.4,
+    "Education": 4.8,
+    "Miscellaneous": 3.9
   }
 }

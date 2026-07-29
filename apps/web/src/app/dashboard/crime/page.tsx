@@ -25,6 +25,7 @@ import {
 import { loadJson } from "@/shared/data/load";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
 import { formatNumber } from "@/shared/utils";
+import { provinceRank } from "@/shared/data/intelligence";
 
 type CrimeCounts = Record<string, number>;
 
@@ -141,6 +142,28 @@ export default async function CrimePage({
   const counts = scopeCounts(d ?? {}, province, city);
   const label = scopeLabel(province, city);
 
+  const violentTotal =
+    sumCrimes(counts, "Murder") +
+    sumCrimes(counts, "Sexual offences") +
+    sumCrimes(counts, "Carjacking") +
+    sumCrimes(counts, "Attempted murder") +
+    sumCrimes(counts, "Assault GBH");
+
+  const propertyTotal =
+    sumCrimes(counts, "Residential burglary") +
+    sumCrimes(counts, "Non-residential burglary") +
+    sumCrimes(counts, "Robbery aggravating");
+
+  const aggravatedRobbery = sumCrimes(counts, "Robbery aggravating");
+  const topHotspot = (d?.national_hotspots ?? [])[0];
+  const murderByProv = Object.fromEntries(
+    PROVINCE_LIST.map((p) => [p, provData[p]?.Murder ?? 0]),
+  );
+  const murderRank =
+    province !== "All Provinces"
+      ? provinceRank(murderByProv, province, true)
+      : null;
+
   const provinceMurders = PROVINCE_LIST.map((p) => ({
     province: p,
     murders: provData[p]?.Murder ?? 0,
@@ -229,6 +252,44 @@ export default async function CrimePage({
             hint={label}
           />
         ))}
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Violent crime total"
+          value={formatNumber(violentTotal)}
+          hint={`Murder, sexual offences, carjacking, assault GBH — ${label}`}
+        />
+        <KpiCard
+          label="Property crime total"
+          value={formatNumber(propertyTotal)}
+          hint="Burglary and aggravated robbery volumes"
+        />
+        <KpiCard
+          label="Aggravated robbery"
+          value={formatNumber(aggravatedRobbery)}
+          hint="High concern for buyers & retailers"
+          trendPositive={aggravatedRobbery < 5000}
+        />
+        <KpiCard
+          label={
+            murderRank != null
+              ? `Murder rank (${province})`
+              : "National hotspot #1"
+          }
+          value={
+            murderRank != null
+              ? `#${murderRank} of 9`
+              : topHotspot?.station ?? "—"
+          }
+          hint={
+            murderRank != null
+              ? "Among provinces this quarter"
+              : topHotspot
+                ? `${formatNumber(topHotspot.serious_crime)} serious crimes`
+                : "SAPS TOP 30"
+          }
+        />
       </div>
 
       <ChartPanel

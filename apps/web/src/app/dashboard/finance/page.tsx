@@ -17,7 +17,9 @@ type FinanceData = {
   repo_rate_pct?: number;
   prime_rate_pct?: number;
   cpi_headline_pct?: number;
+  cpi_period?: string;
   repo_history?: Record<string, number>;
+  cpi_history?: Record<string, number>;
   cpi_basket?: Record<string, number>;
 };
 
@@ -26,10 +28,18 @@ export default async function FinancePage() {
   const repo = d?.repo_rate_pct ?? 6.75;
   const prime = d?.prime_rate_pct ?? 10.25;
   const cpi = d?.cpi_headline_pct ?? 3.5;
+  const spread = prime - repo;
+  const realRate = prime - cpi;
+  const inTargetBand = cpi >= 3 && cpi <= 6;
 
   const repoTrend = Object.entries(d?.repo_history ?? {}).map(([q, r]) => ({
     quarter: q,
     repo: r,
+  }));
+
+  const cpiTrend = Object.entries(d?.cpi_history ?? {}).map(([period, val]) => ({
+    period,
+    cpi: val,
   }));
 
   const cpiBasket = Object.entries(d?.cpi_basket ?? {}).map(([cat, val]) => ({
@@ -47,18 +57,20 @@ export default async function FinancePage() {
       ),
   }));
 
+  const hottestCategory = cpiBasket.sort((a, b) => b.cpi - a.cpi)[0];
+
   return (
     <div>
       <PageHeader
         title="Interest Rates & Inflation"
-        description="SARB policy rate, prime lending rate, and CPI — what drives bonds, rents, and business costs."
+        description="SARB policy, prime lending, and CPI — what drives bonds, rents, and business costs. Sources: SARB, Stats SA, Vulekamali, eTenders."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Repo rate"
           value={`${repo}%`}
-          hint="SARB policy rate"
+          hint={d?.cpi_period ? `CPI period: ${d.cpi_period}` : "SARB policy rate"}
         />
         <KpiCard
           label="Prime lending rate"
@@ -69,12 +81,42 @@ export default async function FinancePage() {
           label="Headline CPI"
           value={`${cpi}%`}
           hint="Inflation target band 3–6%"
-          trendPositive={cpi <= 6}
+          trendPositive={inTargetBand}
+          trend={inTargetBand ? "Within SARB band" : "Outside target band"}
         />
         <KpiCard
           label="Bond on R1.5m home"
           value={`R${monthlyBond.find((b) => b.price_k === 1.5)?.repayment?.toLocaleString() ?? "—"}`}
           hint="Est. 20yr at prime — illustrative"
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Prime − repo spread"
+          value={`${spread.toFixed(2)}pp`}
+          hint="Bank margin on policy rate"
+        />
+        <KpiCard
+          label="Real borrowing rate"
+          value={`${realRate.toFixed(1)}%`}
+          hint="Prime minus headline CPI"
+          trendPositive={realRate < 8}
+          trend={
+            realRate > 7 ? "Tight for borrowers" : "Moderate real rate"
+          }
+        />
+        <KpiCard
+          label="CPI vs target midpoint"
+          value={`${(cpi - 4.5).toFixed(1)}pp`}
+          hint="Distance from 4.5% midpoint"
+          trendPositive={Math.abs(cpi - 4.5) <= 1.5}
+        />
+        <KpiCard
+          label="Hot inflation category"
+          value={hottestCategory?.category ?? "Food"}
+          hint={`${hottestCategory?.cpi ?? "—"}% annual change`}
+          trendPositive={(hottestCategory?.cpi ?? 6) <= 5}
         />
       </div>
 
@@ -97,7 +139,14 @@ export default async function FinancePage() {
         </ChartPanel>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <ChartPanel title="Headline CPI trend">
+          <SimpleLineChart
+            data={cpiTrend}
+            xKey="period"
+            lines={[{ key: "cpi", color: "#d97706", name: "CPI %" }]}
+          />
+        </ChartPanel>
         <ChartPanel
           title="Monthly bond repayment vs home price"
           description={`At prime ${prime}% over 20 years`}
@@ -112,7 +161,7 @@ export default async function FinancePage() {
       </div>
 
       <SourceBadge
-        source={d?.source ?? "SARB · Stats SA"}
+        source={`${d?.source ?? "SARB · Stats SA"} · Vulekamali · eTenders`}
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />
