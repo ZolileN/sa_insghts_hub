@@ -112,24 +112,23 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 
 ## Cron automation (production)
 
-Production scraping runs on **your server** via cron — not GitHub Actions. See **[CRON_SETUP.md](CRON_SETUP.md)** for VPS setup and git deploy keys.
+Scrapers run on your **VPS** when **[cron-job.org](https://cron-job.org)** calls the webhook (`webhook_server.py`). Commits push `data/*.json` to `master`; Vercel redeploys on push.
 
-| Frequency | Topics | Script |
-|-----------|--------|--------|
-| Every 30 min | forex, energy | `cron_realtime.sh` |
-| Weekly (Mon 06:00 UTC) | water | `cron_weekly.sh` |
-| Monthly (1st 05:00 UTC) | finance, property, employment, health | `cron_monthly.sh` |
-| Quarterly (Jan/Apr/Jul/Oct) | all 10 | `cron_quarterly.sh` |
+Full setup: **[CRON_SETUP.md](CRON_SETUP.md)** (cron-job.org URLs, schedules, HTTPS).
+
+| cron-job.org schedule | Endpoint | Topics |
+|----------------------|----------|--------|
+| Every 30 min | `/cron/realtime` | forex, energy |
+| Mon 06:00 UTC | `/cron/weekly` | water |
+| 1st 05:00 UTC | `/cron/monthly` | finance, property, employment, health |
+| Jan/Apr/Jul/Oct 04:00 UTC | `/cron/quarterly` | all 10 |
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-chmod +x cron_*.sh scripts/cron_git_push.sh cron_manager.sh
-./cron_manager.sh install
-./cron_manager.sh test-realtime
+cp .env.example .env   # set CRON_WEBHOOK_SECRET
+./scripts/start-webhook.sh
 ```
 
-Commits push refreshed `data/*.json` to `master`; Vercel redeploys on push.
+Alternative: local crontab via `./cron_manager.sh install`.
 
 ---
 

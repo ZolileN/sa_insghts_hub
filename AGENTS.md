@@ -14,6 +14,8 @@ Libo Insights is a Next.js dashboard (`apps/web`) backed by cached JSON in
 ### Scrapers (optional)
 - `python3 run_scrapers.py` fetches live South African public data; `--dry-run`,
   `--topics <name...>`, and `--parallel` are supported (see `README.md`).
+- **Production schedule:** [cron-job.org](https://cron-job.org) HTTP calls
+  `webhook_server.py` on your VPS (see `CRON_SETUP.md`). Not GitHub Actions.
 - Running scrapers overwrites `data/*.json` and `data/manifest.json` (these files ARE
   committed). Revert scraper-caused edits with `git checkout -- data/` unless you
   intend to commit refreshed data.

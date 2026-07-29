@@ -1,90 +1,140 @@
-# Cron Jobs Setup
+# Cron Jobs Setup — cron-job.org
 
-Libo Insights production data pipeline uses **server cron** on your own host (VPS, home server, or SA VM). Scrapers run locally, commit `data/*.json`, and push to GitHub — **no GitHub Actions** (avoids Actions billing).
+Production scraping uses **[cron-job.org](https://cron-job.org)** to HTTP-call a small webhook on your server. The webhook runs `cron_*.sh` (scrapers + git push to `master`). **No GitHub Actions** (no Actions billing). **No server crontab** required.
 
-Vercel redeploys when those commits land on `master` (data is copied at build via `prebuild`).
+Vercel redeploys when data commits land on `master`.
 
-## One-time server setup
+---
 
-On a Linux host with git push access to this repo (deploy key or PAT):
+## Architecture
+
+```
+cron-job.org  --HTTP GET-->  your VPS webhook_server.py  -->  cron_realtime.sh  -->  git push
+```
+
+---
+
+## 1. Server setup (once)
+
+On a Linux VPS (SA recommended for DWS water):
 
 ```bash
-# Clone (or pull) the repo
-git clone https://github.com/ZolileN/sa_insghts_hub.git
-cd sa_insghts_hub
+git clone https://github.com/ZolileN/sa_insghts_hub.git /opt/libo-insights
+cd /opt/libo-insights
 git checkout master
 
-# Python environment
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# Optional: test a scrape
-python3 run_scrapers.py --topics forex energy
+chmod +x cron_*.sh scripts/*.sh webhook_server.py
 
-# Install cron (auto-detects repo path)
-chmod +x cron_*.sh scripts/cron_git_push.sh cron_manager.sh
-./cron_manager.sh install
-./cron_manager.sh status
-```
+# Secrets
+cp .env.example .env
+# Edit .env — set CRON_WEBHOOK_SECRET to a long random string
 
-**South Africa host recommended** for DWS water (`cron_weekly.sh`) — government sites often block foreign datacenter IPs.
-
-### Git credentials on the server
-
-Cron must be able to `git push` without a password prompt:
-
-```bash
-# SSH deploy key (recommended)
-ssh-keygen -t ed25519 -f ~/.ssh/libo_insights_deploy -N ""
-# Add ~/.ssh/libo_insights_deploy.pub as a deploy key on GitHub (write access)
-
+# Git push access (deploy key on GitHub)
 git remote set-url origin git@github.com:ZolileN/sa_insghts_hub.git
+
+# Test webhook locally
+./scripts/start-webhook.sh
+curl "http://127.0.0.1:8765/health"
+curl "http://127.0.0.1:8765/cron/realtime?token=YOUR_SECRET"
 ```
 
-Or use a fine-scoped PAT with `git credential` store — never commit tokens.
+### HTTPS (required for cron-job.org)
 
-## Schedule
+Expose port `8765` with **HTTPS** using one of:
 
-| Frequency | Topics | Schedule (UTC) | Script |
-|-----------|--------|----------------|--------|
-| Realtime | forex, energy | Every 30 min | `cron_realtime.sh` |
-| Weekly | water | Mon 06:00 | `cron_weekly.sh` |
-| Monthly | finance, property, employment, health | 1st 05:00 | `cron_monthly.sh` |
-| Quarterly | all 10 topics | Jan/Apr/Jul/Oct 04:00 | `cron_quarterly.sh` |
+- **Caddy** or **nginx** reverse proxy → `https://scrapers.yourdomain.com`
+- **Cloudflare Tunnel** (free) → public URL without opening ports
 
-`./cron_manager.sh install` writes `cron_setup.txt` with the correct absolute path (from `cron_setup.template`).
+cron-job.org must reach your URL over the internet.
 
-## Testing
+### Keep webhook running
 
 ```bash
-./cron_manager.sh test-realtime
-./cron_manager.sh test-weekly
-./cron_manager.sh test-monthly
-./cron_manager.sh test-quarterly
-./cron_manager.sh logs
+# Option A: systemd (see deploy/cron-webhook.service)
+sudo cp deploy/cron-webhook.service /etc/systemd/system/
+# Edit User= and paths in the unit file
+sudo systemctl enable --now cron-webhook
+
+# Option B: screen/tmux for testing
+./scripts/start-webhook.sh
 ```
 
-## Logs
+---
 
-- `logs/realtime_cron.log`
-- `logs/weekly_cron.log`
-- `logs/monthly_cron.log`
-- `logs/quarterly_cron.log`
-- `logs/scraper.log` (orchestrator)
+## 2. cron-job.org jobs
 
-## Notes
+Sign up at [cron-job.org](https://console.cron-job.org/). Create **four** cron jobs:
 
-- Cron scripts `git pull --rebase` before push to reduce merge conflicts.
-- Partial runs merge into `data/manifest.json` without dropping other topics.
-- GitHub Actions workflows are **disabled** in this repo — do not rely on them for scraping.
+Replace `BASE` and `TOKEN`:
 
-## Alternative hosts (no GitHub Actions)
+```
+BASE=https://scrapers.yourdomain.com
+TOKEN=your-CRON_WEBHOOK_SECRET
+```
 
-| Option | Notes |
-|--------|--------|
-| **SA VPS** (e.g. Afrihost, Hetzner, Oracle free tier) | Best for DWS + all scrapers |
-| **Your Mac/Linux** with cron | Fine for dev; use `cron_manager.sh install` |
-| **systemd timers** | Replace cron with `OnCalendar=` units calling the same `cron_*.sh` scripts |
+| Job title | URL | Schedule (cron-job.org) | UTC |
+|-----------|-----|-------------------------|-----|
+| Libo realtime | `{BASE}/cron/realtime?token={TOKEN}` | `*/30 * * * *` | Every 30 min |
+| Libo weekly water | `{BASE}/cron/weekly?token={TOKEN}` | `0 6 * * 1` | Mon 06:00 |
+| Libo monthly | `{BASE}/cron/monthly?token={TOKEN}` | `0 5 1 * *` | 1st 05:00 |
+| Libo quarterly | `{BASE}/cron/quarterly?token={TOKEN}` | `0 4 1 1,4,7,10 *` | Jan/Apr/Jul/Oct 04:00 |
 
-Do **not** use GitHub Actions scheduled workflows for scraping if you want to avoid Actions minutes billing.
+**Settings for each job:**
+
+- Method: **GET** (or POST)
+- Timeout: 30 seconds (webhook returns immediately; scrape runs in background)
+- Enabled: yes
+- Request failed notifications: optional email from cron-job.org
+
+### Test from cron-job.org
+
+Use **“Perform test run”** on each job. Expect HTTP **202** with JSON:
+
+```json
+{"status":"accepted","job":"realtime","script":"cron_realtime.sh"}
+```
+
+Check server logs: `logs/webhook_realtime.log`, `logs/realtime_cron.log`
+
+---
+
+## 3. Webhook endpoints
+
+| Path | Script | Topics |
+|------|--------|--------|
+| `/health` | — | Liveness (no token) |
+| `/cron/realtime` | `cron_realtime.sh` | forex, energy |
+| `/cron/weekly` | `cron_weekly.sh` | water |
+| `/cron/monthly` | `cron_monthly.sh` | finance, property, employment, health |
+| `/cron/quarterly` | `cron_quarterly.sh` | all 10 topics |
+
+Auth: `?token=SECRET` or header `X-Cron-Token: SECRET`
+
+---
+
+## 4. Logs
+
+| File | Contents |
+|------|----------|
+| `logs/webhook_*.log` | Webhook-triggered run output |
+| `logs/*_cron.log` | Scraper cron script output |
+| `logs/scraper.log` | Orchestrator log |
+
+---
+
+## Alternative: server crontab
+
+If you prefer not to use cron-job.org, `./cron_manager.sh install` still works (local crontab). See `cron_setup.template`.
+
+---
+
+## Security
+
+- Use a long random `CRON_WEBHOOK_SECRET` (32+ chars).
+- Do not commit `.env`.
+- Prefer HTTPS only; do not expose the webhook without TLS on a public IP.
+- GitHub Actions scraping remains **disabled** in this repo.
