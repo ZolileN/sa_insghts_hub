@@ -8,6 +8,7 @@ import {
   SimpleBarChart,
   SimpleLineChart,
 } from "@/components/charts/recharts";
+import { dashPct } from "@/shared/data/display";
 import { loadJson } from "@/shared/data/load";
 
 type FinanceData = {
@@ -31,12 +32,14 @@ type FinanceData = {
 
 export default async function FinancePage() {
   const d = await loadJson<FinanceData>("finance");
-  const repo = d?.repo_rate_pct ?? 6.75;
-  const prime = d?.prime_rate_pct ?? 10.25;
-  const cpi = d?.cpi_headline_pct ?? 3.5;
-  const spread = prime - repo;
-  const realRate = prime - cpi;
-  const inTargetBand = cpi >= 3 && cpi <= 6;
+  const repo = d?.repo_rate_pct;
+  const prime = d?.prime_rate_pct;
+  const cpi = d?.cpi_headline_pct;
+  const spread =
+    repo != null && prime != null ? prime - repo : null;
+  const realRate =
+    prime != null && cpi != null ? prime - cpi : null;
+  const inTargetBand = cpi != null && cpi >= 3 && cpi <= 6;
 
   const repoTrend = Object.entries(d?.repo_history ?? {}).map(([q, r]) => ({
     quarter: q,
@@ -53,27 +56,36 @@ export default async function FinancePage() {
     cpi: val,
   }));
 
-  const bondPrices = [800, 1000, 1200, 1500, 2000, 2500];
-  const monthlyBond = bondPrices.map((price) => ({
-    price_k: price / 1000,
-    repayment:
-      Math.round(
-        (price * 1000 * (prime / 100 / 12)) /
-          (1 - Math.pow(1 + prime / 100 / 12, -240)),
-      ),
-  }));
+  const monthlyBond =
+    prime != null
+      ? [800, 1000, 1200, 1500, 2000, 2500].map((price) => ({
+          price_k: price / 1000,
+          repayment: Math.round(
+            (price * 1000 * (prime / 100 / 12)) /
+              (1 - Math.pow(1 + prime / 100 / 12, -240)),
+          ),
+        }))
+      : [];
 
-  const hottestCategory = cpiBasket.sort((a, b) => b.cpi - a.cpi)[0];
-  const foodInflation =
-    cpiBasket.find((c) => c.category.startsWith("Food"))?.cpi ?? 6.8;
-  const transportInflation =
-    cpiBasket.find((c) => c.category === "Transport")?.cpi ?? 3.1;
-  const housingInflation =
-    cpiBasket.find((c) => c.category.startsWith("Housing"))?.cpi ?? 4.2;
+  const hottestCategory =
+    cpiBasket.length > 0
+      ? cpiBasket.sort((a, b) => b.cpi - a.cpi)[0]
+      : null;
+  const foodInflation = cpiBasket.find((c) =>
+    c.category.startsWith("Food"),
+  )?.cpi;
+  const transportInflation = cpiBasket.find(
+    (c) => c.category === "Transport",
+  )?.cpi;
+  const housingInflation = cpiBasket.find((c) =>
+    c.category.startsWith("Housing"),
+  )?.cpi;
   const repoPrior =
     repoTrend.length >= 2 ? repoTrend[repoTrend.length - 2].repo : null;
   const repoChange =
-    repoPrior != null ? Math.round((repo - repoPrior) * 100) / 100 : null;
+    repo != null && repoPrior != null
+      ? Math.round((repo - repoPrior) * 100) / 100
+      : null;
 
   return (
     <div>
@@ -85,24 +97,37 @@ export default async function FinancePage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Repo rate"
-          value={`${repo}%`}
+          value={dashPct(repo)}
           hint={d?.cpi_period ? `CPI period: ${d.cpi_period}` : "SARB policy rate"}
         />
         <KpiCard
           label="Prime lending rate"
-          value={`${prime}%`}
+          value={dashPct(prime)}
           hint="Most home loans priced off prime"
         />
         <KpiCard
           label="Headline CPI"
-          value={`${cpi}%`}
+          value={dashPct(cpi)}
           hint="Inflation target band 3–6%"
           trendPositive={inTargetBand}
-          trend={inTargetBand ? "Within SARB band" : "Outside target band"}
+          trend={
+            cpi != null
+              ? inTargetBand
+                ? "Within SARB band"
+                : "Outside target band"
+              : undefined
+          }
         />
         <KpiCard
           label="Bond on R1.5m home"
-          value={`R${monthlyBond.find((b) => b.price_k === 1.5)?.repayment?.toLocaleString() ?? "—"}`}
+          value={
+            monthlyBond.length
+              ? `R${
+                  monthlyBond.find((b) => b.price_k === 1.5)?.repayment?.toLocaleString() ??
+                  "—"
+                }`
+              : "—"
+          }
           hint="Est. 20yr at prime — illustrative"
         />
       </div>
@@ -110,50 +135,64 @@ export default async function FinancePage() {
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Prime − repo spread"
-          value={`${spread.toFixed(2)}pp`}
+          value={
+            spread != null ? `${spread.toFixed(2)}pp` : "—"
+          }
           hint="Bank margin on policy rate"
         />
         <KpiCard
           label="Real borrowing rate"
-          value={`${realRate.toFixed(1)}%`}
+          value={realRate != null ? `${realRate.toFixed(1)}%` : "—"}
           hint="Prime minus headline CPI"
-          trendPositive={realRate < 8}
+          trendPositive={realRate != null && realRate < 8}
           trend={
-            realRate > 7 ? "Tight for borrowers" : "Moderate real rate"
+            realRate != null
+              ? realRate > 7
+                ? "Tight for borrowers"
+                : "Moderate real rate"
+              : undefined
           }
         />
         <KpiCard
           label="CPI vs target midpoint"
-          value={`${(cpi - 4.5).toFixed(1)}pp`}
+          value={
+            cpi != null ? `${(cpi - 4.5).toFixed(1)}pp` : "—"
+          }
           hint="Distance from 4.5% midpoint"
-          trendPositive={Math.abs(cpi - 4.5) <= 1.5}
+          trendPositive={cpi != null && Math.abs(cpi - 4.5) <= 1.5}
         />
         <KpiCard
           label="Hot inflation category"
-          value={hottestCategory?.category ?? "Food"}
-          hint={`${hottestCategory?.cpi ?? "—"}% annual change`}
-          trendPositive={(hottestCategory?.cpi ?? 6) <= 5}
+          value={hottestCategory?.category ?? "—"}
+          hint={
+            hottestCategory != null
+              ? `${hottestCategory.cpi}% annual change`
+              : "CPI basket"
+          }
+          trendPositive={
+            hottestCategory != null ? hottestCategory.cpi <= 5 : undefined
+          }
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Food inflation"
-          value={`${foodInflation}%`}
+          value={dashPct(foodInflation)}
           hint="Largest household budget pressure"
-          trendPositive={foodInflation <= 5}
+          trendPositive={foodInflation != null && foodInflation <= 5}
         />
         <KpiCard
           label="Transport inflation"
-          value={`${transportInflation}%`}
+          value={dashPct(transportInflation)}
           hint="Fuel and mobility costs"
-          trendPositive={transportInflation <= 5}
+          trendPositive={transportInflation != null && transportInflation <= 5}
         />
         <KpiCard
           label="Housing & utilities"
-          value={`${housingInflation}%`}
+          value={dashPct(housingInflation)}
           hint="Rent, water, and electricity costs"
-          trendPositive={housingInflation <= 5}
+          trendPositive={housingInflation != null && housingInflation <= 5}
         />
         <KpiCard
           label="Repo change (quarter)"
@@ -168,43 +207,51 @@ export default async function FinancePage() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel title="Repo rate history (quarterly)">
-          <SimpleLineChart
-            data={repoTrend}
-            xKey="quarter"
-            lines={[{ key: "repo", color: "#2563eb", name: "Repo %" }]}
-          />
-        </ChartPanel>
-        <ChartPanel title="CPI by category">
-          <SimpleBarChart
-            data={cpiBasket}
-            xKey="category"
-            yKey="cpi"
-            layout="vertical"
-            color="#d97706"
-          />
-        </ChartPanel>
+        {repoTrend.length > 0 && (
+          <ChartPanel title="Repo rate history (quarterly)">
+            <SimpleLineChart
+              data={repoTrend}
+              xKey="quarter"
+              lines={[{ key: "repo", color: "#2563eb", name: "Repo %" }]}
+            />
+          </ChartPanel>
+        )}
+        {cpiBasket.length > 0 && (
+          <ChartPanel title="CPI by category">
+            <SimpleBarChart
+              data={cpiBasket}
+              xKey="category"
+              yKey="cpi"
+              layout="vertical"
+              color="#d97706"
+            />
+          </ChartPanel>
+        )}
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel title="Headline CPI trend">
-          <SimpleLineChart
-            data={cpiTrend}
-            xKey="period"
-            lines={[{ key: "cpi", color: "#d97706", name: "CPI %" }]}
-          />
-        </ChartPanel>
-        <ChartPanel
-          title="Monthly bond repayment vs home price"
-          description={`At prime ${prime}% over 20 years`}
-        >
-          <SimpleBarChart
-            data={monthlyBond}
-            xKey="price_k"
-            yKey="repayment"
-            color="#059669"
-          />
-        </ChartPanel>
+        {cpiTrend.length > 0 && (
+          <ChartPanel title="Headline CPI trend">
+            <SimpleLineChart
+              data={cpiTrend}
+              xKey="period"
+              lines={[{ key: "cpi", color: "#d97706", name: "CPI %" }]}
+            />
+          </ChartPanel>
+        )}
+        {monthlyBond.length > 0 && prime != null && (
+          <ChartPanel
+            title="Monthly bond repayment vs home price"
+            description={`At prime ${prime}% over 20 years`}
+          >
+            <SimpleBarChart
+              data={monthlyBond}
+              xKey="price_k"
+              yKey="repayment"
+              color="#059669"
+            />
+          </ChartPanel>
+        )}
       </div>
 
       <SourceBadge

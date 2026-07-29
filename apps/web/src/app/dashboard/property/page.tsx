@@ -29,7 +29,8 @@ import {
   provinceCoords,
   type CrimeMapMarker,
 } from "@/shared/data/sa-geo";
-import { formatCurrency, formatNumber } from "@/shared/utils";
+import { formatMoney } from "@/shared/data/display";
+import { formatNumber } from "@/shared/utils";
 
 type PropertyData = {
   source?: string;
@@ -56,34 +57,39 @@ function scopeMetrics(
   city: string,
   suburb: string,
 ): {
-  median: number;
-  yieldPct: number;
-  yoy: number;
-  dom: number;
-  rentR: number;
+  median: number | null;
+  yieldPct: number | null;
+  yoy: number | null;
+  dom: number | null;
+  rentR: number | null;
   airbnb?: number;
   buildingPlans?: number;
 } {
   const nat = d.national ?? {};
-  const nationalMedian = nat.median_price_r ?? 1320000;
-  const prime = nat.prime_rate_pct ?? 10.5;
+  const pickNum = (...vals: (number | undefined | null)[]) => {
+    for (const v of vals) {
+      if (v != null && !Number.isNaN(v)) return v;
+    }
+    return null;
+  };
 
   if (province === "All Provinces") {
-    const median = nationalMedian;
-    const yieldPct = nat.avg_rental_yield_pct ?? 8.2;
+    const median = nat.median_price_r ?? null;
+    const yieldPct = nat.avg_rental_yield_pct ?? null;
     return {
       median,
       yieldPct,
-      yoy: nat.yoy_growth_pct ?? 2.8,
-      dom: nat.days_on_market ?? 72,
-      rentR: estimateMonthlyRent(median, yieldPct),
-      airbnb: undefined,
-      buildingPlans: undefined,
+      yoy: nat.yoy_growth_pct ?? null,
+      dom: nat.days_on_market ?? null,
+      rentR:
+        median != null && yieldPct != null
+          ? estimateMonthlyRent(median, yieldPct)
+          : null,
     };
   }
 
   const metroMap = d.metros?.[province] ?? {};
-  const metroNames = Object.keys(metroMap);
+  const prov = d.provinces?.[province];
 
   if (city !== "All areas" && metroMap[city]) {
     const metro = metroMap[city];
@@ -91,57 +97,85 @@ function scopeMetrics(
 
     if (suburb !== "All suburbs" && suburbs[suburb]) {
       const sub = suburbs[suburb];
-      const median =
-        sub.median_price_r ??
-        metro.median_price_r ??
-        d.provinces?.[province]?.median_price_r ??
-        nationalMedian;
-      const yieldPct =
-        sub.rental_yield_pct ?? metro.rental_yield_pct ?? 8.2;
+      const median = pickNum(
+        sub.median_price_r,
+        metro.median_price_r,
+        prov?.median_price_r,
+        nat.median_price_r,
+      );
+      const yieldPct = pickNum(
+        sub.rental_yield_pct,
+        metro.rental_yield_pct,
+        prov?.rental_yield_pct,
+        nat.avg_rental_yield_pct,
+      );
       const rentR =
-        sub.estimated_monthly_rent_r ?? estimateMonthlyRent(median, yieldPct);
+        sub.estimated_monthly_rent_r ??
+        metro.estimated_monthly_rent_r ??
+        (median != null && yieldPct != null
+          ? estimateMonthlyRent(median, yieldPct)
+          : null);
       return {
         median,
         yieldPct,
-        yoy: metro.yoy_growth_pct ?? d.provinces?.[province]?.yoy_growth_pct ?? 2,
-        dom:
-          sub.days_on_market ??
-          metro.days_on_market ??
-          d.provinces?.[province]?.days_on_market ??
-          72,
+        yoy: pickNum(
+          metro.yoy_growth_pct,
+          prov?.yoy_growth_pct,
+          nat.yoy_growth_pct,
+        ),
+        dom: pickNum(
+          sub.days_on_market,
+          metro.days_on_market,
+          prov?.days_on_market,
+          nat.days_on_market,
+        ),
         rentR,
         airbnb: metro.airbnb_listings,
         buildingPlans: metro.building_plans_yoy_pct,
       };
     }
 
-    const median = metro.median_price_r ?? d.provinces?.[province]?.median_price_r ?? nationalMedian;
-    const yieldPct =
-      metro.rental_yield_pct ?? d.provinces?.[province]?.rental_yield_pct ?? 8.2;
+    const median = pickNum(
+      metro.median_price_r,
+      prov?.median_price_r,
+      nat.median_price_r,
+    );
+    const yieldPct = pickNum(
+      metro.rental_yield_pct,
+      prov?.rental_yield_pct,
+      nat.avg_rental_yield_pct,
+    );
     const rentR =
-      metro.estimated_monthly_rent_r ?? estimateMonthlyRent(median, yieldPct);
+      metro.estimated_monthly_rent_r ??
+      (median != null && yieldPct != null
+        ? estimateMonthlyRent(median, yieldPct)
+        : null);
     return {
       median,
       yieldPct,
-      yoy: metro.yoy_growth_pct ?? d.provinces?.[province]?.yoy_growth_pct ?? 2,
-      dom: metro.days_on_market ?? d.provinces?.[province]?.days_on_market ?? 72,
+      yoy: pickNum(metro.yoy_growth_pct, prov?.yoy_growth_pct, nat.yoy_growth_pct),
+      dom: pickNum(
+        metro.days_on_market,
+        prov?.days_on_market,
+        nat.days_on_market,
+      ),
       rentR,
       airbnb: metro.airbnb_listings,
       buildingPlans: metro.building_plans_yoy_pct,
     };
   }
 
-  const prov = d.provinces?.[province];
-  const median = prov?.median_price_r ?? nationalMedian;
-  const yieldPct = prov?.rental_yield_pct ?? nat.avg_rental_yield_pct ?? 8.2;
+  const median = pickNum(prov?.median_price_r, nat.median_price_r);
+  const yieldPct = pickNum(prov?.rental_yield_pct, nat.avg_rental_yield_pct);
   return {
     median,
     yieldPct,
-    yoy: prov?.yoy_growth_pct ?? 2,
-    dom: prov?.days_on_market ?? 72,
-    rentR: estimateMonthlyRent(median, yieldPct),
-    airbnb: undefined,
-    buildingPlans: undefined,
+    yoy: pickNum(prov?.yoy_growth_pct, nat.yoy_growth_pct),
+    dom: pickNum(prov?.days_on_market, nat.days_on_market),
+    rentR:
+      median != null && yieldPct != null
+        ? estimateMonthlyRent(median, yieldPct)
+        : null,
   };
 }
 
@@ -256,17 +290,32 @@ export default async function PropertyPage({
   const label = scopeLabel(province, city, suburb);
   const metrics = scopeMetrics(d ?? {}, province, city, suburb);
 
-  const nationalMedian = nat.median_price_r ?? 1320000;
-  const prime = nat.prime_rate_pct ?? 10.5;
-  const monthlyBond = estimateMonthlyBond(metrics.median, prime);
-  const rentBuyRatio = rentVsBuyRatio(metrics.rentR, monthlyBond);
-  const affordability = affordabilityVsNational(metrics.median, nationalMedian);
-  const bondApproval = nat.bond_approval_rate_pct ?? 62;
-  const transferThreshold = nat.transfer_duty_threshold_r ?? 1210000;
-  const householdIncome = nat.avg_household_income_r ?? 282000;
-  const priceToIncome = Math.round((metrics.median / householdIncome) * 10) / 10;
-  const capRateSpread = Math.round((metrics.yieldPct - prime) * 10) / 10;
-  const annualRent = metrics.rentR * 12;
+  const nationalMedian = nat.median_price_r;
+  const prime = nat.prime_rate_pct;
+  const monthlyBond =
+    metrics.median != null && prime != null
+      ? estimateMonthlyBond(metrics.median, prime)
+      : null;
+  const rentBuyRatio =
+    metrics.rentR != null && monthlyBond != null && monthlyBond > 0
+      ? rentVsBuyRatio(metrics.rentR, monthlyBond)
+      : null;
+  const affordability =
+    metrics.median != null && nationalMedian != null
+      ? affordabilityVsNational(metrics.median, nationalMedian)
+      : null;
+  const bondApproval = nat.bond_approval_rate_pct;
+  const transferThreshold = nat.transfer_duty_threshold_r;
+  const householdIncome = nat.avg_household_income_r;
+  const priceToIncome =
+    metrics.median != null && householdIncome != null && householdIncome > 0
+      ? Math.round((metrics.median / householdIncome) * 10) / 10
+      : null;
+  const capRateSpread =
+    metrics.yieldPct != null && prime != null
+      ? Math.round((metrics.yieldPct - prime) * 10) / 10
+      : null;
+  const annualRent = metrics.rentR != null ? metrics.rentR * 12 : null;
 
   const scatter = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -338,29 +387,51 @@ export default async function PropertyPage({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label={`Median price (${label})`}
-          value={formatCurrency(metrics.median)}
+          value={formatMoney(metrics.median)}
           hint="FNB/Lightstone barometer & metro estimates"
         />
         <KpiCard
           label="Est. monthly bond"
-          value={formatCurrency(monthlyBond)}
-          hint={`90% loan · ${prime}% prime · 20 years`}
-          trend={monthlyBond < metrics.rentR ? "Bond cheaper than rent" : "Rent cheaper than bond"}
-          trendPositive={monthlyBond < metrics.rentR}
+          value={formatMoney(monthlyBond)}
+          hint={
+            prime != null
+              ? `90% loan · ${prime}% prime · 20 years`
+              : "90% loan · 20 years"
+          }
+          trend={
+            monthlyBond != null && metrics.rentR != null
+              ? monthlyBond < metrics.rentR
+                ? "Bond cheaper than rent"
+                : "Rent cheaper than bond"
+              : undefined
+          }
+          trendPositive={
+            monthlyBond != null && metrics.rentR != null
+              ? monthlyBond < metrics.rentR
+              : undefined
+          }
         />
         <KpiCard
           label="Est. monthly rent"
-          value={formatCurrency(metrics.rentR)}
-          hint={`Gross yield ${metrics.yieldPct}%`}
+          value={formatMoney(metrics.rentR)}
+          hint={
+            metrics.yieldPct != null
+              ? `Gross yield ${metrics.yieldPct}%`
+              : "Gross yield"
+          }
         />
         <KpiCard
           label="Rental yield"
-          value={`${metrics.yieldPct}%`}
-          trendPositive={metrics.yieldPct >= 8}
+          value={
+            metrics.yieldPct != null ? `${metrics.yieldPct}%` : "—"
+          }
+          trendPositive={metrics.yieldPct != null && metrics.yieldPct >= 8}
           trend={
-            metrics.yieldPct >= 8
-              ? "Income-friendly market"
-              : "Growth-focused market"
+            metrics.yieldPct == null
+              ? undefined
+              : metrics.yieldPct >= 8
+                ? "Income-friendly market"
+                : "Growth-focused market"
           }
         />
       </div>
@@ -368,83 +439,127 @@ export default async function PropertyPage({
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <KpiCard
           label="Rent vs bond ratio"
-          value={`${(rentBuyRatio * 100).toFixed(0)}%`}
+          value={
+            rentBuyRatio != null
+              ? `${(rentBuyRatio * 100).toFixed(0)}%`
+              : "—"
+          }
           hint="Rent as % of bond payment — under 100% favours buying"
-          trendPositive={rentBuyRatio < 1}
+          trendPositive={rentBuyRatio != null && rentBuyRatio < 1}
           trend={
-            rentBuyRatio < 0.85
-              ? "Strong buy signal"
-              : rentBuyRatio < 1
-                ? "Rent below bond"
-                : "Rent exceeds bond"
+            rentBuyRatio == null
+              ? undefined
+              : rentBuyRatio < 0.85
+                ? "Strong buy signal"
+                : rentBuyRatio < 1
+                  ? "Rent below bond"
+                  : "Rent exceeds bond"
           }
         />
         <KpiCard
           label="Affordability index"
-          value={`${affordability}`}
+          value={affordability != null ? `${affordability}` : "—"}
           hint="Local median vs national (100 = national average)"
-          trendPositive={affordability <= 100}
+          trendPositive={affordability != null && affordability <= 100}
           trend={
-            affordability > 120
-              ? "Premium market"
-              : affordability < 90
-                ? "Value market"
-                : "Near national average"
+            affordability == null
+              ? undefined
+              : affordability > 120
+                ? "Premium market"
+                : affordability < 90
+                  ? "Value market"
+                  : "Near national average"
           }
         />
         <KpiCard
           label="Price-to-income"
-          value={`${priceToIncome}x`}
-          hint={`Median vs household income (~R${formatNumber(householdIncome)})`}
-          trendPositive={priceToIncome <= 5}
+          value={priceToIncome != null ? `${priceToIncome}x` : "—"}
+          hint={
+            householdIncome != null
+              ? `Median vs household income (~R${formatNumber(householdIncome)})`
+              : "Median vs household income"
+          }
+          trendPositive={priceToIncome != null && priceToIncome <= 5}
         />
         <KpiCard
           label="Cap rate vs prime"
-          value={`${capRateSpread > 0 ? "+" : ""}${capRateSpread}pp`}
-          hint={`Gross yield ${metrics.yieldPct}% vs prime ${prime}%`}
-          trendPositive={capRateSpread > 0}
+          value={
+            capRateSpread != null
+              ? `${capRateSpread > 0 ? "+" : ""}${capRateSpread}pp`
+              : "—"
+          }
+          hint={
+            metrics.yieldPct != null && prime != null
+              ? `Gross yield ${metrics.yieldPct}% vs prime ${prime}%`
+              : "Gross yield vs prime"
+          }
+          trendPositive={capRateSpread != null && capRateSpread > 0}
           trend={
-            capRateSpread > 0
-              ? "Yield beats borrowing cost"
-              : "Prime exceeds gross yield"
+            capRateSpread == null
+              ? undefined
+              : capRateSpread > 0
+                ? "Yield beats borrowing cost"
+                : "Prime exceeds gross yield"
           }
         />
         <KpiCard
           label="Est. annual rental"
-          value={formatCurrency(annualRent)}
-          hint={`${formatCurrency(metrics.rentR)}/month gross income`}
-          trendPositive={annualRent > monthlyBond * 12}
+          value={formatMoney(annualRent)}
+          hint={`${formatMoney(metrics.rentR)}/month gross income`}
+          trendPositive={
+            annualRent != null &&
+            monthlyBond != null &&
+            annualRent > monthlyBond * 12
+          }
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Days on market"
-          value={formatNumber(metrics.dom)}
-          hint={`Bond approval ~${bondApproval}% nationally`}
-          trendPositive={metrics.dom < 70}
-          trend={metrics.yoy > 0 ? `Prices +${metrics.yoy}% YoY` : "Flat prices"}
+          value={metrics.dom != null ? formatNumber(metrics.dom) : "—"}
+          hint={
+            bondApproval != null
+              ? `Bond approval ~${bondApproval}% nationally`
+              : "National bond approval"
+          }
+          trendPositive={metrics.dom != null && metrics.dom < 70}
+          trend={
+            metrics.yoy == null
+              ? undefined
+              : metrics.yoy > 0
+                ? `Prices +${metrics.yoy}% YoY`
+                : "Flat prices"
+          }
         />
         <KpiCard
           label="YoY price growth"
-          value={`${metrics.yoy}%`}
-          trendPositive={metrics.yoy > 0}
-          trend={metrics.yoy > 2 ? "Above inflation target" : "Moderate growth"}
+          value={metrics.yoy != null ? `${metrics.yoy}%` : "—"}
+          trendPositive={metrics.yoy != null && metrics.yoy > 0}
+          trend={
+            metrics.yoy == null
+              ? undefined
+              : metrics.yoy > 2
+                ? "Above inflation target"
+                : "Moderate growth"
+          }
         />
         <KpiCard
           label="Transfer duty threshold"
-          value={formatCurrency(transferThreshold)}
+          value={formatMoney(transferThreshold)}
           hint={
-            metrics.median > transferThreshold
-              ? "Median above zero-duty band"
-              : "Median within zero-duty band"
+            transferThreshold != null && metrics.median != null
+              ? metrics.median > transferThreshold
+                ? "Median above zero-duty band"
+                : "Median within zero-duty band"
+              : "Zero transfer duty band"
           }
         />
         <KpiCard
           label="Bond approval rate"
-          value={`${bondApproval}%`}
+          value={bondApproval != null ? `${bondApproval}%` : "—"}
           hint="National mortgage approval proxy"
-          trendPositive={bondApproval >= 60}
+          trendPositive={bondApproval != null && bondApproval >= 60}
         />
       </div>
 

@@ -15,6 +15,7 @@ import {
   pctChange,
 } from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
+import { dashNum } from "@/shared/data/display";
 import { formatNumber } from "@/shared/utils";
 
 type FraudData = {
@@ -29,7 +30,7 @@ type FraudData = {
 
 export default async function FraudPage() {
   const d = await loadJson<FraudData>("fraud");
-  const totalB = d?.total_losses_r_billion ?? 3.3;
+  const totalB = d?.total_losses_r_billion;
   const categories = d?.categories ?? {};
 
   const pieData = Object.entries(categories).map(([name, v]) => ({
@@ -62,13 +63,15 @@ export default async function FraudPage() {
     0,
   );
   const lossPerIncident =
-    totalIncidents > 0 ? Math.round((totalB * 1000) / totalIncidents) : 0;
+    totalB != null && totalIncidents > 0
+      ? Math.round((totalB * 1000) / totalIncidents)
+      : null;
 
   const simSwap = categories["SIM swap/account takeover"];
   const simLossPerIncident =
-    simSwap?.incidents
-      ? Math.round((simSwap.losses_rm ?? 0) / simSwap.incidents)
-      : 0;
+    simSwap?.incidents && simSwap.losses_rm != null
+      ? Math.round(simSwap.losses_rm / simSwap.incidents)
+      : null;
 
   return (
     <div>
@@ -80,18 +83,22 @@ export default async function FraudPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Total banking fraud losses"
-          value={`R${totalB}bn`}
+          value={totalB != null ? `R${totalB}bn` : "—"}
           hint="SABRIC annual reported losses"
         />
         <KpiCard
           label="SIM swap incidents"
-          value={formatNumber(d?.sim_swap_incidents ?? 39)}
+          value={dashNum(d?.sim_swap_incidents)}
           hint="Account takeover vector"
         />
         <KpiCard
           label="Top loss category"
-          value={topCategory?.name ?? "Card not present"}
-          hint={`R${formatNumber(topCategory?.losses ?? 0)}m estimated`}
+          value={topCategory?.name ?? "—"}
+          hint={
+            topCategory != null
+              ? `R${dashNum(topCategory.losses)}m estimated`
+              : "SABRIC categories"
+          }
         />
         <KpiCard
           label="Fraud categories tracked"
@@ -128,14 +135,16 @@ export default async function FraudPage() {
         />
         <KpiCard
           label="Avg loss per incident"
-          value={`R${formatNumber(lossPerIncident)}`}
+          value={dashNum(lossPerIncident)}
           hint="Across all reported categories"
         />
         <KpiCard
           label="SIM swap loss / incident"
-          value={`R${formatNumber(simLossPerIncident)}`}
+          value={simLossPerIncident != null ? `R${dashNum(simLossPerIncident)}` : "—"}
           hint="Highest-impact takeover events"
-          trendPositive={simLossPerIncident < 50000}
+          trendPositive={
+            simLossPerIncident != null && simLossPerIncident < 50000
+          }
         />
       </div>
 

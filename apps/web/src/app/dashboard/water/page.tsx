@@ -15,7 +15,7 @@ import { PROVINCE_LIST } from "@/shared/data/constants";
 import { loadJson } from "@/shared/data/load";
 import { buildProvinceMarkers } from "@/shared/data/province-map";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
-import { formatNumber } from "@/shared/utils";
+import { dashNum, dashPct } from "@/shared/data/display";
 
 type WaterData = {
   source?: string;
@@ -47,7 +47,7 @@ export default async function WaterPage({
   const { province: provinceParam } = await searchParams;
   const province = resolveProvince(provinceParam);
   const d = await loadJson<WaterData>("water");
-  const national = d?.national_avg_pct ?? 76.2;
+  const national = d?.national_avg_pct;
   const prov = province !== "All Provinces" ? d?.provinces?.[province] : null;
   const level = prov?.this_week_pct ?? national;
   const wowDelta =
@@ -66,11 +66,14 @@ export default async function WaterPage({
 
   const lowestProv = PROVINCE_LIST.reduce(
     (min, p) => {
-      const v = d?.provinces?.[p]?.this_week_pct ?? 100;
+      const v = d?.provinces?.[p]?.this_week_pct;
+      if (v == null) return min;
       return v < min.val ? { name: p, val: v } : min;
     },
-    { name: "—", val: 100 },
+    { name: "—", val: Infinity },
   );
+  const lowestProvDisplay =
+    lowestProv.val === Infinity ? { name: "—", val: null } : lowestProv;
 
   const provinceLevels = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -84,16 +87,19 @@ export default async function WaterPage({
     level: dam.this_week_pct ?? 0,
   }));
 
-  const droughtStress = PROVINCE_LIST.filter(
-    (p) => (d?.provinces?.[p]?.this_week_pct ?? 100) < 60,
-  ).length;
+  const droughtStress = PROVINCE_LIST.filter((p) => {
+    const v = d?.provinces?.[p]?.this_week_pct;
+    return v != null && v < 60;
+  }).length;
 
-  const lowestDam = (d?.dams ?? []).reduce<{ name: string; level: number }>(
+  const lowestDam = (d?.dams ?? []).reduce<{ name: string; level: number | null }>(
     (min, dam) => {
-      const level = dam.this_week_pct ?? 100;
-      return level < min.level ? { name: dam.name, level } : min;
+      const level = dam.this_week_pct;
+      if (level == null) return min;
+      if (min.level == null || level < min.level) return { name: dam.name, level };
+      return min;
     },
-    { name: "—", level: 100 },
+    { name: "—", level: null },
   );
 
   const damByProv = Object.fromEntries(
@@ -111,7 +117,7 @@ export default async function WaterPage({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label={`Dam level (${provinceLabel(province)})`}
-          value={`${level}%`}
+          value={level != null ? `${level}%` : "—"}
           hint="This week average"
           trend={
             wowDelta != null
@@ -122,7 +128,7 @@ export default async function WaterPage({
         />
         <KpiCard
           label="National dam average"
-          value={`${national}%`}
+          value={national != null ? `${national}%` : "—"}
           hint="All provinces weighted"
         />
         <KpiCard
@@ -132,8 +138,12 @@ export default async function WaterPage({
         />
         <KpiCard
           label="Lowest province"
-          value={lowestProv.name}
-          hint={`${lowestProv.val}% storage — watch stressed regions`}
+          value={lowestProvDisplay.name}
+          hint={
+            lowestProvDisplay.val != null
+              ? `${lowestProvDisplay.val}% storage — watch stressed regions`
+              : "Provincial storage"
+          }
         />
       </div>
 

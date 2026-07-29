@@ -1,3 +1,5 @@
+import { formatCurrency } from "@/shared/utils";
+
 /** User-facing labels — hide scraper/cron/fallback jargon from the UI. */
 export function isTechnicalMetadata(text: string): boolean {
   const lower = text.toLowerCase();
@@ -35,4 +37,35 @@ export function friendlyReportLabel(
 ): string {
   if (reportDate && !isTechnicalMetadata(reportDate)) return reportDate;
   return formatDataAsOf(scrapedAt, "Weekly reservoir report");
+}
+
+/** Dashboard KPI: no invented numbers when JSON field is missing. */
+export function dashNum(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return "—";
+  return formatNumber(value);
+}
+
+export function dashPct(
+  value: number | null | undefined,
+  digits = 1,
+): string {
+  if (value == null || Number.isNaN(value)) return "—";
+  return `${value.toFixed(digits)}%`;
+}
+
+export function dashFixed(
+  value: number | null | undefined,
+  digits = 2,
+): string {
+  if (value == null || Number.isNaN(value)) return "—";
+  return value.toFixed(digits);
+}
+
+export function formatMoney(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return "—";
+  return formatCurrency(value);
+}
+
+export function dashText(value: string | null | undefined): string {
+  return value ?? "—";
 }

@@ -11,6 +11,7 @@ import {
   SimpleLineChart,
 } from "@/components/charts/recharts";
 import { PROVINCE_LIST } from "@/shared/data/constants";
+import { dashNum, dashPct, dashFixed, dashText } from "@/shared/data/display";
 import { provinceRank } from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
 import { buildProvinceMarkers } from "@/shared/data/province-map";
@@ -50,14 +51,15 @@ export default async function EmploymentPage({
   const d = await loadJson<EmploymentData>("employment");
   const prov = province !== "All Provinces" ? d?.provinces?.[province] : null;
 
-  const unemp = prov?.unemployment ?? d?.unemployment_rate_pct ?? 32.9;
-  const youth = prov?.youth_unemployment ?? d?.youth_unemployment_pct ?? 60.7;
+  const unemp = prov?.unemployment ?? d?.unemployment_rate_pct;
+  const youth = prov?.youth_unemployment ?? d?.youth_unemployment_pct;
   const expanded =
-    prov?.expanded_unemployment ?? d?.expanded_unemployment_pct ?? 43.1;
-  const income = prov?.median_income_r ?? 9800;
-  const gini = d?.gini_coefficient ?? 0.63;
-  const minWage = d?.national_min_wage_hourly_r ?? 28.79;
-  const youthGap = youth - unemp;
+    prov?.expanded_unemployment ?? d?.expanded_unemployment_pct;
+  const income = prov?.median_income_r;
+  const gini = d?.gini_coefficient;
+  const minWage = d?.national_min_wage_hourly_r;
+  const youthGap =
+    unemp != null && youth != null ? youth - unemp : null;
 
   const unempByProv = Object.fromEntries(
     PROVINCE_LIST.map((p) => [p, d?.provinces?.[p]?.unemployment ?? 0]),
@@ -82,7 +84,8 @@ export default async function EmploymentPage({
     rate,
   }));
 
-  const monthlyMinWage = Math.round(minWage * 160);
+  const monthlyMinWage =
+    minWage != null ? Math.round(minWage * 160) : null;
 
   const mapMarkers = buildProvinceMarkers(unempByProv);
 
@@ -90,52 +93,68 @@ export default async function EmploymentPage({
     <div>
       <PageHeader
         title="Unemployment & Income"
-        description={`Stats SA QLFS — labour market health and household income. ${d?.period ?? "Latest quarter"}.`}
+        description={`Stats SA QLFS — labour market health and household income. ${dashText(d?.period)}`}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label={`Unemployment (${provinceLabel(province)})`}
-          value={`${unemp}%`}
+          value={dashPct(unemp)}
           hint="Official unemployment rate"
         />
         <KpiCard
           label="Youth unemployment"
-          value={`${youth}%`}
+          value={dashPct(youth)}
           hint="Ages 15–24 — policy-critical"
           trendPositive={false}
         />
         <KpiCard
           label="Employed persons"
-          value={`${d?.employed_millions ?? 16.7}m`}
-          hint={`Expanded unemployment: ${expanded}%`}
+          value={
+            d?.employed_millions != null ? `${d.employed_millions}m` : "—"
+          }
+          hint={
+            expanded != null
+              ? `Expanded unemployment: ${expanded}%`
+              : "Expanded unemployment"
+          }
         />
         <KpiCard
           label={`Median income (${provinceLabel(province)})`}
-          value={`R${formatNumber(income)}`}
-          hint={`Min wage: R${minWage}/hr`}
+          value={income != null ? `R${formatNumber(income)}` : "—"}
+          hint={
+            minWage != null ? `Min wage: R${minWage}/hr` : "Median monthly income"
+          }
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Gini coefficient"
-          value={gini.toFixed(2)}
+          value={dashFixed(gini, 2)}
           hint="Income inequality (0 = equal)"
-          trendPositive={gini < 0.65}
-          trend={gini >= 0.65 ? "High inequality" : "Moderate inequality"}
+          trendPositive={gini != null && gini < 0.65}
+          trend={
+            gini == null
+              ? undefined
+              : gini >= 0.65
+                ? "High inequality"
+                : "Moderate inequality"
+          }
         />
         <KpiCard
           label={`Expanded unemployment (${provinceLabel(province)})`}
-          value={`${expanded}%`}
+          value={dashPct(expanded)}
           hint="Includes discouraged work-seekers"
-          trendPositive={expanded < 40}
+          trendPositive={expanded != null && expanded < 40}
         />
         <KpiCard
           label="Youth unemployment gap"
-          value={`+${youthGap.toFixed(1)}pp`}
+          value={
+            youthGap != null ? `+${youthGap.toFixed(1)}pp` : "—"
+          }
           hint="Youth rate minus overall unemployment"
-          trendPositive={youthGap < 25}
+          trendPositive={youthGap != null && youthGap < 25}
         />
         <KpiCard
           label={
@@ -144,7 +163,11 @@ export default async function EmploymentPage({
               : "National min wage (monthly)"
           }
           value={
-            unempRank != null ? `#${unempRank} of 9` : `R${formatNumber(monthlyMinWage)}`
+            unempRank != null
+              ? `#${unempRank} of 9`
+              : monthlyMinWage != null
+                ? `R${formatNumber(monthlyMinWage)}`
+                : "—"
           }
           hint={
             unempRank != null

@@ -5,9 +5,9 @@ import {
   SourceBadge,
 } from "@/components/dashboard/page-parts";
 import { SimpleBarChart, SimpleLineChart } from "@/components/charts/recharts";
+import { dashFixed, dashNum } from "@/shared/data/display";
 import { lastTwoFromRecord, pctChange } from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
-import { formatNumber } from "@/shared/utils";
 
 type ForexData = {
   source?: string;
@@ -32,10 +32,11 @@ type ForexData = {
 export default async function ForexPage() {
   const d = await loadJson<ForexData>("forex");
   const rates = d?.live_rates ?? {};
-  const usdZar = rates.usd_zar ?? 18.64;
-  const eurZar = rates.eur_zar ?? 20.21;
-  const gbpZar = rates.gbp_zar ?? 23.48;
-  const eurUsdImplied = usdZar > 0 ? eurZar / usdZar : 0;
+  const usdZar = rates.usd_zar;
+  const eurZar = rates.eur_zar;
+  const gbpZar = rates.gbp_zar;
+  const eurUsdImplied =
+    usdZar != null && eurZar != null && usdZar > 0 ? eurZar / usdZar : null;
 
   const historyPair = lastTwoFromRecord(d?.usd_zar_history ?? {});
   const zarMomentum =
@@ -43,20 +44,20 @@ export default async function ForexPage() {
 
   const importCost =
     d?.intelligence?.import_cost_per_usd_1000_r ??
-    Math.round(usdZar * 1000);
+    (usdZar != null ? Math.round(usdZar * 1000) : null);
 
   const historyChart = Object.entries(d?.usd_zar_history ?? {}).map(
     ([month, rate]) => ({ month, rate }),
   );
 
   const crosses = [
-    { pair: "USD/ZAR", rate: usdZar },
-    { pair: "EUR/ZAR", rate: eurZar },
-    { pair: "GBP/ZAR", rate: gbpZar },
-    { pair: "USD/BWP", rate: rates.usd_bwp ?? 13.72 },
-    { pair: "USD/KES", rate: rates.usd_kes ?? 129.5 },
-    { pair: "USD/NGN", rate: rates.usd_ngn ?? 1600 },
-  ];
+    usdZar != null ? { pair: "USD/ZAR", rate: usdZar } : null,
+    eurZar != null ? { pair: "EUR/ZAR", rate: eurZar } : null,
+    gbpZar != null ? { pair: "GBP/ZAR", rate: gbpZar } : null,
+    rates.usd_bwp != null ? { pair: "USD/BWP", rate: rates.usd_bwp } : null,
+    rates.usd_kes != null ? { pair: "USD/KES", rate: rates.usd_kes } : null,
+    rates.usd_ngn != null ? { pair: "USD/NGN", rate: rates.usd_ngn } : null,
+  ].filter(Boolean) as { pair: string; rate: number }[];
 
   return (
     <div>
@@ -68,15 +69,25 @@ export default async function ForexPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="USD/ZAR"
-          value={`R${usdZar.toFixed(2)}`}
-          hint={rates.timestamp ?? "Latest available"}
+          value={usdZar != null ? `R${usdZar.toFixed(2)}` : "—"}
+          hint={rates.timestamp ?? "Live scrape"}
         />
-        <KpiCard label="EUR/ZAR" value={`R${eurZar.toFixed(2)}`} />
-        <KpiCard label="GBP/ZAR" value={`R${gbpZar.toFixed(2)}`} />
+        <KpiCard
+          label="EUR/ZAR"
+          value={eurZar != null ? `R${eurZar.toFixed(2)}` : "—"}
+        />
+        <KpiCard
+          label="GBP/ZAR"
+          value={gbpZar != null ? `R${gbpZar.toFixed(2)}` : "—"}
+        />
         <KpiCard
           label="£1,000 UK remittance"
-          value={`R${formatNumber(Math.round(gbpZar * 1000))}`}
-          hint="Sterling inflow at today's rate"
+          value={
+            gbpZar != null
+              ? `R${dashNum(Math.round(gbpZar * 1000))}`
+              : "—"
+          }
+          hint="Sterling inflow at scraped rate"
         />
       </div>
 
@@ -97,35 +108,41 @@ export default async function ForexPage() {
           trend={
             zarMomentum != null && zarMomentum > 2
               ? "Rand weakening"
-              : "Rand stable or firmer"
+              : zarMomentum != null
+                ? "Rand stable or firmer"
+                : undefined
           }
         />
         <KpiCard
           label="Import cost proxy"
-          value={`R${formatNumber(importCost)}`}
+          value={importCost != null ? `R${dashNum(importCost)}` : "—"}
           hint="Per US$1,000 of imports"
         />
         <KpiCard
           label="EUR/USD implied"
-          value={eurUsdImplied.toFixed(3)}
+          value={dashFixed(eurUsdImplied, 3)}
           hint="Cross-rate from ZAR pairs"
         />
         <KpiCard
           label="Regional USD/BWP"
-          value={`P${(rates.usd_bwp ?? 14.07).toFixed(2)}`}
+          value={
+            rates.usd_bwp != null ? `P${rates.usd_bwp.toFixed(2)}` : "—"
+          }
           hint="Southern Africa peer comparison"
         />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel title="Major currency crosses vs ZAR">
-          <SimpleBarChart
-            data={crosses}
-            xKey="pair"
-            yKey="rate"
-            color="#2563eb"
-          />
-        </ChartPanel>
+        {crosses.length > 0 ? (
+          <ChartPanel title="Major currency crosses vs ZAR">
+            <SimpleBarChart
+              data={crosses}
+              xKey="pair"
+              yKey="rate"
+              color="#2563eb"
+            />
+          </ChartPanel>
+        ) : null}
         {historyChart.length > 0 && (
           <ChartPanel title="USD/ZAR trend (recent months)">
             <SimpleLineChart

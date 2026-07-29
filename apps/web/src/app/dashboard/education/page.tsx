@@ -14,6 +14,7 @@ import { PROVINCE_LIST } from "@/shared/data/constants";
 import { loadJson } from "@/shared/data/load";
 import { buildProvinceMarkers } from "@/shared/data/province-map";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
+import { dashNum, dashPct } from "@/shared/data/display";
 import { formatNumber } from "@/shared/utils";
 
 type EducationData = {
@@ -43,13 +44,12 @@ export default async function EducationPage({
   const province = resolveProvince(provinceParam);
   const d = await loadJson<EducationData>("education");
   const prov = province !== "All Provinces" ? d?.provinces?.[province] : null;
-  const year = d?.exam_year ?? 2024;
-
-  const passRate = prov?.pass_rate ?? d?.national_pass_rate_pct ?? 87.3;
-  const bachelor = prov?.bachelor_pct ?? d?.bachelor_pass_pct ?? 45.6;
-  const bachelorGap = bachelor - 50;
+  const year = d?.exam_year;
+  const passRate = prov?.pass_rate ?? d?.national_pass_rate_pct;
+  const bachelor = prov?.bachelor_pct ?? d?.bachelor_pass_pct;
+  const bachelorGap = bachelor != null ? bachelor - 50 : null;
   const maths = d?.subjects?.Mathematics;
-  const mathsHq = maths?.hq_pass_rate ?? 31.2;
+  const mathsHq = maths?.hq_pass_rate;
 
   const passByProv = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -78,7 +78,9 @@ export default async function EducationPage({
       ? trendEntries[trendEntries.length - 2][1].pass_rate ?? 0
       : null;
   const passMomentum =
-    passRatePrior != null ? passRate - passRatePrior : null;
+    passRatePrior != null && passRate != null
+      ? passRate - passRatePrior
+      : null;
 
   const passByProvMap = Object.fromEntries(
     PROVINCE_LIST.map((p) => [p, d?.provinces?.[p]?.pass_rate ?? 0]),
@@ -89,29 +91,37 @@ export default async function EducationPage({
     <div>
       <PageHeader
         title="Education & Matric Data"
-        description={`NSC ${year} results — pass rates, subject performance, and university readiness.`}
+        description={
+          year != null
+            ? `NSC ${year} results — pass rates, subject performance, and university readiness.`
+            : "NSC results — pass rates, subject performance, and university readiness."
+        }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label={`Pass rate (${provinceLabel(province)})`}
-          value={`${passRate}%`}
-          hint={`National NSC ${year}`}
+          value={dashPct(passRate)}
+          hint={year != null ? `National NSC ${year}` : "National NSC"}
         />
         <KpiCard
           label="Bachelor pass rate"
-          value={`${bachelor}%`}
+          value={dashPct(bachelor)}
           hint="University-ready cohort"
-          trendPositive={bachelor >= 40}
+          trendPositive={bachelor != null && bachelor >= 40}
         />
         <KpiCard
           label="Candidates wrote"
-          value={formatNumber(d?.total_wrote ?? 756000)}
-          hint={`Distinctions: ${d?.distinction_rate_pct ?? 7.2}%`}
+          value={dashNum(d?.total_wrote)}
+          hint={
+            d?.distinction_rate_pct != null
+              ? `Distinctions: ${d.distinction_rate_pct}%`
+              : "Candidates who wrote"
+          }
         />
         <KpiCard
           label="National pass rate"
-          value={`${d?.national_pass_rate_pct ?? 87.3}%`}
+          value={dashPct(d?.national_pass_rate_pct)}
           hint="All provinces combined"
         />
       </div>
@@ -119,27 +129,43 @@ export default async function EducationPage({
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Candidates passed"
-          value={formatNumber(d?.total_passed ?? 656000)}
-          hint={`${((d?.total_passed ?? 656000) / (d?.total_wrote ?? 900000) * 100).toFixed(1)}% of cohort`}
-          trendPositive={(d?.total_passed ?? 0) > 600000}
+          value={dashNum(d?.total_passed)}
+          hint={
+            d?.total_passed != null && d?.total_wrote != null && d.total_wrote > 0
+              ? `${((d.total_passed / d.total_wrote) * 100).toFixed(1)}% of cohort`
+              : "Candidates who passed"
+          }
+          trendPositive={
+            d?.total_passed != null && d.total_passed > 600000
+          }
         />
         <KpiCard
           label="Distinction rate"
-          value={`${d?.distinction_rate_pct ?? 7.2}%`}
+          value={dashPct(d?.distinction_rate_pct)}
           hint="Top achievers nationally"
-          trendPositive={(d?.distinction_rate_pct ?? 7) >= 7}
+          trendPositive={
+            d?.distinction_rate_pct != null && d.distinction_rate_pct >= 7
+          }
         />
         <KpiCard
           label="Maths higher-grade pass"
-          value={`${mathsHq}%`}
-          hint={`Overall maths pass: ${maths?.pass_rate ?? 64}%`}
-          trendPositive={mathsHq >= 30}
+          value={dashPct(mathsHq)}
+          hint={
+            maths?.pass_rate != null
+              ? `Overall maths pass: ${maths.pass_rate}%`
+              : "Mathematics higher-grade"
+          }
+          trendPositive={mathsHq != null && mathsHq >= 30}
         />
         <KpiCard
           label="Bachelor readiness gap"
-          value={`${bachelorGap >= 0 ? "+" : ""}${bachelorGap.toFixed(1)}pp`}
+          value={
+            bachelorGap != null
+              ? `${bachelorGap >= 0 ? "+" : ""}${bachelorGap.toFixed(1)}pp`
+              : "—"
+          }
           hint="Vs 50% university-ready benchmark"
-          trendPositive={bachelorGap >= -5}
+          trendPositive={bachelorGap != null && bachelorGap >= -5}
           trend={
             passMomentum != null
               ? `${passMomentum >= 0 ? "+" : ""}${passMomentum.toFixed(1)}pp pass vs prior year`

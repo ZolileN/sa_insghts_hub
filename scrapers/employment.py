@@ -156,9 +156,11 @@ def fetch(output_dir: Path) -> dict:
     youth_ratio = (
         youth / unemployment
         if unemployment and youth
-        else cached.get("youth_unemployment_pct", 45) / cached.get("unemployment_rate_pct", 32)
-        if cached.get("unemployment_rate_pct")
-        else 1.4
+        else (
+            cached.get("youth_unemployment_pct") / cached.get("unemployment_rate_pct")
+            if cached.get("youth_unemployment_pct") and cached.get("unemployment_rate_pct")
+            else None
+        )
     )
 
     provinces: dict[str, dict] = dict(cached.get("provinces", {}))
@@ -168,7 +170,8 @@ def fetch(output_dir: Path) -> dict:
             continue
         entry = provinces.get(name, {})
         entry["unemployment"] = unemp
-        entry["youth_unemployment"] = round(unemp * youth_ratio, 1)
+        if youth_ratio is not None:
+            entry["youth_unemployment"] = round(unemp * youth_ratio, 1)
         if figures.get("expanded_unemployment"):
             entry["expanded_unemployment"] = figures["expanded_unemployment"]
         provinces[name] = entry
@@ -176,7 +179,7 @@ def fetch(output_dir: Path) -> dict:
     if parsed_provinces:
         ingestion["qlfs_provincial_table"] = True
 
-    period = (live or {}).get("period") or cached.get("period", "Unknown")
+    period = (live or {}).get("period") or cached.get("period")
     trend = dict(cached.get("trend", {}))
     if live and unemployment:
         trend[period.replace(" ", "-")] = unemployment

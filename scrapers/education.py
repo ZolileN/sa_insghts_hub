@@ -86,7 +86,7 @@ def fetch(output_dir: Path) -> dict:
     if not live and not cached:
         raise RuntimeError("Education: NSC scrape failed and no cached education.json")
 
-    exam_year = (live or {}).get("exam_year") or cached.get("exam_year", 2025)
+    exam_year = (live or {}).get("exam_year") or cached.get("exam_year")
     pass_rate = (live or {}).get("national_pass_rate_pct") or cached.get("national_pass_rate_pct")
     bachelor = (live or {}).get("bachelor_pass_pct") or cached.get("bachelor_pass_pct")
     total_passed = (live or {}).get("total_passed") or cached.get("total_passed")
