@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+import { AreaFilter } from "@/components/layout/area-filter";
 import { ProvinceFilter } from "@/components/layout/province-filter";
 import { Button } from "@/components/ui/button";
 
@@ -26,6 +27,9 @@ export default function DashboardLayout({
           <div className="flex items-center gap-2 sm:gap-3">
             <Suspense fallback={null}>
               <ProvinceFilter />
+            </Suspense>
+            <Suspense fallback={null}>
+              <AreaFilter />
             </Suspense>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/">Marketing site</Link>

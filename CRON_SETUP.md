@@ -18,7 +18,7 @@ Libo Insights uses local cron jobs for automated scraping (not GitHub Actions).
 |-----------|--------|----------|--------|
 | Realtime | forex, energy | Every 30 minutes | `cron_realtime.sh` |
 | Weekly | water | Mondays 06:00 UTC | `cron_weekly.sh` |
-| Monthly | finance, property | 1st of month 05:00 UTC | `cron_monthly.sh` |
+| Monthly | finance, property, employment | 1st of month 05:00 UTC | `cron_monthly.sh` |
 | Quarterly | All 10 topics | 1st of Jan, Apr, Jul, Oct 04:00 UTC | `cron_quarterly.sh` |
 
 Cadence matches each source’s publication schedule:
@@ -26,8 +26,8 @@ Cadence matches each source’s publication schedule:
 - **Forex / Eskom** — near real-time APIs
 - **Water (DWS)** — weekly reservoir report (often blocked outside SA; run cron on SA-hosted server for live data)
 - **Finance** — Stats SA CPI monthly; SARB MPC ~6× per year
-- **Property** — monthly press releases (commercial APIs still require licenses)
-- **Crime (SAPS), employment (QLFS), health, education, fraud** — quarterly or annual official releases
+- **Property** — FNB barometer, PayProp rental index (press); metros preserved in JSON
+- **Employment (QLFS)** — Stats SA quarterly PDF with live provincial table parse
 
 ## Testing
 

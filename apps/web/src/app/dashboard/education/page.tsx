@@ -21,14 +21,14 @@ type EducationData = {
   national_pass_rate_pct?: number;
   bachelor_pass_pct?: number;
   total_wrote?: number;
+  total_passed?: number;
   distinction_rate_pct?: number;
   provinces?: Record<
     string,
     { pass_rate?: number; bachelor_pct?: number; wrote?: number }
   >;
   subjects?: Record<string, { pass_rate?: number; hq_pass_rate?: number }>;
-  pass_trend?: Record<string, number>;
-  bachelor_trend?: Record<string, number>;
+  trend?: Record<string, { pass_rate?: number; bachelor?: number }>;
 };
 
 export default async function EducationPage({
@@ -44,6 +44,9 @@ export default async function EducationPage({
 
   const passRate = prov?.pass_rate ?? d?.national_pass_rate_pct ?? 87.3;
   const bachelor = prov?.bachelor_pct ?? d?.bachelor_pass_pct ?? 45.6;
+  const bachelorGap = bachelor - 50;
+  const maths = d?.subjects?.Mathematics;
+  const mathsHq = maths?.hq_pass_rate ?? 31.2;
 
   const passByProv = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -58,18 +61,27 @@ export default async function EducationPage({
     .sort((a, b) => b.pass - a.pass)
     .slice(0, 8);
 
-  const years = Object.keys(d?.pass_trend ?? {}).sort();
-  const trend = years.map((y) => ({
+  const trendEntries = Object.entries(d?.trend ?? {}).sort(([a], [b]) =>
+    a.localeCompare(b),
+  );
+  const trend = trendEntries.map(([y, v]) => ({
     year: y,
-    pass: d?.pass_trend?.[y] ?? 0,
-    bachelor: d?.bachelor_trend?.[y] ?? 0,
+    pass: v.pass_rate ?? 0,
+    bachelor: v.bachelor ?? 0,
   }));
+
+  const passRatePrior =
+    trendEntries.length >= 2
+      ? trendEntries[trendEntries.length - 2][1].pass_rate ?? 0
+      : null;
+  const passMomentum =
+    passRatePrior != null ? passRate - passRatePrior : null;
 
   return (
     <div>
       <PageHeader
         title="Education & Matric Data"
-        description={`NSC ${year} results — pass rates and university readiness by province.`}
+        description={`NSC ${year} results — pass rates, subject performance, and university readiness.`}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -93,6 +105,38 @@ export default async function EducationPage({
           label="National pass rate"
           value={`${d?.national_pass_rate_pct ?? 87.3}%`}
           hint="All provinces combined"
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Candidates passed"
+          value={formatNumber(d?.total_passed ?? 656000)}
+          hint={`${((d?.total_passed ?? 656000) / (d?.total_wrote ?? 900000) * 100).toFixed(1)}% of cohort`}
+          trendPositive={(d?.total_passed ?? 0) > 600000}
+        />
+        <KpiCard
+          label="Distinction rate"
+          value={`${d?.distinction_rate_pct ?? 7.2}%`}
+          hint="Top achievers nationally"
+          trendPositive={(d?.distinction_rate_pct ?? 7) >= 7}
+        />
+        <KpiCard
+          label="Maths higher-grade pass"
+          value={`${mathsHq}%`}
+          hint={`Overall maths pass: ${maths?.pass_rate ?? 64}%`}
+          trendPositive={mathsHq >= 30}
+        />
+        <KpiCard
+          label="Bachelor readiness gap"
+          value={`${bachelorGap >= 0 ? "+" : ""}${bachelorGap.toFixed(1)}pp`}
+          hint="Vs 50% university-ready benchmark"
+          trendPositive={bachelorGap >= -5}
+          trend={
+            passMomentum != null
+              ? `${passMomentum >= 0 ? "+" : ""}${passMomentum.toFixed(1)}pp pass vs prior year`
+              : undefined
+          }
         />
       </div>
 
@@ -132,7 +176,7 @@ export default async function EducationPage({
       )}
 
       <SourceBadge
-        source={d?.source ?? "DBE NSC"}
+        source={`${d?.source ?? "DBE NSC"} · EMIS master lists · DHET`}
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

@@ -126,3 +126,16 @@ body {
     animation: none;
   }
 }
+
+/* Leaflet map (OpenStreetMap tiles — no Mapbox token required) */
+@import "leaflet/dist/leaflet.css";
+
+.leaflet-container {
+  font-family: inherit;
+  background: #e8eef4;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+

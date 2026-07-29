@@ -1,11 +1,11 @@
 {
-  "last_run": "2026-07-29T20:00:04.700434+00:00",
+  "last_run": "2026-07-29T19:20:28.329928+00:00",
   "topics": {
     "forex": {
       "label": "\ud83d\udcb1 ZAR Exchange Rate",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 1.03,
+      "elapsed_s": 1.12,
       "cadence": "realtime",
       "schedule": "Every 15 min (forex) / hourly (energy stage)"
     },
@@ -13,9 +13,41 @@
       "label": "\u26a1 Eskom Load Shedding",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 0.9,
+      "elapsed_s": 11.94,
       "cadence": "realtime",
       "schedule": "Every 15 min (forex) / hourly (energy stage)"
+    },
+    "finance": {
+      "label": "\ud83d\udcb0 SARB Repo + CPI",
+      "status": "success",
+      "is_live": true,
+      "elapsed_s": 5.37,
+      "cadence": "monthly",
+      "schedule": "1st of each month"
+    },
+    "property": {
+      "label": "\ud83c\udfe0 Property Prices",
+      "status": "success",
+      "is_live": true,
+      "elapsed_s": 2.46,
+      "cadence": "monthly",
+      "schedule": "1st of each month"
+    },
+    "employment": {
+      "label": "\ud83d\udcc9 Stats SA QLFS",
+      "status": "success",
+      "is_live": true,
+      "elapsed_s": 4.75,
+      "cadence": "quarterly",
+      "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
+    },
+    "health": {
+      "label": "\ud83c\udfe5 NDOH Health Data",
+      "status": "success",
+      "is_live": true,
+      "elapsed_s": 61.82,
+      "cadence": "quarterly",
+      "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
     }
   }
 }

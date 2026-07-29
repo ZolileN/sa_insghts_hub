@@ -6,6 +6,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/shared/utils";
 
 const Select = SelectPrimitive.Root;
+
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
@@ -17,14 +18,14 @@ function SelectTrigger({
   return (
     <SelectPrimitive.Trigger
       className={cn(
-        "flex h-9 w-full items-center justify-between rounded-lg border border-[var(--border)] bg-white/80 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-900/50",
+        "flex h-9 w-full items-center justify-between rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="h-4 w-4 opacity-50" />
+        <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -40,15 +41,16 @@ function SelectContent({
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-lg border border-[var(--border)] bg-white text-[var(--foreground)] shadow-md dark:bg-slate-900",
+          "z-[100] max-h-72 min-w-[8rem] overflow-hidden rounded-lg border border-[var(--border)] bg-white text-[var(--foreground)] shadow-lg",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
           className,
         )}
         position={position}
+        sideOffset={4}
         {...props}
       >
-        <SelectPrimitive.Viewport className="p-1">
+        <SelectPrimitive.Viewport className="max-h-64 overflow-y-auto p-1">
           {children}
         </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>

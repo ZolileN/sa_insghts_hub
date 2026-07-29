@@ -75,3 +75,22 @@ def find_first_percent(text: str, pattern: str) -> float | None:
     if not match:
         return None
     return parse_sa_decimal(match.group(1))
+
+
+def get_json(
+    url: str,
+    timeout: int = 30,
+    verify: bool = True,
+) -> dict | list | None:
+    try:
+        response = requests.get(
+            url,
+            headers=HEADERS,
+            timeout=timeout,
+            verify=verify,
+        )
+        if response.status_code == 200:
+            return response.json()
+    except Exception as exc:
+        log.debug("get_json %s: %s", url, exc)
+    return None

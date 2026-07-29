@@ -4,8 +4,10 @@ import {
   PageHeader,
   SourceBadge,
 } from "@/components/dashboard/page-parts";
-import { SimpleBarChart } from "@/components/charts/recharts";
+import { SimpleBarChart, SimpleLineChart } from "@/components/charts/recharts";
+import { lastTwoFromRecord, pctChange } from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
+import { formatNumber } from "@/shared/utils";
 
 type ForexData = {
   source?: string;
@@ -20,6 +22,11 @@ type ForexData = {
     usd_kes?: number;
     timestamp?: string;
   };
+  usd_zar_history?: Record<string, number>;
+  intelligence?: {
+    import_cost_per_usd_1000_r?: number;
+    sarb_official_url?: string;
+  };
 };
 
 export default async function ForexPage() {
@@ -28,6 +35,19 @@ export default async function ForexPage() {
   const usdZar = rates.usd_zar ?? 18.64;
   const eurZar = rates.eur_zar ?? 20.21;
   const gbpZar = rates.gbp_zar ?? 23.48;
+  const eurUsdImplied = usdZar > 0 ? eurZar / usdZar : 0;
+
+  const historyPair = lastTwoFromRecord(d?.usd_zar_history ?? {});
+  const zarMomentum =
+    historyPair != null ? pctChange(historyPair[3], historyPair[1]) : null;
+
+  const importCost =
+    d?.intelligence?.import_cost_per_usd_1000_r ??
+    Math.round(usdZar * 1000);
+
+  const historyChart = Object.entries(d?.usd_zar_history ?? {}).map(
+    ([month, rate]) => ({ month, rate }),
+  );
 
   const crosses = [
     { pair: "USD/ZAR", rate: usdZar },
@@ -42,7 +62,7 @@ export default async function ForexPage() {
     <div>
       <PageHeader
         title="ZAR Exchange Rate & Forex"
-        description="Live rand crosses — critical for imports, remittances, and offshore investment limits."
+        description="Live rand crosses — imports, remittances, and offshore limits."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -54,14 +74,50 @@ export default async function ForexPage() {
         <KpiCard label="EUR/ZAR" value={`R${eurZar.toFixed(2)}`} />
         <KpiCard label="GBP/ZAR" value={`R${gbpZar.toFixed(2)}`} />
         <KpiCard
-          label="Data status"
-          value={d?.is_live ? "Live feed" : "Cached"}
-          hint="open.er-api.com + SARB"
-          trendPositive={d?.is_live}
+          label="£1,000 UK remittance"
+          value={`R${formatNumber(Math.round(gbpZar * 1000))}`}
+          hint="Sterling inflow at today's rate"
         />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="ZAR momentum (monthly)"
+          value={
+            zarMomentum != null
+              ? `${zarMomentum >= 0 ? "+" : ""}${zarMomentum.toFixed(1)}%`
+              : "—"
+          }
+          hint={
+            historyPair
+              ? `USD/ZAR ${historyPair[0]} → ${historyPair[2]}`
+              : "SARB / market history"
+          }
+          trendPositive={zarMomentum != null && zarMomentum < 0}
+          trend={
+            zarMomentum != null && zarMomentum > 2
+              ? "Rand weakening"
+              : "Rand stable or firmer"
+          }
+        />
+        <KpiCard
+          label="Import cost proxy"
+          value={`R${formatNumber(importCost)}`}
+          hint="Per US$1,000 of imports"
+        />
+        <KpiCard
+          label="EUR/USD implied"
+          value={eurUsdImplied.toFixed(3)}
+          hint="Cross-rate from ZAR pairs"
+        />
+        <KpiCard
+          label="Regional USD/BWP"
+          value={`P${(rates.usd_bwp ?? 14.07).toFixed(2)}`}
+          hint="Southern Africa peer comparison"
+        />
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <ChartPanel title="Major currency crosses vs ZAR">
           <SimpleBarChart
             data={crosses}
@@ -70,10 +126,19 @@ export default async function ForexPage() {
             color="#2563eb"
           />
         </ChartPanel>
+        {historyChart.length > 0 && (
+          <ChartPanel title="USD/ZAR trend (recent months)">
+            <SimpleLineChart
+              data={historyChart}
+              xKey="month"
+              lines={[{ key: "rate", color: "#059669", name: "USD/ZAR" }]}
+            />
+          </ChartPanel>
+        )}
       </div>
 
       <SourceBadge
-        source={d?.source ?? "open.er-api.com · SARB"}
+        source="South African Reserve Bank · Frankfurter · open.er-api.com"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

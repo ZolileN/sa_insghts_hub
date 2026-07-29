@@ -22,6 +22,7 @@ from scrapers._common import (
     parse_sa_decimal,
     utc_now_iso,
 )
+from scrapers.sources.vulekamali import fetch_budget_summary
 
 log = logging.getLogger(__name__)
 
@@ -121,6 +122,14 @@ def _fetch_statssa_cpi_html() -> dict | None:
 def fetch(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    existing_path = output_dir / "finance.json"
+    existing: dict = {}
+    if existing_path.exists():
+        try:
+            existing = json.loads(existing_path.read_text())
+        except json.JSONDecodeError:
+            existing = {}
+
     sarb = _fetch_sarb_repo_rate()
     cpi = _fetch_statssa_cpi_pdf() or _fetch_statssa_cpi_html()
 
@@ -146,13 +155,61 @@ def fetch(output_dir: Path) -> dict:
             "2025-Q1": 7.5,  "2025-Q2": 7.25, "2025-Q3": 7.0,  "2025-Q4": 6.75,
             "2026-Q1": 6.75, "2026-Q2": 7.0,  "2026-Q3": 7.0,
         },
-        "cpi_history": {
-            "2023-01": 6.9, "2023-04": 6.8, "2023-07": 4.7, "2023-10": 5.5,
-            "2024-01": 5.3, "2024-04": 5.3, "2024-07": 4.6, "2024-10": 2.9,
-            "2025-01": 3.5, "2025-04": 3.3, "2025-07": 3.4, "2025-10": 3.6,
-            "2026-01": 3.5, "2026-04": 4.5, "2026-06": 5.0,
+        "cpi_history": existing.get(
+            "cpi_history",
+            {
+                "2023-01": 6.9, "2023-04": 6.8, "2023-07": 4.7, "2023-10": 5.5,
+                "2024-01": 5.3, "2024-04": 5.3, "2024-07": 4.6, "2024-10": 2.9,
+                "2025-01": 3.5, "2025-04": 3.3, "2025-07": 3.4, "2025-10": 3.6,
+                "2026-01": 3.5, "2026-04": 4.5, "2026-06": 5.0,
+            },
+        ),
+        "cpi_basket": existing.get(
+            "cpi_basket",
+            {
+                "Food & non-alcoholic beverages": 6.8,
+                "Housing & utilities": 4.2,
+                "Transport": 3.1,
+                "Medical care": 5.4,
+                "Education": 4.8,
+                "Miscellaneous": 3.9,
+            },
+        ),
+        "ingestion": {
+            "sarb_mpc": bool(sarb),
+            "stats_sa_cpi": bool(cpi),
+            "vulekamali": False,
+            "etenders": False,
+        },
+        "data_sources": {
+            "sarb": "https://www.resbank.co.za",
+            "stats_sa_cpi": "https://www.statssa.gov.za/?page_id=1854&PPN=P0141",
+            "vulekamali": "https://vulekamali.gov.za",
+            "etenders": "https://www.etenders.gov.za",
         },
     }
+
+    if cpi and result["cpi_period"]:
+        period_key = result["cpi_period"].replace(" ", "-").lower()
+        if "june" in period_key or "2026" in period_key:
+            result["cpi_history"]["2026-06"] = result["cpi_headline_pct"]
+
+    budget_live = fetch_budget_summary()
+    if budget_live:
+        result["budget"] = budget_live
+        result["ingestion"]["vulekamali"] = True
+        result["is_live"] = True
+    else:
+        result["budget"] = existing.get(
+            "budget",
+            {
+                "portal": "https://vulekamali.gov.za",
+                "datastore": "https://data.vulekamali.gov.za",
+                "latest_financial_year": "2025-26",
+                "packages_found": 0,
+                "note": "CKAN API unreachable — use SA-hosted cron for live budget datasets",
+            },
+        )
 
     out = output_dir / "finance.json"
     out.write_text(json.dumps(result, indent=2))

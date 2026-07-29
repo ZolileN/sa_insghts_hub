@@ -12,6 +12,9 @@ import requests
 from bs4 import BeautifulSoup
 
 from scrapers._common import HEADERS, utc_now_iso
+from scrapers.sources.finance_sync import read_prime_rate_pct
+from scrapers.sources.payprop import fetch_rental_growth_pct
+from scrapers.sources.cape_town_arcgis import fetch_cape_town_open_data
 
 log = logging.getLogger(__name__)
 
@@ -32,9 +35,16 @@ def _scrape_page_for_rate(url: str, pattern: str) -> float | None:
 
 def fetch(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
+    existing_path = output_dir / "property.json"
+    existing: dict = {}
+    if existing_path.exists():
+        try:
+            existing = json.loads(existing_path.read_text())
+        except json.JSONDecodeError:
+            existing = {}
 
     result = {
-        "source": "Lightstone · FNB Property Barometer · PayProp Rental Index 2024",
+        "source": "Lightstone · FNB Property Barometer · PayProp · Inside Airbnb · Stats SA P0142 · Cape Town Open Data",
         "scraped_at": utc_now_iso(),
         "is_live": False,
         "national": {
@@ -44,6 +54,8 @@ def fetch(output_dir: Path) -> dict:
             "days_on_market": 72,
             "bond_approval_rate_pct": 62,
             "prime_rate_pct": 10.5,
+            "transfer_duty_threshold_r": 1210000,
+            "avg_household_income_r": 282000,
         },
         "provinces": {
             "Western Cape":  {"median_price_r": 2100000, "yoy_growth_pct": 4.2, "rental_yield_pct": 6.8, "days_on_market": 52},
@@ -61,10 +73,52 @@ def fetch(output_dir: Path) -> dict:
             "Q3-2022": 1120, "Q1-2023": 1180, "Q3-2023": 1240,
             "Q1-2024": 1270, "Q3-2024": 1280, "Q1-2025": 1300, "Q1-2026": 1320,
         },
+        "metros": existing.get("metros", {}),
+        "price_trend": existing.get("price_trend", {}),
+        "data_sources": existing.get(
+            "data_sources",
+            {
+                "inside_airbnb": "https://insideairbnb.com/get-the-data/",
+                "wazimap": "https://wazimap.co.za",
+                "stats_sa": "https://www.statssa.gov.za",
+            },
+        ),
     }
 
+    ingestion: dict[str, bool | str] = {
+        "fnb_barometer": False,
+        "payprop": False,
+        "inside_airbnb": False,
+        "cape_town_open_data": False,
+        "csg_dlrrd": False,
+    }
+
+    yoy = _scrape_page_for_rate(FNB_URL, r"growth[^\d]*(\d+[.,]\d+)\s*%")
+    if yoy:
+        result["national"]["yoy_growth_pct"] = yoy
+        result["is_live"] = True
+        ingestion["fnb_barometer"] = True
+
+    payprop_growth = fetch_rental_growth_pct()
+    if payprop_growth is not None:
+        ingestion["payprop"] = True
+        result["is_live"] = True
+        result["national"]["rental_growth_yoy_pct"] = payprop_growth
+
+    prime = read_prime_rate_pct(output_dir)
+    if prime is not None:
+        result["national"]["prime_rate_pct"] = prime
+
+    cape_town = fetch_cape_town_open_data()
+    if cape_town:
+        result["cape_town_open"] = cape_town
+        ingestion["cape_town_open_data"] = True
+        result["is_live"] = True
+
+    result["ingestion"] = ingestion
+
     (output_dir / "property.json").write_text(json.dumps(result, indent=2))
-    log.info("Property data saved")
+    log.info("Property data saved | live=%s ingestion=%s", result["is_live"], ingestion)
     return result
 
 

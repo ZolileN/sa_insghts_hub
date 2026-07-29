@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { formatDataAsOf } from "@/shared/data/display";
 import { cn } from "@/shared/utils";
 
 interface PageHeaderProps {
@@ -73,33 +73,17 @@ export function KpiCard({
 interface SourceBadgeProps {
   source: string;
   scrapedAt?: string | null;
+  /** Kept for API compatibility; no longer shown in the footer. */
   isLive?: boolean;
 }
 
 export function SourceBadge({ source, scrapedAt, isLive }: SourceBadgeProps) {
-  let refreshed = "";
-  if (scrapedAt && scrapedAt !== "fallback") {
-    try {
-      const dt = new Date(scrapedAt);
-      refreshed = ` · ${dt.toLocaleDateString("en-ZA", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    } catch {
-      /* ignore */
-    }
-  }
+  const refreshed = formatDataAsOf(scrapedAt, "");
 
   return (
-    <div className="mt-6 flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
-      <span>Source: {source}</span>
-      {refreshed && <span>{refreshed}</span>}
-      <Badge variant={isLive ? "success" : "warning"}>
-        {isLive ? "Live" : "Cached"}
-      </Badge>
+    <div className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--muted-foreground)]">
+      <span>Sources: {source}</span>
+      {refreshed && <span>· Updated {refreshed}</span>}
     </div>
   );
 }

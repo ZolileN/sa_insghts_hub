@@ -1,6 +1,6 @@
 {
-  "source": "Stats SA QLFS Q1 2026",
-  "scraped_at": "2026-07-29T16:18:01.090264+00:00",
+  "source": "Stats SA QLFS Q1 2026 \u00b7 Wazimap (planned) \u00b7 labour.gov.za",
+  "scraped_at": "2026-07-29T19:17:32.262445+00:00",
   "is_live": true,
   "period": "Q1 2026",
   "unemployment_rate_pct": 32.7,
@@ -20,13 +20,13 @@
       "unemployment": 44.6,
       "youth_unemployment": 63.1,
       "median_income_r": 6400,
-      "expanded_unemployment": 54.4
+      "expanded_unemployment": 5.4
     },
     "Northern Cape": {
       "unemployment": 30.4,
       "youth_unemployment": 43.0,
       "median_income_r": 8900,
-      "expanded_unemployment": 47.0
+      "expanded_unemployment": 3.9
     },
     "Free State": {
       "unemployment": 37.8,
@@ -56,7 +56,7 @@
       "unemployment": 36.3,
       "youth_unemployment": 51.4,
       "median_income_r": 5800,
-      "expanded_unemployment": 49.6
+      "expanded_unemployment": 0.3
     },
     "Limpopo": {
       "unemployment": 31.7,
@@ -80,5 +80,18 @@
     "Q4-2024": 31.4,
     "Q1-2025": 32.9,
     "Q1-2026": 32.7
+  },
+  "ingestion": {
+    "qlfs_pdf": true,
+    "qlfs_html": false,
+    "wazimap": false,
+    "labour_gov": false,
+    "qlfs_provincial_table": true
+  },
+  "data_sources": {
+    "qlfs": "https://www.statssa.gov.za/?page_id=1854&PPN=P0211",
+    "datafirst": "https://www.datafirst.uct.ac.za",
+    "wazimap": "https://wazimap.co.za",
+    "labour": "https://www.labour.gov.za"
   }
 }

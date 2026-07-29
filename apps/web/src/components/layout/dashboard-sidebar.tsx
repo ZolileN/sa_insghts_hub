@@ -79,8 +79,9 @@ export function DashboardSidebar() {
 
       <div className="p-4">
         <Separator className="mb-3" />
-        <p className="text-[10px] text-[var(--muted-foreground)]">
-          Data refreshed via cron scrapers. Live badges reflect source availability.
+        <p className="text-[10px] leading-relaxed text-[var(--muted-foreground)]">
+          Tip: choose a province in the header to compare regions. On Crime and
+          Property, click the map or charts to drill into metros and suburbs.
         </p>
       </div>
     </aside>

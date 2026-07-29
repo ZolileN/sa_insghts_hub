@@ -11,11 +11,13 @@ import {
 import { PROVINCE_LIST } from "@/shared/data/constants";
 import { loadJson } from "@/shared/data/load";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
+import { formatNumber } from "@/shared/utils";
 
 type WaterData = {
   source?: string;
   scraped_at?: string;
   is_live?: boolean;
+  report_date?: string;
   national_avg_pct?: number;
   provinces?: Record<
     string,
@@ -48,11 +50,29 @@ export default async function WaterPage({
     prov?.this_week_pct != null && prov?.last_week_pct != null
       ? prov.this_week_pct - prov.last_week_pct
       : null;
+  const yoyDelta =
+    prov?.this_week_pct != null && prov?.last_year_pct != null
+      ? prov.this_week_pct - prov.last_year_pct
+      : null;
+
+  const totalCapacity = (d?.dams ?? []).reduce(
+    (a, dam) => a + (dam.capacity_mm3 ?? 0),
+    0,
+  );
+
+  const lowestProv = PROVINCE_LIST.reduce(
+    (min, p) => {
+      const v = d?.provinces?.[p]?.this_week_pct ?? 100;
+      return v < min.val ? { name: p, val: v } : min;
+    },
+    { name: "—", val: 100 },
+  );
 
   const provinceLevels = PROVINCE_LIST.map((p) => ({
     province: p,
     thisWeek: d?.provinces?.[p]?.this_week_pct ?? 0,
     lastWeek: d?.provinces?.[p]?.last_week_pct ?? 0,
+    lastYear: d?.provinces?.[p]?.last_year_pct ?? 0,
   }));
 
   const dams = (d?.dams ?? []).map((dam) => ({
@@ -60,11 +80,23 @@ export default async function WaterPage({
     level: dam.this_week_pct ?? 0,
   }));
 
+  const droughtStress = PROVINCE_LIST.filter(
+    (p) => (d?.provinces?.[p]?.this_week_pct ?? 100) < 60,
+  ).length;
+
+  const lowestDam = (d?.dams ?? []).reduce<{ name: string; level: number }>(
+    (min, dam) => {
+      const level = dam.this_week_pct ?? 100;
+      return level < min.level ? { name: dam.name, level } : min;
+    },
+    { name: "—", level: 100 },
+  );
+
   return (
     <div>
       <PageHeader
         title="Water & Service Delivery"
-        description="Dam and reservoir levels — water security signal for metros and agriculture."
+        description="Dam and reservoir levels — water security for metros and agriculture."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -91,16 +123,39 @@ export default async function WaterPage({
         />
         <KpiCard
           label="Lowest province"
+          value={lowestProv.name}
+          hint={`${lowestProv.val}% storage — watch stressed regions`}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label={`YoY storage change (${provinceLabel(province)})`}
           value={
-            PROVINCE_LIST.reduce(
-              (min, p) => {
-                const v = d?.provinces?.[p]?.this_week_pct ?? 100;
-                return v < min.val ? { name: p, val: v } : min;
-              },
-              { name: "—", val: 100 },
-            ).name
+            yoyDelta != null
+              ? `${yoyDelta >= 0 ? "+" : ""}${yoyDelta.toFixed(1)}pp`
+              : "—"
           }
-          hint="Watch water-stressed regions"
+          hint="Versus same week last year"
+          trendPositive={yoyDelta != null ? yoyDelta >= 0 : undefined}
+        />
+        <KpiCard
+          label="Total capacity tracked"
+          value={`${totalCapacity.toFixed(0)} km³`}
+          hint="Major dam combined capacity"
+        />
+        <KpiCard
+          label="Drought-stress provinces"
+          value={formatNumber(droughtStress)}
+          hint="Provinces below 60% storage"
+          trendPositive={droughtStress === 0}
+        />
+        <KpiCard
+          label="Most stressed major dam"
+          value={lowestDam.name}
+          hint={`${lowestDam.level}% full this week`}
+          trendPositive={lowestDam.level >= 60}
+          trend={lowestDam.level < 60 ? "Below comfort threshold" : "Adequate storage"}
         />
       </div>
 
@@ -120,8 +175,21 @@ export default async function WaterPage({
         </ChartPanel>
       </div>
 
+      <div className="mt-6">
+        <ChartPanel title="Province dam levels — vs last year">
+          <MultiBarChart
+            data={provinceLevels}
+            xKey="province"
+            keys={[
+              { key: "thisWeek", color: "#2563eb", name: "This week" },
+              { key: "lastYear", color: "#d97706", name: "Last year" },
+            ]}
+          />
+        </ChartPanel>
+      </div>
+
       <SourceBadge
-        source={d?.source ?? "DWS"}
+        source="Department of Water & Sanitation · OpenUp · Cape Town open data"
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />
