@@ -33,8 +33,19 @@ type EnergyData = {
     consecutive_days_without?: number;
     eaf_pct?: number;
     financial_year?: string;
+    calendar_year_hours?: Record<string, number>;
+    current_fy_hours?: number;
   };
 };
+
+/** All years with monthly hour breakdowns (legacy + modern keys). */
+function monthlyYears(d: EnergyData): string[] {
+  const years = new Set<string>();
+  for (const y of Object.keys(d.monthly_hours_by_year ?? {})) years.add(y);
+  if (d.monthly_hours_2023) years.add("2023");
+  if (d.monthly_hours_2024) years.add("2024");
+  return [...years].sort();
+}
 
 function monthlyHoursForYear(d: EnergyData, year: string): Record<string, number> {
   if (d.monthly_hours_by_year?.[year]) return d.monthly_hours_by_year[year];
@@ -43,33 +54,35 @@ function monthlyHoursForYear(d: EnergyData, year: string): Record<string, number
   return {};
 }
 
-function latestMonthlyYear(d: EnergyData): string | null {
-  const years = Object.keys(d.monthly_hours_by_year ?? {});
-  if (years.length) return years.sort().pop() ?? null;
-  if (d.monthly_hours_2024) return "2024";
-  return null;
+/** Latest calendar year in annual totals (scraped live + cache). */
+function primaryOutageYear(d: EnergyData): string {
+  const years = Object.keys(d.annual_totals ?? {})
+    .filter((y) => /^\d{4}$/.test(y))
+    .sort();
+  if (years.length) return years[years.length - 1];
+  return String(new Date().getFullYear());
 }
 
 function latestTariffYear(d: EnergyData): string | null {
-  const keys = Object.keys(d.electricity_tariff_history ?? {});
+  const keys = Object.keys(d.electricity_tariff_history ?? {}).filter((y) =>
+    /^\d{4}$/.test(y),
+  );
   return keys.length ? keys.sort().pop() ?? null : null;
 }
 
-function energyMix(d: EnergyData): Record<string, number> {
-  const byYear = d.energy_mix_by_year;
-  if (byYear) {
-    const y = Object.keys(byYear).sort().pop();
-    if (y) return byYear[y];
-  }
-  return d.energy_mix_pct_2024 ?? {};
+function energyMixForYear(d: EnergyData, year: string): Record<string, number> {
+  if (d.energy_mix_by_year?.[year]) return d.energy_mix_by_year[year];
+  if (year === "2024" && d.energy_mix_pct_2024) return d.energy_mix_pct_2024;
+  return {};
 }
 
-function mixYearLabel(d: EnergyData): string {
-  const byYear = d.energy_mix_by_year;
-  if (byYear && Object.keys(byYear).length) {
-    return Object.keys(byYear).sort().pop() ?? "latest";
-  }
-  return "2024";
+function latestMixYear(d: EnergyData): string | null {
+  const years = Object.keys(d.energy_mix_by_year ?? {}).filter((y) =>
+    /^\d{4}$/.test(y),
+  );
+  if (d.energy_mix_pct_2024) years.push("2024");
+  const unique = [...new Set(years)].sort();
+  return unique.length ? unique[unique.length - 1] : null;
 }
 
 export default async function EnergyPage() {
@@ -77,49 +90,71 @@ export default async function EnergyPage() {
   const data: EnergyData = d ?? {};
   const stage = data.current_stage ?? 0;
 
-  const currentYear = latestMonthlyYear(data) ?? String(new Date().getFullYear());
-  const prevYear = String(Number(currentYear) - 1);
-  const hoursCurrent = Object.values(monthlyHoursForYear(data, currentYear)).reduce(
-    (a, b) => a + b,
-    0,
-  );
-  const hoursPrev = Object.values(monthlyHoursForYear(data, prevYear)).reduce(
-    (a, b) => a + b,
-    0,
-  );
-  const annualHours =
-    data.annual_totals?.[currentYear] ??
-    data.fy_stats?.loadshedding_hours_fy ??
-    hoursCurrent;
-  const hoursReductionPct = hoursPrev > 0 ? pctChange(annualHours, hoursPrev) : null;
+  const outageYear = primaryOutageYear(data);
+  const prevOutageYear = String(Number(outageYear) - 1);
 
-  const tariffYear = latestTariffYear(data) ?? currentYear;
+  const annualHours =
+    data.annual_totals?.[outageYear] ??
+    data.fy_stats?.loadshedding_hours_fy ??
+    Object.values(monthlyHoursForYear(data, outageYear)).reduce((a, b) => a + b, 0);
+
+  const hoursPrev =
+    data.annual_totals?.[prevOutageYear] ??
+    Object.values(monthlyHoursForYear(data, prevOutageYear)).reduce((a, b) => a + b, 0);
+
+  const hoursReductionPct =
+    hoursPrev > 0 ? pctChange(annualHours, hoursPrev) : null;
+
+  const tariffYear = latestTariffYear(data) ?? outageYear;
   const tariff = data.electricity_tariff_history?.[tariffYear] ?? 0;
-  const mix = energyMix(data);
-  const mixYear = mixYearLabel(data);
+
+  const mixYear = latestMixYear(data);
+  const mix = mixYear ? energyMixForYear(data, mixYear) : {};
+
   const upcoming = data.upcoming_outages?.length ?? 0;
   const monthlyBill = estimateMonthlyElectricityBill(400, tariff);
   const streak = data.fy_stats?.consecutive_days_without;
 
-  const monthlyCompare = Object.keys(monthlyHoursForYear(data, currentYear)).map((m) => ({
-    month: m,
-    [prevYear]: monthlyHoursForYear(data, prevYear)[m] ?? 0,
-    [currentYear]: monthlyHoursForYear(data, currentYear)[m] ?? 0,
-  }));
+  const monthlyYearsList = monthlyYears(data);
+  const chartPrevYear =
+    monthlyYearsList.length >= 2
+      ? monthlyYearsList[monthlyYearsList.length - 2]
+      : null;
+  const chartCurrentYear =
+    monthlyYearsList.length >= 1
+      ? monthlyYearsList[monthlyYearsList.length - 1]
+      : null;
 
-  const annual = Object.entries(data.annual_totals ?? {}).map(([year, h]) => ({
-    year,
-    hours: h,
-  }));
+  const monthlyCompare =
+    chartPrevYear && chartCurrentYear
+      ? Object.keys(monthlyHoursForYear(data, chartCurrentYear)).map((m) => ({
+          month: m,
+          [chartPrevYear]: monthlyHoursForYear(data, chartPrevYear)[m] ?? 0,
+          [chartCurrentYear]: monthlyHoursForYear(data, chartCurrentYear)[m] ?? 0,
+        }))
+      : [];
+
+  const monthlyChartHistorical =
+    chartCurrentYear != null && chartCurrentYear !== outageYear;
+
+  const annual = Object.entries(data.annual_totals ?? {})
+    .filter(([year]) => /^\d{4}$/.test(year))
+    .map(([year, h]) => ({ year, hours: h }));
 
   const mixChart = Object.entries(mix).map(([name, pct]) => ({
     name,
     pct,
   }));
 
-  const tariffTrend = Object.entries(data.electricity_tariff_history ?? {}).map(
-    ([year, c]) => ({ year, tariff: c }),
-  );
+  const tariffTrend = Object.entries(data.electricity_tariff_history ?? {})
+    .filter(([year]) => /^\d{4}$/.test(year))
+    .map(([year, c]) => ({ year, tariff: c }));
+
+  const outageHint = data.fy_stats?.financial_year
+    ? `FY ${data.fy_stats.financial_year} · Eskom media`
+    : data.annual_totals?.[outageYear] != null
+      ? "Calendar year · scraped totals"
+      : "Scheduled outage hours";
 
   return (
     <div>
@@ -137,41 +172,45 @@ export default async function EnergyPage() {
           trend={stage === 0 ? "No load shedding" : `Stage ${stage}`}
         />
         <KpiCard
-          label={`Outage hours ${currentYear}`}
+          label={`Outage hours ${outageYear}`}
           value={formatNumber(annualHours)}
-          hint={
-            data.fy_stats?.financial_year
-              ? `FY ${data.fy_stats.financial_year} · Eskom media`
-              : "Scheduled outage hours"
-          }
+          hint={outageHint}
           trendPositive={hoursPrev > 0 && annualHours < hoursPrev}
           trend={
             hoursPrev > 0
-              ? `vs ${formatNumber(hoursPrev)} hrs in ${prevYear}`
+              ? `vs ${formatNumber(hoursPrev)} hrs in ${prevOutageYear}`
               : undefined
           }
         />
         <KpiCard
           label="Electricity tariff"
           value={tariff ? `${tariff} c/kWh` : "—"}
-          hint={`Latest published (${tariffYear})`}
+          hint={
+            tariffYear === String(new Date().getFullYear())
+              ? `Latest published (${tariffYear})`
+              : `Latest published (${tariffYear}) — check NERSA for newer`
+          }
         />
         <KpiCard
           label="Solar in mix"
-          value={`${mix.Solar ?? 0}%`}
-          hint={`Coal ${mix.Coal ?? 0}% · mix ${mixYear}`}
+          value={mix.Solar != null ? `${mix.Solar}%` : "—"}
+          hint={
+            mixYear
+              ? `Coal ${mix.Coal ?? 0}% · mix ${mixYear}`
+              : "Generation mix not in cache"
+          }
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          label={`Outage change vs ${prevYear}`}
+          label={`Outage change vs ${prevOutageYear}`}
           value={
             hoursReductionPct != null
               ? `${hoursReductionPct.toFixed(0)}%`
               : "—"
           }
-          hint={`Calendar/FY hours compared to ${prevYear}`}
+          hint={`${outageYear} hours compared to ${prevOutageYear}`}
           trendPositive={hoursReductionPct != null && hoursReductionPct < 0}
         />
         <KpiCard
@@ -194,21 +233,50 @@ export default async function EnergyPage() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel
-          title={`Monthly outage hours — ${prevYear} vs ${currentYear}`}
-        >
-          <MultiBarChart
-            data={monthlyCompare}
-            xKey="month"
-            keys={[
-              { key: prevYear, color: "#dc2626", name: prevYear },
-              { key: currentYear, color: "#059669", name: currentYear },
-            ]}
-          />
-        </ChartPanel>
-        <ChartPanel title={`Energy generation mix ${mixYear}`}>
-          <SimplePieChart data={mixChart} nameKey="name" valueKey="pct" />
-        </ChartPanel>
+        {monthlyCompare.length > 0 && chartPrevYear && chartCurrentYear ? (
+          <ChartPanel
+            title={`Monthly outage hours — ${chartPrevYear} vs ${chartCurrentYear}`}
+            description={
+              monthlyChartHistorical
+                ? `Historical monthly series (live scrape has ${outageYear} annual total: ${formatNumber(annualHours)} hrs).`
+                : undefined
+            }
+          >
+            <MultiBarChart
+              data={monthlyCompare}
+              xKey="month"
+              keys={[
+                { key: chartPrevYear, color: "#dc2626", name: chartPrevYear },
+                { key: chartCurrentYear, color: "#059669", name: chartCurrentYear },
+              ]}
+            />
+          </ChartPanel>
+        ) : (
+          <ChartPanel title="Monthly outage hours">
+            <p className="text-sm text-muted-foreground">
+              No monthly breakdown in cache. Annual total for {outageYear}:{" "}
+              {formatNumber(annualHours)} hrs (from live Eskom scrape).
+            </p>
+          </ChartPanel>
+        )}
+        {mixChart.length > 0 && mixYear ? (
+          <ChartPanel
+            title={`Energy generation mix ${mixYear}`}
+            description={
+              mixYear !== String(new Date().getFullYear())
+                ? "Latest published annual mix in cache — not scraped live each run."
+                : undefined
+            }
+          >
+            <SimplePieChart data={mixChart} nameKey="name" valueKey="pct" />
+          </ChartPanel>
+        ) : (
+          <ChartPanel title="Energy generation mix">
+            <p className="text-sm text-muted-foreground">
+              Generation mix not available from live scrape.
+            </p>
+          </ChartPanel>
+        )}
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

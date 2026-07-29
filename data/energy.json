@@ -1,6 +1,6 @@
 {
   "source": "Eskom LoadShedding API \u00b7 Eskom media \u00b7 community calendar",
-  "scraped_at": "2026-07-29T22:48:36.842871+00:00",
+  "scraped_at": "2026-07-29T23:05:19.872099+00:00",
   "is_live": true,
   "current_stage": 0,
   "stage_label": "No load shedding",
@@ -79,5 +79,46 @@
     },
     "current_fy_hours": 0,
     "source": "eskom.co.za media statements"
+  },
+  "monthly_hours_by_year": {
+    "2023": {
+      "Jan": 744,
+      "Feb": 576,
+      "Mar": 648,
+      "Apr": 576,
+      "May": 600,
+      "Jun": 552,
+      "Jul": 600,
+      "Aug": 576,
+      "Sep": 504,
+      "Oct": 576,
+      "Nov": 480,
+      "Dec": 300
+    },
+    "2024": {
+      "Jan": 312,
+      "Feb": 240,
+      "Mar": 168,
+      "Apr": 120,
+      "May": 72,
+      "Jun": 96,
+      "Jul": 144,
+      "Aug": 120,
+      "Sep": 96,
+      "Oct": 72,
+      "Nov": 48,
+      "Dec": 24
+    }
+  },
+  "energy_mix_by_year": {
+    "2024": {
+      "Coal": 57,
+      "Nuclear": 5,
+      "Hydro": 2,
+      "Wind": 6,
+      "Solar": 10,
+      "Gas/Diesel": 8,
+      "Imports": 12
+    }
   }
 }

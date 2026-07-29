@@ -29,6 +29,23 @@ ESKOM_STATUS_URL = "https://loadshedding.eskom.co.za/LoadShedding/GetStatus"
 ESKOM_CALENDAR_URL = "https://eskom-calendar-api.shuttleapp.rs/outages/south-africa"
 
 
+def _migrate_legacy_year_keys(result: dict) -> None:
+    """Normalize legacy *_2023 / *_2024 keys into by-year maps (cache-only series)."""
+    monthly = dict(result.get("monthly_hours_by_year", {}))
+    if result.get("monthly_hours_2023"):
+        monthly.setdefault("2023", result["monthly_hours_2023"])
+    if result.get("monthly_hours_2024"):
+        monthly.setdefault("2024", result["monthly_hours_2024"])
+    if monthly:
+        result["monthly_hours_by_year"] = monthly
+
+    mix = dict(result.get("energy_mix_by_year", {}))
+    if result.get("energy_mix_pct_2024"):
+        mix.setdefault("2024", result["energy_mix_pct_2024"])
+    if mix:
+        result["energy_mix_by_year"] = mix
+
+
 def _fetch_eskom_stage() -> dict | None:
     try:
         response = requests.get(ESKOM_STATUS_URL, headers=HEADERS, timeout=8)
@@ -90,6 +107,8 @@ def fetch(output_dir: Path) -> dict:
     if media_stats:
         result = apply_media_stats_to_energy(result, media_stats)
         result["is_live"] = True
+
+    _migrate_legacy_year_keys(result)
 
     if not stage and not media_stats and not cached:
         raise RuntimeError("Energy: no live Eskom data and no cached energy.json")
