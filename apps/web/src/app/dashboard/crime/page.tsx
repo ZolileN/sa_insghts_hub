@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { CrimeMap } from "@/components/maps/crime-map";
 import { CityFilter } from "@/components/layout/city-filter";
 import {
   ChartPanel,
@@ -18,6 +19,11 @@ import {
   resolveCity,
   scopeLabel,
 } from "@/shared/data/crime";
+import {
+  districtCoords,
+  provinceCoords,
+  type CrimeMapMarker,
+} from "@/shared/data/sa-geo";
 import { loadJson } from "@/shared/data/load";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
 import { formatNumber } from "@/shared/utils";
@@ -69,6 +75,51 @@ function scopeCounts(
   }
 
   return d.provinces?.[province] ?? nat;
+}
+
+function buildMapMarkers(
+  province: string,
+  city: string,
+  provData: Record<string, CrimeCounts>,
+  districtMap: Record<string, CrimeCounts>,
+  stationRows: StationRow[],
+): CrimeMapMarker[] {
+  if (province === "All Provinces") {
+    return PROVINCE_LIST.map((p) => ({
+      id: p,
+      label: p,
+      longitude: provinceCoords(p)[0],
+      latitude: provinceCoords(p)[1],
+      value: provData[p]?.Murder ?? 0,
+      kind: "province" as const,
+    })).filter((m) => m.value > 0);
+  }
+
+  if (city === "All areas") {
+    return Object.entries(districtMap).map(([district, crimes], i) => {
+      const [lng, lat] = districtCoords(district, province, i);
+      return {
+        id: `${province}-${district}`,
+        label: district,
+        longitude: lng,
+        latitude: lat,
+        value: crimes.Murder ?? 0,
+        kind: "district" as const,
+      };
+    }).filter((m) => m.value > 0);
+  }
+
+  return stationRows.map((s, i) => {
+    const [lng, lat] = districtCoords(s.district, province, i);
+    return {
+      id: `${s.name}-${i}`,
+      label: s.name,
+      longitude: lng,
+      latitude: lat,
+      value: s.murders,
+      kind: "station" as const,
+    };
+  }).filter((m) => m.value > 0);
 }
 
 export default async function CrimePage({
@@ -149,6 +200,21 @@ export default async function CrimePage({
 
   const hotspots = (d?.national_hotspots ?? []).slice(0, 15);
 
+  const mapMarkers = buildMapMarkers(
+    province,
+    city,
+    provData,
+    districtMap,
+    stationRows,
+  );
+
+  const mapDescription =
+    province === "All Provinces"
+      ? "Murder counts by province — blue markers scale with volume"
+      : city === "All areas"
+        ? `Murder counts by city/metro in ${province} — orange markers`
+        : `Police precincts in ${city} — red markers sized by murders`;
+
   return (
     <div>
       <PageHeader
@@ -172,6 +238,18 @@ export default async function CrimePage({
           />
         ))}
       </div>
+
+      <ChartPanel
+        title="Crime map"
+        description={mapDescription}
+        className="mt-6"
+      >
+        <CrimeMap
+          markers={mapMarkers}
+          province={province}
+          city={city}
+        />
+      </ChartPanel>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {province === "All Provinces" ? (
@@ -307,11 +385,6 @@ export default async function CrimePage({
           </ChartPanel>
         )}
       </div>
-
-      <p className="mt-4 text-xs text-[var(--muted-foreground)]">
-        Map drill-down (province → city boundaries) is planned with Mapbox. Precinct
-        coordinates can be layered once a Mapbox token is configured.
-      </p>
 
       <SourceBadge
         source={`${d?.source ?? "SAPS"} · Lightstone/ISS insights listed in DATA_SOURCES.md`}

@@ -313,6 +313,8 @@ def _parse_national_hotspots(xls: pd.ExcelFile) -> list[dict]:
         station = str(row.iloc[5]).strip()
         district_raw = str(row.iloc[6]).strip()
         province = str(row.iloc[7]).strip()
+        if province not in PROVINCES:
+            continue
         if not station or station == "Station":
             continue
 
