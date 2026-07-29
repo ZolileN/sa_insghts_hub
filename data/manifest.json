@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-07-29T23:05:19.872737+00:00",
+  "last_run": "2026-07-29T23:09:00.656471+00:00",
   "topics": {
     "forex": {
       "label": "\ud83d\udcb1 ZAR Exchange Rate",
@@ -45,7 +45,7 @@
       "label": "\ud83c\udfe5 NDOH Health Data",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 63.12,
+      "elapsed_s": 10.63,
       "cadence": "quarterly",
       "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
     },

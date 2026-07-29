@@ -25,6 +25,8 @@ type HealthData = {
     prevalence_15_49_pct?: number;
     on_art_millions?: number;
     art_coverage_pct?: number;
+    report_year?: string;
+    annual?: Record<string, Record<string, number>>;
     new_infections_2023?: number;
     aids_deaths_2023?: number;
   };
@@ -32,6 +34,9 @@ type HealthData = {
     incidence_per_100k?: number;
     treatment_success_pct?: number;
     tb_hiv_coinfection_pct?: number;
+    report_year?: string;
+    annual?: Record<string, Record<string, number>>;
+    notifications_2023?: number;
     dr_tb_cases_2023?: number;
   };
   health_system?: {
@@ -63,6 +68,31 @@ type HealthData = {
   };
 };
 
+function yearMetric(
+  section: Record<string, unknown> | undefined,
+  metric: string,
+): { year: string | null; value: number | null } {
+  if (!section) return { year: null, value: null };
+
+  const annual = section.annual as Record<string, Record<string, number>> | undefined;
+  const reportYear = section.report_year as string | undefined;
+  const years = Object.keys(annual ?? {})
+    .filter((y) => /^\d{4}$/.test(y))
+    .sort();
+  const year = reportYear ?? years.at(-1) ?? null;
+
+  if (year && annual?.[year]?.[metric] != null) {
+    return { year, value: annual[year][metric] };
+  }
+
+  for (const [k, v] of Object.entries(section)) {
+    const m = k.match(new RegExp(`^${metric}_(\\d{4})$`));
+    if (m && typeof v === "number") return { year: m[1], value: v };
+  }
+
+  return { year: null, value: null };
+}
+
 export default async function HealthPage({
   searchParams,
 }: {
@@ -76,10 +106,13 @@ export default async function HealthPage({
   const system = d?.health_system ?? {};
   const prov = province !== "All Provinces" ? d?.provinces?.[province] : null;
 
-  const hivPrev = prov?.hiv_prevalence_pct ?? hiv.prevalence_15_49_pct ?? 18.3;
-  const artCoverage =
-    prov?.art_coverage_pct ?? hiv.art_coverage_pct ?? 73;
+  const hivPrev = prov?.hiv_prevalence_pct ?? hiv.prevalence_15_49_pct;
+  const artCoverage = prov?.art_coverage_pct ?? hiv.art_coverage_pct;
   const doctors = prov?.doctors_per_100k ?? 0;
+
+  const newHiv = yearMetric(hiv as Record<string, unknown>, "new_infections");
+  const aidsDeaths = yearMetric(hiv as Record<string, unknown>, "aids_deaths");
+  const drTb = yearMetric(tb as Record<string, unknown>, "dr_tb_cases");
 
   const doctorsByProv = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -117,17 +150,21 @@ export default async function HealthPage({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label={`HIV prevalence (${provinceLabel(province)})`}
-          value={`${hivPrev}%`}
+          value={hivPrev != null ? `${hivPrev}%` : "—"}
           hint="Ages 15–49"
         />
         <KpiCard
           label="On ART nationally"
-          value={`${hiv.on_art_millions ?? 5.7}m`}
-          hint={`${hiv.art_coverage_pct ?? 73}% treatment coverage`}
+          value={hiv.on_art_millions != null ? `${hiv.on_art_millions}m` : "—"}
+          hint={
+            hiv.art_coverage_pct != null
+              ? `${hiv.art_coverage_pct}% treatment coverage`
+              : "Treatment coverage"
+          }
         />
         <KpiCard
           label="TB incidence"
-          value={`${tb.incidence_per_100k ?? 468}`}
+          value={tb.incidence_per_100k != null ? `${tb.incidence_per_100k}` : "—"}
           hint="Per 100,000 population"
         />
         <KpiCard
@@ -169,53 +206,101 @@ export default async function HealthPage({
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          label="New HIV infections (2023)"
-          value={formatNumber(hiv.new_infections_2023 ?? 140000)}
-          hint="Annual new infections estimate"
-          trendPositive={(hiv.new_infections_2023 ?? 140000) < 150000}
+          label={
+            newHiv.year
+              ? `New HIV infections (${newHiv.year})`
+              : "New HIV infections"
+          }
+          value={newHiv.value != null ? formatNumber(newHiv.value) : "—"}
+          hint={
+            newHiv.year
+              ? `Annual estimate · latest in cache (${newHiv.year})`
+              : "Not in cache"
+          }
+          trendPositive={newHiv.value != null && newHiv.value < 150000}
         />
         <KpiCard
-          label="AIDS deaths (2023)"
-          value={formatNumber(hiv.aids_deaths_2023 ?? 57000)}
-          hint="Mortality burden"
-          trendPositive={(hiv.aids_deaths_2023 ?? 57000) < 60000}
+          label={
+            aidsDeaths.year ? `AIDS deaths (${aidsDeaths.year})` : "AIDS deaths"
+          }
+          value={aidsDeaths.value != null ? formatNumber(aidsDeaths.value) : "—"}
+          hint={
+            aidsDeaths.year
+              ? `Mortality burden · latest in cache (${aidsDeaths.year})`
+              : "Not in cache"
+          }
+          trendPositive={aidsDeaths.value != null && aidsDeaths.value < 60000}
         />
         <KpiCard
           label="Maternal mortality"
-          value={`${system.maternal_mortality_per_100k ?? 118}`}
+          value={
+            system.maternal_mortality_per_100k != null
+              ? `${system.maternal_mortality_per_100k}`
+              : "—"
+          }
           hint="Per 100,000 live births"
-          trendPositive={(system.maternal_mortality_per_100k ?? 118) < 120}
+          trendPositive={
+            system.maternal_mortality_per_100k != null &&
+            system.maternal_mortality_per_100k < 120
+          }
         />
         <KpiCard
           label={`ART coverage (${provinceLabel(province)})`}
-          value={`${artCoverage}%`}
-          hint={`TB treatment success: ${tb.treatment_success_pct ?? 81}%`}
-          trendPositive={artCoverage >= 70}
+          value={artCoverage != null ? `${artCoverage}%` : "—"}
+          hint={
+            tb.treatment_success_pct != null
+              ? `TB treatment success: ${tb.treatment_success_pct}%`
+              : "TB treatment success"
+          }
+          trendPositive={artCoverage != null && artCoverage >= 70}
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Under-5 mortality"
-          value={`${system.under5_mortality_per_1000 ?? 34}`}
+          value={
+            system.under5_mortality_per_1000 != null
+              ? `${system.under5_mortality_per_1000}`
+              : "—"
+          }
           hint="Per 1,000 live births"
-          trendPositive={(system.under5_mortality_per_1000 ?? 34) < 35}
+          trendPositive={
+            system.under5_mortality_per_1000 != null &&
+            system.under5_mortality_per_1000 < 35
+          }
         />
         <KpiCard
           label="TB–HIV co-infection"
-          value={`${tb.tb_hiv_coinfection_pct ?? 60}%`}
+          value={
+            tb.tb_hiv_coinfection_pct != null ? `${tb.tb_hiv_coinfection_pct}%` : "—"
+          }
           hint="Of TB patients co-infected"
         />
         <KpiCard
           label="Hospital beds (public)"
-          value={formatNumber(system.public_hospitals ?? 407)}
-          hint={`${system.private_hospitals ?? 211} private hospitals`}
+          value={
+            system.public_hospitals != null
+              ? formatNumber(system.public_hospitals)
+              : "—"
+          }
+          hint={
+            system.private_hospitals != null
+              ? `${system.private_hospitals} private hospitals`
+              : "Public hospitals"
+          }
         />
         <KpiCard
-          label="Drug-resistant TB (2023)"
-          value={formatNumber(tb.dr_tb_cases_2023 ?? 1200)}
-          hint="Cases needing specialised treatment"
-          trendPositive={(tb.dr_tb_cases_2023 ?? 1200) < 1500}
+          label={
+            drTb.year ? `Drug-resistant TB (${drTb.year})` : "Drug-resistant TB"
+          }
+          value={drTb.value != null ? formatNumber(drTb.value) : "—"}
+          hint={
+            drTb.year
+              ? `Latest annual report in cache (${drTb.year})`
+              : "Not in cache"
+          }
+          trendPositive={drTb.value != null && drTb.value < 7000}
         />
       </div>
 
