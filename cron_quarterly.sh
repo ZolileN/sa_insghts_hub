@@ -1,9 +1,9 @@
 #!/bin/bash
 # Libo Insights — Quarterly scrapers (all 10 topics)
-# Schedule: 1st of January, April, July, October at 04:00 UTC
+# Schedule: 1st of Jan, Apr, Jul, Oct at 04:00 UTC
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$PROJECT_DIR" || exit 1
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT" || exit 1
 
 if [ -f ".venv/bin/activate" ]; then
     source .venv/bin/activate
@@ -19,13 +19,8 @@ if [ $? -eq 124 ]; then
     exit 1
 fi
 
-if git diff --quiet data/; then
-    echo "$(date): No changes to commit"
-else
-    echo "$(date): Committing changes"
-    git add data/*.json
-    git commit -m "data: quarterly full refresh — all 10 topics [skip ci]"
-    git push origin master
-fi
+./scripts/cron_git_push.sh \
+    "data: quarterly full refresh — all 10 topics" \
+    data/
 
 echo "$(date): Quarterly scrapers completed"

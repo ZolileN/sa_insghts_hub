@@ -11,12 +11,7 @@ Usage:
     python run_scrapers.py --parallel      # run concurrently (faster)
     python run_scrapers.py --dry-run       # report status without saving
 
-Schedule via GitHub Actions or cron:
-    # crontab entry — runs every Monday at 06:00 SAST
-    0 6 * * 1 cd /app && python run_scrapers.py >> logs/scraper.log 2>&1
-
-    # Or quarterly for slow-changing data (crime, education)
-    0 6 1 */3 * cd /app && python run_scrapers.py --topics crime education employment health
+Schedule via server cron (see CRON_SETUP.md and cron_manager.sh):
 """
 
 import argparse

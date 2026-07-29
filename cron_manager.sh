@@ -4,11 +4,24 @@
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR" || exit 1
 
+install_crontab() {
+    if [ ! -f "cron_setup.template" ]; then
+        echo "cron_setup.template not found in $PROJECT_DIR"
+        exit 1
+    fi
+    TMP="$(mktemp)"
+    sed "s|__LIBO_INSIGHTS_ROOT__|$PROJECT_DIR|g" cron_setup.template > "$TMP"
+    crontab "$TMP"
+    rm -f "$TMP"
+    # Keep a copy for reference (gitignored path optional)
+    sed "s|__LIBO_INSIGHTS_ROOT__|$PROJECT_DIR|g" cron_setup.template > cron_setup.txt
+    echo "Installed crontab for: $PROJECT_DIR"
+}
+
 case "$1" in
     install)
-        echo "Installing cron jobs..."
-        echo "Edit LIBO_INSIGHTS_ROOT in cron_setup.txt if needed (currently may point to /workspace)."
-        crontab cron_setup.txt
+        echo "Installing cron jobs for $PROJECT_DIR ..."
+        install_crontab
         echo "Cron jobs installed successfully!"
         echo ""
         crontab -l
@@ -19,8 +32,10 @@ case "$1" in
         echo "Cron jobs removed successfully!"
         ;;
     status)
+        echo "Project directory: $PROJECT_DIR"
+        echo ""
         echo "Current cron jobs:"
-        crontab -l
+        crontab -l 2>/dev/null || echo "(no crontab)"
         ;;
     test-realtime)
         echo "Testing realtime scraper..."
@@ -40,7 +55,7 @@ case "$1" in
         ;;
     logs)
         echo "Recent log files:"
-        ls -la logs/
+        ls -la logs/ 2>/dev/null || echo "No logs directory yet"
         echo ""
         echo "Latest realtime log:"
         tail -20 logs/realtime_cron.log 2>/dev/null || echo "No realtime log found"

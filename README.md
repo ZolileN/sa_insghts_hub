@@ -112,9 +112,7 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 
 ## Cron automation (production)
 
-**Primary:** GitHub Actions scrapers (see **[CRON_SETUP.md](CRON_SETUP.md)**) commit refreshed `data/*.json` on schedule.
-
-**Optional:** server cron on a South African host for DWS water when GitHub runners are blocked.
+Production scraping runs on **your server** via cron — not GitHub Actions. See **[CRON_SETUP.md](CRON_SETUP.md)** for VPS setup and git deploy keys.
 
 | Frequency | Topics | Script |
 |-----------|--------|--------|
@@ -124,12 +122,14 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 | Quarterly (Jan/Apr/Jul/Oct) | all 10 | `cron_quarterly.sh` |
 
 ```bash
-# Edit LIBO_INSIGHTS_ROOT in cron_setup.txt, then:
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+chmod +x cron_*.sh scripts/cron_git_push.sh cron_manager.sh
 ./cron_manager.sh install
-./cron_manager.sh test-weekly
+./cron_manager.sh test-realtime
 ```
 
-Cron scripts resolve the project path from their own location. Partial runs **merge** into `manifest.json` without dropping other topics.
+Commits push refreshed `data/*.json` to `master`; Vercel redeploys on push.
 
 ---
 

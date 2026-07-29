@@ -1,2 +1,4 @@
-# This file disables all GitHub Actions workflows
-# To re-enable, delete this file or rename it to .github/workflows/disabled.yml
+# GitHub Actions scraping is intentionally disabled (billing / minutes).
+# Production scraping uses server cron — see CRON_SETUP.md and cron_manager.sh
+#
+# To re-enable a workflow, restore from git history or rename *.disabled → *.yml

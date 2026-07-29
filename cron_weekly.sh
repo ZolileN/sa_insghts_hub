@@ -1,9 +1,9 @@
 #!/bin/bash
-# Libo Insights — Weekly scrapers (DWS dam levels)
-# Schedule: every Monday at 06:00 UTC (08:00 SAST)
+# Libo Insights — Weekly scrapers (DWS water)
+# Schedule: every Monday 06:00 UTC
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$PROJECT_DIR" || exit 1
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT" || exit 1
 
 if [ -f ".venv/bin/activate" ]; then
     source .venv/bin/activate
@@ -14,13 +14,8 @@ mkdir -p data logs
 echo "$(date): Starting weekly scrapers (water)"
 python3 run_scrapers.py --topics water >> logs/weekly_cron.log 2>&1
 
-if git diff --quiet data/; then
-    echo "$(date): No changes to commit"
-else
-    echo "$(date): Committing changes"
-    git add data/water.json data/manifest.json
-    git commit -m "data: weekly update — water [skip ci]"
-    git push origin master
-fi
+./scripts/cron_git_push.sh \
+    "data: weekly update — water" \
+    "data/water.json data/manifest.json"
 
 echo "$(date): Weekly scrapers completed"
