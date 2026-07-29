@@ -233,7 +233,10 @@ export default async function CrimePage({
           "Common robbery": districtMap[row.district]?.["Common robbery"] ?? 0,
         }));
 
-  const hotspots = (d?.national_hotspots ?? []).slice(0, 15);
+  const hotspots =
+    province === "All Provinces"
+      ? (d?.national_hotspots ?? []).slice(0, 30)
+      : [];
 
   const mapMarkers = buildMapMarkers(
     province,
@@ -479,8 +482,8 @@ export default async function CrimePage({
                 <thead>
                   <tr className="border-b border-[var(--border)] text-left text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
                     <th className="py-2 pr-4">#</th>
-                    <th className="py-2 pr-4">Precinct</th>
-                    <th className="py-2 pr-4">Area</th>
+                    <th className="py-2 pr-4">Station</th>
+                    <th className="py-2 pr-4">District</th>
                     <th className="py-2 pr-4">Province</th>
                     <th className="py-2 text-right">Serious crime</th>
                   </tr>

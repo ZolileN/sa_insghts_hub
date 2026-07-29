@@ -301,21 +301,22 @@ def _parse_national_hotspots(xls: pd.ExcelFile) -> list[dict]:
 
     df = pd.read_excel(xls, sheet_name=sheet, header=None)
     hotspots: list[dict] = []
+    seen_ranks: set[int] = set()
 
     for _, row in df.iterrows():
         try:
-            rank = int(float(row.iloc[3]))
+            rank = int(float(row.iloc[2]))
         except (TypeError, ValueError):
             continue
-        if rank < 1 or rank > 30:
+        if rank < 1 or rank > 30 or rank in seen_ranks:
             continue
 
-        station = str(row.iloc[5]).strip()
-        district_raw = str(row.iloc[6]).strip()
-        province = str(row.iloc[7]).strip()
+        station = str(row.iloc[4]).strip()
+        district_raw = str(row.iloc[5]).strip()
+        province = str(row.iloc[6]).strip()
         if province not in PROVINCES:
             continue
-        if not station or station == "Station":
+        if not station or station in ("Station", "Sta"):
             continue
 
         try:
@@ -323,6 +324,7 @@ def _parse_national_hotspots(xls: pd.ExcelFile) -> list[dict]:
         except (TypeError, ValueError):
             serious_crime = 0
 
+        seen_ranks.add(rank)
         hotspots.append({
             "rank": rank,
             "station": station,

@@ -1,7 +1,7 @@
 {
   "source": "SAPS",
   "url": "https://www.saps.gov.za/services/downloads/2025/2025-2026_-_4th_Quarter_WEB.xlsx",
-  "scraped_at": "2026-07-29T16:46:56.894792+00:00",
+  "scraped_at": "2026-07-29T20:49:44.120031+00:00",
   "is_live": true,
   "period": "2025-2026 - 4th Quarter",
   "provinces": {
@@ -6099,220 +6099,213 @@
   "national_hotspots": [
     {
       "rank": 1,
-      "station": "City of Cape Town District",
-      "district": "Western Cape",
-      "province": "2653",
+      "station": "Cape Town Central",
+      "district": "City of Cape Town",
+      "province": "Western Cape",
       "serious_crime": 2824
     },
     {
-      "rank": 1,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "1379",
-      "serious_crime": 1787
-    },
-    {
-      "rank": 1,
-      "station": "Mangaung District",
-      "district": "Free State",
-      "province": "1903",
-      "serious_crime": 1682
-    },
-    {
-      "rank": 1,
-      "station": "Johannesburg District",
-      "district": "Gauteng",
-      "province": "1420",
-      "serious_crime": 1679
-    },
-    {
-      "rank": 1,
-      "station": "Bojanala District",
-      "district": "North West",
-      "province": "1681",
-      "serious_crime": 1433
-    },
-    {
-      "rank": 1,
-      "station": "Capricorn District",
-      "district": "Limpopo",
-      "province": "1165",
-      "serious_crime": 1342
-    },
-    {
       "rank": 2,
-      "station": "City of Cape Town District",
-      "district": "Western Cape",
-      "province": "1973",
+      "station": "Mitchells Plain",
+      "district": "City of Cape Town",
+      "province": "Western Cape",
       "serious_crime": 1861
     },
     {
-      "rank": 2,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "2037",
+      "rank": 3,
+      "station": "Inanda",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1787
+    },
+    {
+      "rank": 4,
+      "station": "Durban Central",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
       "serious_crime": 1784
     },
     {
-      "rank": 2,
-      "station": "Johannesburg District",
-      "district": "Gauteng",
-      "province": "2149",
-      "serious_crime": 1665
-    },
-    {
-      "rank": 2,
-      "station": "Vhembe District",
-      "district": "Limpopo",
-      "province": "1236",
-      "serious_crime": 1285
-    },
-    {
-      "rank": 3,
-      "station": "City of Cape Town District",
-      "district": "Western Cape",
-      "province": "1433",
+      "rank": 5,
+      "station": "Mfuleni",
+      "district": "City of Cape Town",
+      "province": "Western Cape",
       "serious_crime": 1691
     },
     {
-      "rank": 3,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "1816",
-      "serious_crime": 1612
-    },
-    {
-      "rank": 3,
-      "station": "Johannesburg District",
-      "district": "Gauteng",
-      "province": "1367",
-      "serious_crime": 1558
-    },
-    {
-      "rank": 3,
-      "station": "Capricorn District",
-      "district": "Limpopo",
-      "province": "1018",
-      "serious_crime": 1276
-    },
-    {
-      "rank": 4,
-      "station": "City of Cape Town District",
-      "district": "Western Cape",
-      "province": "1564",
-      "serious_crime": 1576
-    },
-    {
-      "rank": 4,
-      "station": "Umgungundlovu District",
-      "district": "KwaZulu-Natal",
-      "province": "1494",
-      "serious_crime": 1567
-    },
-    {
-      "rank": 4,
-      "station": "Johannesburg District",
-      "district": "Gauteng",
-      "province": "2021",
-      "serious_crime": 1505
-    },
-    {
-      "rank": 5,
-      "station": "City of Cape Town District",
-      "district": "Western Cape",
-      "province": "1450",
-      "serious_crime": 1502
-    },
-    {
-      "rank": 5,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "1284",
-      "serious_crime": 1463
-    },
-    {
-      "rank": 5,
-      "station": "Ekurhuleni District",
-      "district": "Gauteng",
-      "province": "1342",
-      "serious_crime": 1407
-    },
-    {
       "rank": 6,
-      "station": "Ilembe District",
-      "district": "KwaZulu-Natal",
-      "province": "1445",
-      "serious_crime": 1404
-    },
-    {
-      "rank": 6,
-      "station": "Ekurhuleni District",
-      "district": "Gauteng",
-      "province": "1473",
-      "serious_crime": 1397
-    },
-    {
-      "rank": 6,
-      "station": "Cape Winelands District",
-      "district": "Western Cape",
-      "province": "1574",
-      "serious_crime": 1306
+      "station": "Park Road",
+      "district": "Mangaung",
+      "province": "Free State",
+      "serious_crime": 1682
     },
     {
       "rank": 7,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "1516",
-      "serious_crime": 1392
-    },
-    {
-      "rank": 7,
-      "station": "Tshwane District",
-      "district": "Gauteng",
-      "province": "1631",
-      "serious_crime": 1359
-    },
-    {
-      "rank": 7,
-      "station": "Cape Winelands District",
-      "district": "Western Cape",
-      "province": "1428",
-      "serious_crime": 1286
+      "station": "Midrand",
+      "district": "Johannesburg",
+      "province": "Gauteng",
+      "serious_crime": 1679
     },
     {
       "rank": 8,
-      "station": "King Cetshwayo District",
-      "district": "KwaZulu-Natal",
-      "province": "1476",
-      "serious_crime": 1333
-    },
-    {
-      "rank": 8,
-      "station": "Johannesburg District",
-      "district": "Gauteng",
-      "province": "1320",
-      "serious_crime": 1329
+      "station": "Honeydew",
+      "district": "Johannesburg",
+      "province": "Gauteng",
+      "serious_crime": 1665
     },
     {
       "rank": 9,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "1195",
-      "serious_crime": 1285
+      "station": "Phoenix",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1612
     },
     {
       "rank": 10,
-      "station": "eThekwini District",
-      "district": "KwaZulu-Natal",
-      "province": "1158",
-      "serious_crime": 1277
+      "station": "Delft",
+      "district": "City of Cape Town",
+      "province": "Western Cape",
+      "serious_crime": 1576
+    },
+    {
+      "rank": 11,
+      "station": "Plessislaer",
+      "district": "Umgungundlovu",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1567
+    },
+    {
+      "rank": 12,
+      "station": "Roodepoort",
+      "district": "Johannesburg",
+      "province": "Gauteng",
+      "serious_crime": 1558
+    },
+    {
+      "rank": 13,
+      "station": "JHB Central",
+      "district": "Johannesburg",
+      "province": "Gauteng",
+      "serious_crime": 1505
+    },
+    {
+      "rank": 14,
+      "station": "Kraaifontein",
+      "district": "City of Cape Town",
+      "province": "Western Cape",
+      "serious_crime": 1502
+    },
+    {
+      "rank": 15,
+      "station": "Chatsworth",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1463
+    },
+    {
+      "rank": 16,
+      "station": "Rustenburg",
+      "district": "Bojanala",
+      "province": "North West",
+      "serious_crime": 1433
+    },
+    {
+      "rank": 17,
+      "station": "Ivory Park",
+      "district": "Ekurhuleni",
+      "province": "Gauteng",
+      "serious_crime": 1407
+    },
+    {
+      "rank": 18,
+      "station": "Kwadukuza",
+      "district": "Ilembe",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1404
+    },
+    {
+      "rank": 19,
+      "station": "Tembisa",
+      "district": "Ekurhuleni",
+      "province": "Gauteng",
+      "serious_crime": 1397
+    },
+    {
+      "rank": 20,
+      "station": "Pinetown",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1392
+    },
+    {
+      "rank": 21,
+      "station": "Brooklyn",
+      "district": "Tshwane",
+      "province": "Gauteng",
+      "serious_crime": 1359
+    },
+    {
+      "rank": 22,
+      "station": "Polokwane",
+      "district": "Capricorn",
+      "province": "Limpopo",
+      "serious_crime": 1342
+    },
+    {
+      "rank": 23,
+      "station": "Empangeni",
+      "district": "King Cetshwayo",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1333
+    },
+    {
+      "rank": 24,
+      "station": "Sandton",
+      "district": "Johannesburg",
+      "province": "Gauteng",
+      "serious_crime": 1329
+    },
+    {
+      "rank": 25,
+      "station": "Worcester",
+      "district": "Cape Winelands",
+      "province": "Western Cape",
+      "serious_crime": 1306
+    },
+    {
+      "rank": 26,
+      "station": "Stellenbosch",
+      "district": "Cape Winelands",
+      "province": "Western Cape",
+      "serious_crime": 1286
+    },
+    {
+      "rank": 27,
+      "station": "Umlazi",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1285
+    },
+    {
+      "rank": 28,
+      "station": "Thohoyandou",
+      "district": "Vhembe",
+      "province": "Limpopo",
+      "serious_crime": 1285
     },
     {
       "rank": 29,
-      "station": "2",
-      "district": "3",
-      "province": "10",
-      "serious_crime": 26
+      "station": "Verulam",
+      "district": "eThekwini",
+      "province": "KwaZulu-Natal",
+      "serious_crime": 1277
+    },
+    {
+      "rank": 30,
+      "station": "Seshego",
+      "district": "Capricorn",
+      "province": "Limpopo",
+      "serious_crime": 1276
     }
   ]
 }

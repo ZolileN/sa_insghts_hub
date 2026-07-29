@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-07-29T20:41:17.259966+00:00",
+  "last_run": "2026-07-29T20:49:44.127289+00:00",
   "topics": {
     "forex": {
       "label": "\ud83d\udcb1 ZAR Exchange Rate",
@@ -46,6 +46,14 @@
       "status": "success",
       "is_live": true,
       "elapsed_s": 63.12,
+      "cadence": "quarterly",
+      "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
+    },
+    "crime": {
+      "label": "\ud83d\udd34 SAPS Crime Stats",
+      "status": "success",
+      "is_live": true,
+      "elapsed_s": 46.32,
       "cadence": "quarterly",
       "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
     }
