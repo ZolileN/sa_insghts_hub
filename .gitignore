@@ -17,6 +17,8 @@ pip-wheel-metadata/
 .installed.cfg
 lib/
 lib64/
+!apps/web/src/lib/
+!apps/web/src/lib/**
 
 # Virtual environments
 .env

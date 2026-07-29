@@ -8,9 +8,8 @@ JSON in `data/*.json`, plus optional data scrapers (`run_scrapers.py` +
 this repo.
 
 ### Running the app (main service)
-- Start the dashboard with `python3 -m streamlit run app.py`. Use `python3 -m streamlit`
-  because the `streamlit` console script installs to `~/.local/bin`, which is not on PATH.
-- It serves on `http://localhost:8501`. Standard run command is documented in `README.md`.
+- **Next.js dashboard (primary):** `cd apps/web && npm install && npm run dev` — serves on `http://localhost:3000`.
+- **Legacy Streamlit (deprecated):** `python3 -m streamlit run app.py` on `http://localhost:8501`. Prefer Next.js for new work.
 - The dashboard renders fully from the committed `data/*.json` fallback files, so it works
   with no network access, no API keys, and without running any scraper first.
 
