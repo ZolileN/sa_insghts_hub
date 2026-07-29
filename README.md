@@ -2,7 +2,7 @@
 
 > South Africa's critical public data — ten topics, live scrapers, province-aware dashboards, and precinct-level crime drill-down.
 
-Formerly **SA Insight Hub**. The primary UI is a Next.js app (`apps/web`) with a Precision Ops light theme. Legacy Streamlit (`app.py`) remains in the repo but is deprecated.
+Formerly **SA Insight Hub**. The UI is a Next.js app (`apps/web`) with a Precision Ops light theme.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue?style=flat-square)
@@ -33,7 +33,7 @@ Full publisher list (FNB, PayProp, BankservAfrica, NICD, etc.) is in **[DATA_SOU
 
 ## Quick Start
 
-### Next.js dashboard (recommended)
+### Next.js dashboard
 
 ```bash
 git clone https://github.com/ZolileN/sa_insghts_hub
@@ -78,15 +78,6 @@ npx vercel --prod        # production deploy
 ```
 
 Data is baked in at build time via `prebuild` → `scripts/sync-data.mjs` (copies repo `data/` into the app). Push updated `data/*.json` to refresh production figures.
-
-### Legacy Streamlit
-
-```bash
-pip install -r requirements.txt
-python3 -m streamlit run app.py
-```
-
-Serves on **http://localhost:8501**. Optional Claude Q&A via sidebar API key or `.streamlit/secrets.toml`.
 
 ---
 
@@ -154,8 +145,7 @@ sa_insghts_hub/
 ├── cron_*.sh                 # Scheduled scraper wrappers
 ├── DATA_SOURCES.md           # Public & commercial data catalog
 ├── CRON_SETUP.md             # Cron install guide
-├── app.py                    # Legacy Streamlit app
-└── requirements.txt
+└── requirements.txt          # Python scraper dependencies
 ```
 
 ---

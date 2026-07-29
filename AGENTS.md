@@ -2,30 +2,24 @@
 
 ## Cursor Cloud specific instructions
 
-SA Insight Hub is a single-service Streamlit dashboard (`app.py`) backed by cached
-JSON in `data/*.json`, plus optional data scrapers (`run_scrapers.py` +
-`scrapers/`). There is no build step, no test suite, and no linter configured in
-this repo.
+Libo Insights is a Next.js dashboard (`apps/web`) backed by cached JSON in
+`data/*.json`, plus optional data scrapers (`run_scrapers.py` + `scrapers/`).
 
 ### Running the app (main service)
-- **Next.js dashboard (primary):** `cd apps/web && npm install && npm run dev` — serves on `http://localhost:3000`.
-- **Legacy Streamlit (deprecated):** `python3 -m streamlit run app.py` on `http://localhost:8501`. Prefer Next.js for new work.
-- The dashboard renders fully from the committed `data/*.json` fallback files, so it works
-  with no network access, no API keys, and without running any scraper first.
+- `cd apps/web && npm install && npm run dev` — serves on `http://localhost:3000`.
+- The dashboard renders fully from committed `data/*.json`, so it works with no
+  network access, no API keys, and without running any scraper first.
+- `npm run dev` syncs `data/*.json` into `apps/web/data` via the `predev` hook.
 
 ### Scrapers (optional)
 - `python3 run_scrapers.py` fetches live South African public data; `--dry-run`,
   `--topics <name...>`, and `--parallel` are supported (see `README.md`).
 - Running scrapers overwrites `data/*.json` and `data/manifest.json` (these files ARE
-  committed, despite the README implying `data/` is git-ignored). Revert scraper-caused
-  edits with `git checkout -- data/` unless you intend to commit refreshed data.
-- Scrapers hit external gov/finance sites; individual topics may fail if a source is down
-  or blocked. The app still works from cached data.
-
-### AI Q&A panel
-- The bottom-of-page Claude Q&A panel needs an Anthropic API key (entered in the sidebar
-  or via `.streamlit/secrets.toml`). It is optional; all dashboards/charts work without it.
+  committed). Revert scraper-caused edits with `git checkout -- data/` unless you
+  intend to commit refreshed data.
+- Scrapers hit external gov/finance sites; individual topics may fail if a source is
+  down or blocked. The app still works from cached data.
 
 ### Notes
-- `runtime.txt` pins python-3.11 (for Streamlit Cloud); the dev VM runs Python 3.12, which
-  works fine.
+- Python scrapers use `requirements.txt` (pandas, requests, etc.); Python 3.11+ works.
+- Deploy the web app from `apps/web` on Vercel (see `README.md`).

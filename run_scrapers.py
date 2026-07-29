@@ -3,7 +3,7 @@
 SA Insight Hub — Master Data Scraper
 =======================================
 Runs all 10 topic scrapers in sequence (or parallel) and saves
-results to data/  as JSON files that app.py reads at startup.
+results to data/ as JSON files consumed by the Next.js dashboard.
 
 Usage:
     python run_scrapers.py                 # run all scrapers

@@ -29,9 +29,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# Streamlit secrets — NEVER commit your API keys
-.streamlit/secrets.toml
-
 # OS
 .DS_Store
 .DS_Store?
