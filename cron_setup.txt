@@ -3,7 +3,8 @@
 
 LIBO_INSIGHTS_ROOT=/workspace
 
-*/30 * * * * $LIBO_INSIGHTS_ROOT/cron_realtime.sh
+# Realtime — forex + energy once daily at 07:00 UTC
+0 7 * * * $LIBO_INSIGHTS_ROOT/cron_realtime.sh
 0 6 * * 1 $LIBO_INSIGHTS_ROOT/cron_weekly.sh
 0 5 1 * * $LIBO_INSIGHTS_ROOT/cron_monthly.sh
 0 4 1 1,4,7,10 * $LIBO_INSIGHTS_ROOT/cron_quarterly.sh
