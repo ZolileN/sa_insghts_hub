@@ -1,8 +1,9 @@
 {
-  "source": "SABRIC Annual Report 2023",
-  "scraped_at": "2026-03-14T16:23:52.247428",
+  "source": "SABRIC Annual Report 2024",
+  "scraped_at": "2026-07-29T16:17:46.053567+00:00",
   "is_live": true,
-  "total_losses_r_billion": 3.3,
+  "pdf_url": "https://www.sabric.co.za/wp-content/uploads/2025/08/SABRIC_annual-report-2024.pdf",
+  "total_losses_r_billion": 3.5,
   "sim_swap_incidents": 39,
   "categories": {
     "Card not present": {
@@ -39,6 +40,7 @@
     "2020": 1.8,
     "2021": 2.1,
     "2022": 2.9,
-    "2023": 3.3
+    "2023": 3.3,
+    "2024": 3.5
   }
 }

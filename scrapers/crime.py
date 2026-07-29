@@ -7,128 +7,205 @@ Format : .xlsx  ~10 MB per file
 Cadence: Quarterly (Aug, Nov, Feb, May)
 """
 
-import re
 import io
 import json
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 
-import requests
 import pandas as pd
+import requests
 from bs4 import BeautifulSoup
+
+from scrapers._common import HEADERS, download_bytes, utc_now_iso
 
 log = logging.getLogger(__name__)
 
-BASE       = "https://www.saps.gov.za"
-INDEX_URL  = f"{BASE}/services/crimestats.php"
-HEADERS    = {"User-Agent": "Mozilla/5.0 (SA-Insight-Hub/1.0; research)"}
+BASE = "https://www.saps.gov.za"
+INDEX_URL = f"{BASE}/services/crimestats.php"
 
 PROVINCES = [
     "Western Cape", "Gauteng", "KwaZulu-Natal", "Eastern Cape",
     "Limpopo", "Mpumalanga", "North West", "Free State", "Northern Cape",
 ]
 
-CRIME_CATEGORIES = [
-    "Murder", "Attempted murder", "Sexual offences", "Assault GBH",
-    "Common assault", "Common robbery", "Robbery aggravating",
-    "Carjacking", "Residential burglary", "Non-residential burglary",
-    "Stock-theft", "Malicious damage to property",
+# SAPS sheet labels → dashboard keys used across the app
+CATEGORY_ALIASES = {
+    "Murder": "Murder",
+    "Sexual offences": "Sexual offences",
+    "Attempted murder": "Attempted murder",
+    "Assault with the intent to inflict grievous bodily harm": "Assault GBH",
+    "Common assault": "Common assault",
+    "Common robbery": "Common robbery",
+    "Robbery with aggravating circumstances": "Robbery aggravating",
+    "Carjacking": "Carjacking",
+    "Burglary at residential premises": "Residential burglary",
+    "Burglary at non-residential premises": "Non-residential burglary",
+    "Stock-theft": "Stock-theft",
+    "Malicious damage to property": "Malicious damage to property",
+}
+
+SUMMARY_PROVINCE_ORDER = [
+    "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
+    "Limpopo", "Mpumalanga", "North West", "Northern Cape", "Western Cape",
+]
+
+KNOWN_XLSX_FALLBACKS = [
+    "/services/downloads/2025/2025-2026_-_4th_Quarter_WEB.xlsx",
+    "/services/downloads/2025/2025-2026_-_3rd_Quarter_WEB.xlsx",
+    "/services/downloads/2024-2025_-_3rd_Quarter_WEB.xlsx",
 ]
 
 
 def _find_latest_xlsx_url(html: str) -> str | None:
     """Parse the SAPS crime stats page and return the most recent .xlsx link."""
     soup = BeautifulSoup(html, "lxml")
-    candidates = []
-    for a in soup.find_all("a", href=True):
-        href = a["href"]
-        if href.lower().endswith(".xlsx") and ("quarter" in href.lower() or "annual" in href.lower()):
+    candidates: list[str] = []
+
+    for anchor in soup.find_all("a", href=True):
+        href = anchor["href"]
+        lower = href.lower()
+        if lower.endswith(".xlsx") and (
+            "quarter" in lower or "annual" in lower or "downloads" in lower
+        ):
             candidates.append(href)
 
-    # Also check the known /services/downloads/ directory listing
     if not candidates:
-        # Fallback: known URL pattern for Q3 2024/25 (most recent confirmed)
-        candidates = [
-            "/services/downloads/2024-2025_-_3rd_Quarter_WEB.xlsx",
-            "/services/downloads/2024-2025_-_2nd_Quarter_WEB.xlsx",
-        ]
+        candidates = KNOWN_XLSX_FALLBACKS.copy()
 
-    # Prefer the most recently named file
-    def sort_key(h):
-        m = re.search(r"(\d{4})-(\d{4}).*?(\d)(?:st|nd|rd|th)", h, re.IGNORECASE)
-        if m:
-            return (int(m.group(1)), int(m.group(3)))
-        return (0, 0)
+    def sort_key(href: str) -> tuple[int, int, int]:
+        match = re.search(r"(\d{4})-(\d{4}).*?(\d)(?:st|nd|rd|th)", href, re.IGNORECASE)
+        if match:
+            return (int(match.group(1)), int(match.group(3)), len(href))
+        year_match = re.search(r"(\d{4})-(\d{4})", href)
+        if year_match:
+            return (int(year_match.group(1)), 0, len(href))
+        return (0, 0, 0)
 
     candidates.sort(key=sort_key, reverse=True)
-    url = candidates[0]
-    return url if url.startswith("http") else BASE + url
+    href = candidates[0]
+    if href.startswith("http"):
+        return href
+    if not href.startswith("/"):
+        if href.startswith("downloads/"):
+            href = "/services/" + href
+        else:
+            href = "/" + href
+    return BASE + href
 
 
 def _download_xlsx(url: str) -> bytes | None:
-    try:
-        log.info(f"Downloading SAPS Excel: {url}")
-        r = requests.get(url, headers=HEADERS, timeout=60)
-        r.raise_for_status()
-        return r.content
-    except Exception as e:
-        log.error(f"SAPS download failed: {e}")
-        return None
+    log.info("Downloading SAPS Excel: %s", url)
+    # SAPS cert chain often fails outside SA; stream large files with retries
+    return download_bytes(url, timeout=180, verify=False, retries=4)
 
 
-def _parse_province_totals(raw_bytes: bytes) -> dict:
+def _parse_summary_sheet(raw_bytes: bytes) -> dict:
     """
-    Extract province-level totals from the SAPS Excel workbook.
-    The workbook has one sheet per crime category or a summary sheet.
-    Returns a dict keyed by province with crime counts.
+    Parse the modern SAPS workbook layout (2025+).
+    Uses 'Crime stats RSA & PHO summary' with province columns 8–16.
     """
     xls = pd.ExcelFile(io.BytesIO(raw_bytes))
-    result = {p: {} for p in PROVINCES}
+    sheet = "Crime stats RSA & PHO summary"
+    if sheet not in xls.sheet_names:
+        log.warning("Summary sheet missing; falling back to legacy parser")
+        return _parse_legacy_sheets(xls)
+
+    df = pd.read_excel(xls, sheet_name=sheet, header=None)
+    result = {province: {} for province in PROVINCES}
+
+    for _, row in df.iterrows():
+        raw_label = str(row.iloc[2]).strip()
+        if raw_label not in CATEGORY_ALIASES:
+            continue
+
+        key = CATEGORY_ALIASES[raw_label]
+        try:
+            national = int(float(row.iloc[4]))
+        except (TypeError, ValueError):
+            continue
+
+        for idx, province in enumerate(SUMMARY_PROVINCE_ORDER):
+            col = 8 + idx
+            if col >= len(row):
+                continue
+            value = row.iloc[col]
+            if pd.isna(value):
+                continue
+            try:
+                result[province][key] = int(float(value))
+            except (TypeError, ValueError):
+                continue
+
+        # Sanity check: national total should be positive
+        if national <= 0:
+            continue
+
+    populated = sum(1 for p in result.values() if p)
+    log.info("Parsed SAPS summary sheet for %s provinces with data", populated)
+    return result
+
+
+def _parse_legacy_sheets(xls: pd.ExcelFile) -> dict:
+    """Original per-category sheet parser for older SAPS workbooks."""
+    legacy_categories = list(CATEGORY_ALIASES.keys())
+    result = {province: {} for province in PROVINCES}
 
     for sheet in xls.sheet_names:
         cat = sheet.strip()
-        if cat not in CRIME_CATEGORIES:
+        if cat not in legacy_categories:
             continue
+        key = CATEGORY_ALIASES.get(cat, cat)
         try:
             df = pd.read_excel(xls, sheet_name=sheet, header=None)
-            # SAPS format: province names appear in column 0 as row headers
             for _, row in df.iterrows():
                 cell = str(row.iloc[0]).strip()
                 for prov in PROVINCES:
                     if prov.lower() in cell.lower():
-                        # Last non-null numeric value in the row = latest quarter
-                        nums = [v for v in row if isinstance(v, (int, float)) and not pd.isna(v)]
+                        nums = [
+                            v for v in row
+                            if isinstance(v, (int, float)) and not pd.isna(v)
+                        ]
                         if nums:
-                            result[prov][cat] = int(nums[-1])
+                            result[prov][key] = int(nums[-1])
                         break
-        except Exception as e:
-            log.warning(f"Skipping sheet '{sheet}': {e}")
+        except Exception as exc:
+            log.warning("Skipping legacy sheet '%s': %s", sheet, exc)
 
     return result
 
 
+def _parse_province_totals(raw_bytes: bytes) -> dict:
+    return _parse_summary_sheet(raw_bytes)
+
+
 def fetch(output_dir: Path) -> dict:
-    """
-    Main entry point. Downloads and parses SAPS crime data.
-    Returns structured dict and saves JSON to output_dir.
-    """
+    """Download and parse SAPS crime data; save JSON to output_dir."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. Get index page to find latest file
+    xlsx_url: str | None = None
     try:
-        r = requests.get(INDEX_URL, headers=HEADERS, timeout=15)
-        xlsx_url = _find_latest_xlsx_url(r.text)
-    except Exception:
-        xlsx_url = BASE + "/services/downloads/2024-2025_-_3rd_Quarter_WEB.xlsx"
+        response = requests.get(INDEX_URL, headers=HEADERS, timeout=20, verify=False)
+        xlsx_url = _find_latest_xlsx_url(response.text)
+    except Exception as exc:
+        log.error("SAPS index fetch failed: %s", exc)
 
-    log.info(f"Latest SAPS xlsx URL: {xlsx_url}")
+    if not xlsx_url:
+        xlsx_url = BASE + KNOWN_XLSX_FALLBACKS[0]
 
-    # 2. Download the file
+    log.info("Latest SAPS xlsx URL: %s", xlsx_url)
+
     raw = _download_xlsx(xlsx_url)
+    is_live = False
+    province_data: dict
 
     if raw:
         province_data = _parse_province_totals(raw)
+        is_live = any(province_data.values())
+        if not is_live:
+            log.warning("SAPS download succeeded but parsing returned no rows")
+            province_data = _fallback_data()
     else:
         log.warning("Using cached/fallback crime data")
         province_data = _fallback_data()
@@ -136,7 +213,8 @@ def fetch(output_dir: Path) -> dict:
     result = {
         "source": "SAPS",
         "url": xlsx_url,
-        "scraped_at": datetime.utcnow().isoformat(),
+        "scraped_at": utc_now_iso(),
+        "is_live": is_live,
         "period": _extract_period(xlsx_url),
         "provinces": province_data,
         "national_totals": _national_totals(province_data),
@@ -144,17 +222,23 @@ def fetch(output_dir: Path) -> dict:
 
     out = output_dir / "crime.json"
     out.write_text(json.dumps(result, indent=2))
-    log.info(f"Crime data saved → {out}")
+    log.info("Crime data saved → %s (live=%s)", out, is_live)
     return result
 
 
 def _extract_period(url: str) -> str:
-    m = re.search(r"(\d{4}-\d{4}.*?)(?:_WEB)?\.xlsx", url, re.IGNORECASE)
-    return m.group(1).replace("_", " ") if m else "Unknown"
+    match = re.search(r"(\d{4}-\d{4}.*?)(?:_WEB)?\.xlsx", url, re.IGNORECASE)
+    if match:
+        return match.group(1).replace("_", " ")
+    quarter = re.search(r"(\d)(?:st|nd|rd|th)_Quarter", url, re.IGNORECASE)
+    year_span = re.search(r"(\d{4}-\d{4})", url)
+    if quarter and year_span:
+        return f"{year_span.group(1)} Q{quarter.group(1)}"
+    return "Unknown"
 
 
 def _national_totals(provinces: dict) -> dict:
-    totals = {}
+    totals: dict[str, int] = {}
     for prov_data in provinces.values():
         for cat, val in prov_data.items():
             totals[cat] = totals.get(cat, 0) + val
@@ -162,17 +246,44 @@ def _national_totals(provinces: dict) -> dict:
 
 
 def _fallback_data() -> dict:
-    """Hardcoded Q3 2024/25 published figures as fallback."""
+    """Q4 2025/26 (Jan–Mar 2026) figures from published SAPS workbook."""
     return {
-        "Gauteng":        {"Murder": 4912, "Carjacking": 6800, "Residential burglary": 52000, "Sexual offences": 10200},
-        "KwaZulu-Natal":  {"Murder": 3801, "Carjacking": 2800, "Residential burglary": 41000, "Sexual offences": 8900},
-        "Western Cape":   {"Murder": 1204, "Carjacking": 2900, "Residential burglary": 28400, "Sexual offences": 7800},
-        "Eastern Cape":   {"Murder": 2890, "Carjacking": 1200, "Residential burglary": 22000, "Sexual offences": 5600},
-        "Limpopo":        {"Murder": 1102, "Carjacking":  450, "Residential burglary": 10500, "Sexual offences": 3200},
-        "Mpumalanga":     {"Murder": 1450, "Carjacking":  620, "Residential burglary": 16000, "Sexual offences": 3400},
-        "North West":     {"Murder":  980, "Carjacking":  540, "Residential burglary": 13000, "Sexual offences": 2900},
-        "Free State":     {"Murder":  785, "Carjacking":  420, "Residential burglary": 11200, "Sexual offences": 1804},
-        "Northern Cape":  {"Murder":  550, "Carjacking":  197, "Residential burglary": 11665, "Sexual offences": 2900},
+        "Gauteng": {
+            "Murder": 1223, "Carjacking": 2062, "Residential burglary": 6499,
+            "Sexual offences": 2369, "Robbery aggravating": 8625,
+        },
+        "KwaZulu-Natal": {
+            "Murder": 1058, "Carjacking": 446, "Residential burglary": 5986,
+            "Sexual offences": 2589, "Robbery aggravating": 8013,
+        },
+        "Western Cape": {
+            "Murder": 983, "Carjacking": 498, "Residential burglary": 4909,
+            "Sexual offences": 1663, "Robbery aggravating": 5994,
+        },
+        "Eastern Cape": {
+            "Murder": 949, "Carjacking": 189, "Residential burglary": 3724,
+            "Sexual offences": 1853, "Robbery aggravating": 6026,
+        },
+        "Limpopo": {
+            "Murder": 175, "Carjacking": 58, "Residential burglary": 2620,
+            "Sexual offences": 1185, "Robbery aggravating": 2823,
+        },
+        "Mpumalanga": {
+            "Murder": 253, "Carjacking": 212, "Residential burglary": 2260,
+            "Sexual offences": 900, "Robbery aggravating": 2850,
+        },
+        "North West": {
+            "Murder": 271, "Carjacking": 106, "Residential burglary": 2633,
+            "Sexual offences": 887, "Robbery aggravating": 4048,
+        },
+        "Free State": {
+            "Murder": 192, "Carjacking": 32, "Residential burglary": 2408,
+            "Sexual offences": 837, "Robbery aggravating": 3203,
+        },
+        "Northern Cape": {
+            "Murder": 77, "Carjacking": 6, "Residential burglary": 1348,
+            "Sexual offences": 307, "Robbery aggravating": 1994,
+        },
     }
 
 

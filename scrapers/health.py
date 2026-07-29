@@ -5,12 +5,12 @@ Source : https://dhis2.org / NDOH public DHIS2 instance
 Cadence: Quarterly
 """
 import json, logging
-from datetime import datetime
 from pathlib import Path
 import requests
 
+from scrapers._common import HEADERS, utc_now_iso
+
 log = logging.getLogger(__name__)
-HEADERS = {"User-Agent": "Mozilla/5.0 (SA-Insight-Hub/1.0; public-data-research)"}
 
 # South Africa's NDOH DHIS2 instance (public read access)
 DHIS2_BASE = "https://dhis.gov.za/dhis/api"
@@ -37,7 +37,7 @@ def fetch(output_dir: Path) -> dict:
 
     result = {
         "source": "NDOH DHIS2 + SANAC + UNAIDS",
-        "scraped_at": datetime.utcnow().isoformat(),
+        "scraped_at": utc_now_iso(),
         "is_live": is_live,
         "dhis2_connected": is_live,
         # National headline indicators (SANAC 2024 / UNAIDS 2024)

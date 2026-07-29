@@ -1,17 +1,16 @@
 #!/bin/bash
-# SA Insight Hub - Cron Jobs Setup Script
-# This script helps you install, view, and remove the cron jobs
+# Libo Insights — Cron Jobs Setup Script
 
-PROJECT_DIR="/home/zolile/Documents/insights_hub"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR" || exit 1
 
 case "$1" in
     install)
         echo "Installing cron jobs..."
+        echo "Edit LIBO_INSIGHTS_ROOT in cron_setup.txt if needed (currently may point to /workspace)."
         crontab cron_setup.txt
         echo "Cron jobs installed successfully!"
         echo ""
-        echo "Current cron jobs:"
         crontab -l
         ;;
     uninstall)
@@ -31,6 +30,10 @@ case "$1" in
         echo "Testing weekly scraper..."
         ./cron_weekly.sh
         ;;
+    test-monthly)
+        echo "Testing monthly scraper..."
+        ./cron_monthly.sh
+        ;;
     test-quarterly)
         echo "Testing quarterly scraper..."
         ./cron_quarterly.sh
@@ -45,20 +48,14 @@ case "$1" in
         echo "Latest weekly log:"
         tail -20 logs/weekly_cron.log 2>/dev/null || echo "No weekly log found"
         echo ""
+        echo "Latest monthly log:"
+        tail -20 logs/monthly_cron.log 2>/dev/null || echo "No monthly log found"
+        echo ""
         echo "Latest quarterly log:"
         tail -20 logs/quarterly_cron.log 2>/dev/null || echo "No quarterly log found"
         ;;
     *)
-        echo "Usage: $0 {install|uninstall|status|test-realtime|test-weekly|test-quarterly|logs}"
-        echo ""
-        echo "Commands:"
-        echo "  install       - Install all cron jobs"
-        echo "  uninstall     - Remove all cron jobs"
-        echo "  status        - Show current cron jobs"
-        echo "  test-realtime - Test the realtime scraper"
-        echo "  test-weekly   - Test the weekly scraper"
-        echo "  test-quarterly- Test the quarterly scraper"
-        echo "  logs          - Show recent log files"
+        echo "Usage: $0 {install|uninstall|status|test-realtime|test-weekly|test-monthly|test-quarterly|logs}"
         exit 1
         ;;
 esac

@@ -1,19 +1,21 @@
-# SA Insight Hub - Cron Jobs Configuration
-# This file contains the cron jobs that replace GitHub Actions
-# 
-# To install: crontab cron_setup.txt
-# To view current cron jobs: crontab -l
-# To edit: crontab -e
-# To remove: crontab -r
+# Libo Insights — Cron Jobs Configuration
+# Install: crontab cron_setup.txt
+# View: crontab -l
 
-# Realtime scrapers (forex + energy) - Every 30 minutes
-*/30 * * * * /home/zolile/Documents/insights_hub/cron_realtime.sh
+# Resolve repo root at install time (edit path if deploying elsewhere)
+LIBO_INSIGHTS_ROOT=/workspace
 
-# Weekly scrapers (water + finance + property) - Every Monday at 06:00 UTC (08:00 SAST)
-0 6 * * 1 /home/zolile/Documents/insights_hub/cron_weekly.sh
+# Realtime — forex + energy every 30 minutes
+*/30 * * * * $LIBO_INSIGHTS_ROOT/cron_realtime.sh
 
-# Quarterly scrapers (all 10 topics) - 1st of January, April, July, October at 04:00 UTC
-0 4 1 1,4,7,10 * /home/zolile/Documents/insights_hub/cron_quarterly.sh
+# Weekly — DWS dam levels every Monday 06:00 UTC
+0 6 * * 1 $LIBO_INSIGHTS_ROOT/cron_weekly.sh
 
-# Optional: Log cleanup - Delete logs older than 30 days (runs daily at 02:00)
-0 2 * * * find /home/zolile/Documents/insights_hub/logs -name "*.log" -mtime +30 -delete
+# Monthly — SARB repo + Stats SA CPI + property on 1st of month 05:00 UTC
+0 5 1 * * $LIBO_INSIGHTS_ROOT/cron_monthly.sh
+
+# Quarterly — full refresh all 10 topics (Jan, Apr, Jul, Oct) 04:00 UTC
+0 4 1 1,4,7,10 * $LIBO_INSIGHTS_ROOT/cron_quarterly.sh
+
+# Log cleanup — delete logs older than 30 days (daily 02:00 UTC)
+0 2 * * * find $LIBO_INSIGHTS_ROOT/logs -name "*.log" -mtime +30 -delete

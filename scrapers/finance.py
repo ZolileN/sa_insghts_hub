@@ -1,146 +1,142 @@
 """
 Finance Scraper — SARB Repo Rate + Stats SA CPI
 -------------------------------------------------
-Source 1 : https://custom.resbank.co.za/SarbWebApi/  (SARB public Web API)
-Source 2 : https://www.statssa.gov.za/               (Stats SA CPI releases)
-Source 3 : https://www.resbank.co.za (HTML fallback)
-Cadence  : SARB MPC meets 6x/year · Stats SA CPI monthly
+Source 1 : SARB MPC statements (HTML/PDF)
+Source 2 : Stats SA CPI releases (P0141 PDF)
+Cadence  : SARB MPC ~6x/year · Stats SA CPI monthly
 """
 
 import json
 import logging
 import re
-from datetime import datetime
 from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
 
+from scrapers._common import (
+    HEADERS,
+    extract_pdf_text,
+    fetch_statssa_pdf,
+    find_first_percent,
+    parse_sa_decimal,
+    utc_now_iso,
+)
+
 log = logging.getLogger(__name__)
 
-HEADERS = {"User-Agent": "Mozilla/5.0 (SA-Insight-Hub/1.0; public-data-research)"}
+SARB_MPC_URL = "https://www.resbank.co.za/en/home/what-we-do/monetary-policy"
+SARB_MPC_PDF = (
+    "https://www.resbank.co.za/content/dam/sarb/publications/statements/"
+    "monetary-policy-statements/2026/july/july-statement.pdf"
+)
+STATSSA_CPI = "https://www.statssa.gov.za/?page_id=1854&PPN=P0141"
 
-SARB_API_BASE  = "https://custom.resbank.co.za/SarbWebApi"
-SARB_MPC_URL   = "https://www.resbank.co.za/en/home/what-we-do/monetary-policy"
-STATSSA_CPI    = "https://www.statssa.gov.za/?page_id=1854&PPN=P0141"
+CPI_PDF_CANDIDATES = [
+    "P0141June2026.pdf",
+    "P0141July2026.pdf",
+    "P0141May2026.pdf",
+]
 
 
 def _fetch_sarb_repo_rate() -> dict | None:
-    """Try the SARB Web API for current repo rate series."""
-    endpoints = [
-        f"{SARB_API_BASE}/WebIndicators/CurrentGroupData/Rates",
-        f"{SARB_API_BASE}/WebIndicators/CurrentGroupData/MonetaryPolicy",
-        f"{SARB_API_BASE}/Home/Overview",
-    ]
-    for url in endpoints:
-        try:
-            r = requests.get(url, headers={**HEADERS, "Accept": "application/json"}, timeout=10)
-            if r.status_code == 200 and r.headers.get("content-type", "").startswith("application/json"):
-                data = r.json()
-                log.info(f"SARB API OK at {url}")
-                return data
-        except Exception as e:
-            log.debug(f"SARB endpoint {url} failed: {e}")
-
-    # HTML scrape fallback: SARB monetary policy page
-    try:
-        r = requests.get(SARB_MPC_URL, headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(r.text, "lxml")
-        text = soup.get_text()
-        # Look for repo rate mentions like "repo rate of 7.75%" or "8.00 per cent"
-        m = re.search(r"repo rate[^\d]*(\d+[\.,]\d+)\s*(?:%|per cent)", text, re.IGNORECASE)
-        if m:
-            rate = float(m.group(1).replace(",", "."))
-            log.info(f"Repo rate scraped from HTML: {rate}%")
-            return {"repo_rate_pct": rate, "source": "SARB HTML scrape"}
-    except Exception as e:
-        log.error(f"SARB HTML scrape failed: {e}")
-
-    return None
-
-
-def _fetch_statssa_cpi() -> dict | None:
-    """Scrape Stats SA for latest CPI headline figure."""
-    try:
-        r = requests.get(STATSSA_CPI, headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(r.text, "lxml")
-        text = soup.get_text()
-
-        # Look for patterns like "4.4%" or "Consumer price index: 4.4%"
-        m = re.search(
-            r"(?:headline|overall|annual)[^\d%]*(\d+[\.,]\d+)\s*%",
-            text, re.IGNORECASE
+    """Resolve current repo rate from SARB MPC PDF or monetary policy pages."""
+    pdf_bytes = requests.get(SARB_MPC_PDF, headers=HEADERS, timeout=30).content
+    if pdf_bytes.startswith(b"%PDF"):
+        text = extract_pdf_text(pdf_bytes, max_pages=5)
+        match = re.search(
+            r"policy rate unchanged,\s*at\s*(\d+(?:[\.,]\d+)?)\s*%",
+            text,
+            re.IGNORECASE | re.DOTALL,
         )
-        if m:
-            cpi = float(m.group(1).replace(",", "."))
-            log.info(f"CPI scraped: {cpi}%")
-            return {"headline_cpi_pct": cpi, "source": "Stats SA"}
+        if match:
+            rate = parse_sa_decimal(match.group(1))
+            log.info("Repo rate from SARB July 2026 MPC PDF: %s%%", rate)
+            return {"repo_rate_pct": rate, "source": "SARB MPC July 2026"}
 
-        # Broader search
-        m2 = re.search(r"(\d+[\.,]\d+)\s*(?:per cent|%)", text)
-        if m2:
-            return {"headline_cpi_pct": float(m2.group(1).replace(",", ".")),
-                    "source": "Stats SA (broad match)"}
-    except Exception as e:
-        log.error(f"Stats SA CPI scrape failed: {e}")
+    pages = [
+        SARB_MPC_URL,
+        "https://www.resbank.co.za/en/home/what-we-do/monetary-policy/key-repo-rate",
+    ]
+    for url in pages:
+        try:
+            response = requests.get(url, headers=HEADERS, timeout=15)
+            soup = BeautifulSoup(response.text, "lxml")
+            text = soup.get_text()
+            match = re.search(
+                r"repo rate[^\d]*(\d+[\.,]\d+)\s*(?:%|per cent)",
+                text,
+                re.IGNORECASE,
+            )
+            if match:
+                rate = parse_sa_decimal(match.group(1))
+                log.info("Repo rate scraped from HTML %s: %s%%", url, rate)
+                return {"repo_rate_pct": rate, "source": f"SARB HTML ({url})"}
+        except Exception as exc:
+            log.debug("SARB HTML scrape %s failed: %s", url, exc)
+
     return None
 
 
-def _fetch_tradingeconomics_rates() -> dict | None:
-    """
-    TradingEconomics hosts SA interest rate and CPI data.
-    We use their public embed endpoints (no key required for basic reads).
-    """
-    url = "https://tradingeconomics.com/south-africa/interest-rate"
+def _fetch_statssa_cpi_pdf() -> dict | None:
+    for filename in CPI_PDF_CANDIDATES:
+        pdf_bytes = fetch_statssa_pdf("P0141", filename)
+        if not pdf_bytes or not pdf_bytes.startswith(b"%PDF"):
+            continue
+        text = extract_pdf_text(pdf_bytes, max_pages=8)
+        match = re.search(
+            r"Annual consumer price inflation was (\d+[\.,]\d+)\s*%",
+            text,
+            re.IGNORECASE,
+        )
+        if match:
+            cpi = parse_sa_decimal(match.group(1))
+            period_match = re.search(r"Consumer Price Index,\s*(\w+\s+\d{4})", text)
+            period = period_match.group(1) if period_match else "2026"
+            log.info("CPI %s%% from %s", cpi, filename)
+            return {
+                "headline_cpi_pct": cpi,
+                "period": period,
+                "source": f"Stats SA {filename}",
+            }
+    return None
+
+
+def _fetch_statssa_cpi_html() -> dict | None:
     try:
-        r = requests.get(url, headers=HEADERS, timeout=10)
-        soup = BeautifulSoup(r.text, "lxml")
-
-        result = {}
-
-        # Scrape the large rate display
-        for span in soup.find_all(["span", "div", "td"], class_=re.compile(r"value|rate|number", re.I)):
-            txt = span.get_text(strip=True)
-            m = re.match(r"^(\d+[\.,]\d+)\s*%?$", txt)
-            if m:
-                val = float(m.group(1).replace(",", "."))
-                if 3 < val < 25:   # plausible interest rate range
-                    result.setdefault("repo_candidate", val)
-                break
-
-        return result if result else None
-    except Exception as e:
-        log.debug(f"TradingEconomics scrape: {e}")
-        return None
+        response = requests.get(STATSSA_CPI, headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(response.text, "lxml")
+        text = soup.get_text()
+        cpi = find_first_percent(
+            text,
+            r"(?:headline|overall|annual)[^\d%]*(\d+[\.,]\d+)\s*%",
+        )
+        if cpi:
+            return {"headline_cpi_pct": cpi, "source": "Stats SA HTML"}
+    except Exception as exc:
+        log.error("Stats SA CPI HTML scrape failed: %s", exc)
+    return None
 
 
 def fetch(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     sarb = _fetch_sarb_repo_rate()
-    cpi  = _fetch_statssa_cpi()
-    te   = _fetch_tradingeconomics_rates()
+    cpi = _fetch_statssa_cpi_pdf() or _fetch_statssa_cpi_html()
 
-    # Best-effort repo rate
-    repo_rate = None
-    prime_rate = None
-    if sarb and isinstance(sarb, dict):
-        repo_rate = sarb.get("repo_rate_pct") or sarb.get("repo_candidate")
-    if te and not repo_rate:
-        repo_rate = te.get("repo_candidate")
-    if repo_rate:
-        prime_rate = round(repo_rate + 3.5, 2)
+    repo_rate = sarb.get("repo_rate_pct") if sarb else None
+    prime_rate = round(repo_rate + 3.5, 2) if repo_rate else None
 
     result = {
         "source": "SARB + Stats SA",
-        "scraped_at": datetime.utcnow().isoformat(),
+        "scraped_at": utc_now_iso(),
         "is_live": bool(repo_rate or cpi),
-        "repo_rate_pct": repo_rate or 6.75,          # fallback: Nov 2025 actual
-        "prime_rate_pct": prime_rate or 10.25,
-        "cpi_headline_pct": (cpi or {}).get("headline_cpi_pct", 3.5),
+        "repo_rate_pct": repo_rate or 7.0,
+        "prime_rate_pct": prime_rate or 10.5,
+        "cpi_headline_pct": (cpi or {}).get("headline_cpi_pct", 5.0),
+        "cpi_period": (cpi or {}).get("period", "June 2026"),
         "sarb_raw": sarb,
         "cpi_raw": cpi,
-        # Historical series (hardcoded from SARB published data — update quarterly)
         "repo_history": {
             "2020-Q1": 6.25, "2020-Q2": 3.75, "2020-Q3": 3.5,  "2020-Q4": 3.5,
             "2021-Q1": 3.5,  "2021-Q2": 3.5,  "2021-Q3": 3.5,  "2021-Q4": 3.75,
@@ -148,18 +144,24 @@ def fetch(output_dir: Path) -> dict:
             "2023-Q1": 7.25, "2023-Q2": 8.25, "2023-Q3": 8.25, "2023-Q4": 8.25,
             "2024-Q1": 8.25, "2024-Q2": 8.25, "2024-Q3": 8.0,  "2024-Q4": 7.75,
             "2025-Q1": 7.5,  "2025-Q2": 7.25, "2025-Q3": 7.0,  "2025-Q4": 6.75,
+            "2026-Q1": 6.75, "2026-Q2": 7.0,  "2026-Q3": 7.0,
         },
         "cpi_history": {
             "2023-01": 6.9, "2023-04": 6.8, "2023-07": 4.7, "2023-10": 5.5,
             "2024-01": 5.3, "2024-04": 5.3, "2024-07": 4.6, "2024-10": 2.9,
             "2025-01": 3.5, "2025-04": 3.3, "2025-07": 3.4, "2025-10": 3.6,
-            "2026-01": 3.5,
+            "2026-01": 3.5, "2026-04": 4.5, "2026-06": 5.0,
         },
     }
 
     out = output_dir / "finance.json"
     out.write_text(json.dumps(result, indent=2))
-    log.info(f"Finance data saved → {out}  |  repo={result['repo_rate_pct']}%  CPI={result['cpi_headline_pct']}%")
+    log.info(
+        "Finance data saved → %s | repo=%s%% CPI=%s%%",
+        out,
+        result["repo_rate_pct"],
+        result["cpi_headline_pct"],
+    )
     return result
 
 
