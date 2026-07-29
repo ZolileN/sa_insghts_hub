@@ -1,62 +1,63 @@
 {
-  "source": "Department of Basic Education \u2014 NSC 2024",
-  "scraped_at": "2026-03-14T17:34:15.168327",
-  "is_live": false,
-  "exam_year": 2024,
-  "national_pass_rate_pct": 87.3,
-  "bachelor_pass_pct": 45.6,
-  "total_wrote": 756000,
+  "source": "Department of Basic Education \u2014 NSC 2025",
+  "scraped_at": "2026-07-29T16:17:40.071589+00:00",
+  "is_live": true,
+  "exam_year": 2025,
+  "national_pass_rate_pct": 88.0,
+  "bachelor_pass_pct": 46.0,
+  "total_wrote": 900000,
+  "total_passed": 656000,
   "distinction_rate_pct": 7.2,
   "provinces": {
-    "Western Cape": {
-      "pass_rate": 83.6,
-      "bachelor_pct": 54.2,
-      "wrote": 88000
-    },
-    "Gauteng": {
-      "pass_rate": 92.2,
-      "bachelor_pct": 58.8,
-      "wrote": 132000
-    },
     "KwaZulu-Natal": {
-      "pass_rate": 80.4,
-      "bachelor_pct": 39.2,
+      "pass_rate": 90.6,
+      "bachelor_pct": 46.0,
       "wrote": 148000
     },
-    "Eastern Cape": {
-      "pass_rate": 71.9,
-      "bachelor_pct": 31.4,
-      "wrote": 94000
-    },
-    "Limpopo": {
-      "pass_rate": 65.4,
-      "bachelor_pct": 22.8,
-      "wrote": 58000
-    },
-    "Mpumalanga": {
-      "pass_rate": 74.8,
-      "bachelor_pct": 31.0,
-      "wrote": 62000
-    },
-    "North West": {
-      "pass_rate": 79.2,
-      "bachelor_pct": 35.6,
-      "wrote": 47000
-    },
     "Free State": {
-      "pass_rate": 77.3,
-      "bachelor_pct": 33.2,
+      "pass_rate": 89.33,
+      "bachelor_pct": 46.0,
       "wrote": 38000
     },
+    "Gauteng": {
+      "pass_rate": 89.06,
+      "bachelor_pct": 46.0,
+      "wrote": 132000
+    },
+    "North West": {
+      "pass_rate": 88.49,
+      "bachelor_pct": 46.0,
+      "wrote": 47000
+    },
+    "Western Cape": {
+      "pass_rate": 88.2,
+      "bachelor_pct": 46.0,
+      "wrote": 88000
+    },
     "Northern Cape": {
-      "pass_rate": 88.1,
-      "bachelor_pct": 48.8,
+      "pass_rate": 87.79,
+      "bachelor_pct": 46.0,
       "wrote": 20000
+    },
+    "Mpumalanga": {
+      "pass_rate": 86.55,
+      "bachelor_pct": 46.0,
+      "wrote": 62000
+    },
+    "Limpopo": {
+      "pass_rate": 86.15,
+      "bachelor_pct": 46.0,
+      "wrote": 58000
+    },
+    "Eastern Cape": {
+      "pass_rate": 84.17,
+      "bachelor_pct": 46.0,
+      "wrote": 94000
     }
   },
   "subjects": {
     "Mathematics": {
-      "pass_rate": 52.3,
+      "pass_rate": 64.0,
       "hq_pass_rate": 31.2
     },
     "Mathematical Literacy": {
@@ -64,7 +65,7 @@
       "hq_pass_rate": 48.1
     },
     "Physical Sciences": {
-      "pass_rate": 50.1,
+      "pass_rate": 77.0,
       "hq_pass_rate": 28.4
     },
     "Life Sciences": {
@@ -72,7 +73,7 @@
       "hq_pass_rate": 42.1
     },
     "Accounting": {
-      "pass_rate": 58.8,
+      "pass_rate": 78.0,
       "hq_pass_rate": 34.2
     },
     "Geography": {
@@ -112,6 +113,10 @@
     "2024": {
       "pass_rate": 87.3,
       "bachelor": 45.6
+    },
+    "2025": {
+      "pass_rate": 88.0,
+      "bachelor": 46.0
     }
   }
 }

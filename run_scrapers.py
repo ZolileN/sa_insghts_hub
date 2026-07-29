@@ -25,7 +25,7 @@ import logging
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 # ── Ensure directories exist ────────────────────────────────────────────────────
@@ -130,23 +130,33 @@ def run_all(topics: list[str], parallel: bool = False, dry_run: bool = False) ->
 
 
 def write_manifest(results: list[dict]):
-    """Write a data/manifest.json with scrape timestamps and statuses."""
+    """Write data/manifest.json, merging with any existing topic entries."""
+    manifest_path = DATA_DIR / "manifest.json"
+    existing: dict = {}
+    if manifest_path.exists():
+        try:
+            existing = json.loads(manifest_path.read_text())
+        except json.JSONDecodeError:
+            log.warning("Could not parse existing manifest — overwriting topics map")
+
+    topics = existing.get("topics", {})
+    for result in results:
+        key = result["topic"]
+        topics[key] = {
+            "label": result["label"],
+            "status": result["status"],
+            "is_live": result.get("is_live", False),
+            "elapsed_s": result.get("elapsed_s", 0),
+            "cadence": SCRAPERS[key]["cadence"],
+            "schedule": CADENCE_SCHEDULE[SCRAPERS[key]["cadence"]],
+        }
+
     manifest = {
-        "last_run": datetime.utcnow().isoformat(),
-        "topics": {
-            r["topic"]: {
-                "label":     r["label"],
-                "status":    r["status"],
-                "is_live":   r.get("is_live", False),
-                "elapsed_s": r.get("elapsed_s", 0),
-                "cadence":   SCRAPERS[r["topic"]]["cadence"],
-                "schedule":  CADENCE_SCHEDULE[SCRAPERS[r["topic"]]["cadence"]],
-            }
-            for r in results
-        },
+        "last_run": datetime.now(timezone.utc).isoformat(),
+        "topics": topics,
     }
-    (DATA_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2))
-    log.info(f"Manifest written → {DATA_DIR}/manifest.json")
+    manifest_path.write_text(json.dumps(manifest, indent=2))
+    log.info("Manifest written → %s", manifest_path)
     return manifest
 
 

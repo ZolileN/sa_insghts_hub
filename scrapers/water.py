@@ -10,17 +10,17 @@ Notes   : HTML table has province-level summaries + individual dam rows
 import json
 import logging
 import re
-from datetime import datetime
 from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
 
+from scrapers._common import HEADERS, utc_now_iso
+
 log = logging.getLogger(__name__)
 
 HTML_URL = "https://www.dws.gov.za/Hydrology/Weekly/Province.aspx"
 PDF_URL  = "https://www.dws.gov.za/Hydrology/Weekly/Weekly.pdf"
-HEADERS  = {"User-Agent": "Mozilla/5.0 (SA-Insight-Hub/1.0; public-data-research)"}
 
 PROVINCE_MAP = {
     "western cape": "Western Cape",
@@ -126,9 +126,10 @@ def fetch(output_dir: Path) -> dict:
         log.error(f"DWS HTML scrape failed: {e}")
 
     if not provinces:
-        log.warning("Using fallback dam data")
+        log.warning("DWS blocked or unreachable from this network — using latest published fallback")
         provinces = _fallback_province_data()
-        dams      = _fallback_dam_data()
+        dams = _fallback_dam_data()
+        report_date = report_date or "fallback (run cron from SA network for live DWS)"
 
     # Compute national average
     pcts = [v["this_week_pct"] for v in provinces.values() if v.get("this_week_pct")]
@@ -138,7 +139,7 @@ def fetch(output_dir: Path) -> dict:
         "source": "DWS Weekly State of Reservoirs",
         "url": HTML_URL,
         "pdf_url": PDF_URL,
-        "scraped_at": datetime.utcnow().isoformat(),
+        "scraped_at": utc_now_iso(),
         "report_date": report_date,
         "is_live": is_live,
         "national_avg_pct": national_avg,

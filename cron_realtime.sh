@@ -1,23 +1,19 @@
 #!/bin/bash
-# SA Insight Hub - Realtime Scrapers (Forex + Energy)
-# Replaces GitHub Actions scrape_realtime.yml
-# Schedule: Every 30 minutes
+# Libo Insights — Realtime scrapers (forex + energy)
+# Schedule: every 30 minutes
 
-# Set the project directory
-PROJECT_DIR="/home/zolile/Documents/insights_hub"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR" || exit 1
 
-# Activate virtual environment
-source .venv/bin/activate || exit 1
+if [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
+fi
 
-# Create directories if they don't exist
 mkdir -p data logs
 
-# Run the scrapers
 echo "$(date): Starting realtime scrapers (forex + energy)"
-python run_scrapers.py --topics forex energy >> logs/realtime_cron.log 2>&1
+python3 run_scrapers.py --topics forex energy >> logs/realtime_cron.log 2>&1
 
-# Commit changes if any
 if git diff --quiet data/; then
     echo "$(date): No changes to commit"
 else

@@ -1,68 +1,6318 @@
 {
   "source": "SAPS",
-  "url": "https://www.saps.gov.zadownloads/2025/2025-2026_-_3rd_Quarter_WEB.xlsx",
-  "scraped_at": "2026-03-14T17:33:35.503693",
-  "period": "2025-2026 - 3rd Quarter",
+  "url": "https://www.saps.gov.za/services/downloads/2025/2025-2026_-_4th_Quarter_WEB.xlsx",
+  "scraped_at": "2026-07-29T16:46:56.894792+00:00",
+  "is_live": true,
+  "period": "2025-2026 - 4th Quarter",
   "provinces": {
+    "Western Cape": {
+      "Murder": 983,
+      "Sexual offences": 1663,
+      "Attempted murder": 1025,
+      "Assault GBH": 5994,
+      "Common assault": 11711,
+      "Common robbery": 2613,
+      "Robbery aggravating": 4246,
+      "Carjacking": 498,
+      "Malicious damage to property": 6201,
+      "Non-residential burglary": 1153,
+      "Residential burglary": 4909,
+      "Stock-theft": 131
+    },
     "Gauteng": {
-      "Murder": 4912,
-      "Carjacking": 6800,
-      "Residential burglary": 52000,
-      "Sexual offences": 10200
+      "Murder": 1223,
+      "Sexual offences": 2369,
+      "Attempted murder": 1710,
+      "Assault GBH": 8625,
+      "Common assault": 12011,
+      "Common robbery": 3193,
+      "Robbery aggravating": 9963,
+      "Carjacking": 2062,
+      "Malicious damage to property": 5906,
+      "Non-residential burglary": 2264,
+      "Residential burglary": 6499,
+      "Stock-theft": 151
     },
     "KwaZulu-Natal": {
-      "Murder": 3801,
-      "Carjacking": 2800,
-      "Residential burglary": 41000,
-      "Sexual offences": 8900
-    },
-    "Western Cape": {
-      "Murder": 1204,
-      "Carjacking": 2900,
-      "Residential burglary": 28400,
-      "Sexual offences": 7800
+      "Murder": 1058,
+      "Sexual offences": 2589,
+      "Attempted murder": 1626,
+      "Assault GBH": 8013,
+      "Common assault": 8293,
+      "Common robbery": 1715,
+      "Robbery aggravating": 4944,
+      "Carjacking": 446,
+      "Malicious damage to property": 3661,
+      "Non-residential burglary": 1714,
+      "Residential burglary": 5986,
+      "Stock-theft": 1204
     },
     "Eastern Cape": {
-      "Murder": 2890,
-      "Carjacking": 1200,
-      "Residential burglary": 22000,
-      "Sexual offences": 5600
+      "Murder": 949,
+      "Sexual offences": 1853,
+      "Attempted murder": 524,
+      "Assault GBH": 6026,
+      "Common assault": 4046,
+      "Common robbery": 658,
+      "Robbery aggravating": 1831,
+      "Carjacking": 189,
+      "Malicious damage to property": 2737,
+      "Non-residential burglary": 1406,
+      "Residential burglary": 3724,
+      "Stock-theft": 1482
     },
     "Limpopo": {
-      "Murder": 1102,
-      "Carjacking": 450,
-      "Residential burglary": 10500,
-      "Sexual offences": 3200
+      "Murder": 175,
+      "Sexual offences": 1185,
+      "Attempted murder": 238,
+      "Assault GBH": 2823,
+      "Common assault": 2478,
+      "Common robbery": 603,
+      "Robbery aggravating": 1412,
+      "Carjacking": 58,
+      "Malicious damage to property": 1803,
+      "Non-residential burglary": 1211,
+      "Residential burglary": 2620,
+      "Stock-theft": 377
     },
     "Mpumalanga": {
-      "Murder": 1450,
-      "Carjacking": 620,
-      "Residential burglary": 16000,
-      "Sexual offences": 3400
+      "Murder": 253,
+      "Sexual offences": 900,
+      "Attempted murder": 322,
+      "Assault GBH": 2850,
+      "Common assault": 2157,
+      "Common robbery": 406,
+      "Robbery aggravating": 1459,
+      "Carjacking": 212,
+      "Malicious damage to property": 1233,
+      "Non-residential burglary": 771,
+      "Residential burglary": 2260,
+      "Stock-theft": 475
     },
     "North West": {
-      "Murder": 980,
-      "Carjacking": 540,
-      "Residential burglary": 13000,
-      "Sexual offences": 2900
+      "Murder": 271,
+      "Sexual offences": 887,
+      "Attempted murder": 303,
+      "Assault GBH": 4048,
+      "Common assault": 3091,
+      "Common robbery": 560,
+      "Robbery aggravating": 1597,
+      "Carjacking": 106,
+      "Malicious damage to property": 1776,
+      "Non-residential burglary": 975,
+      "Residential burglary": 2633,
+      "Stock-theft": 626
     },
     "Free State": {
-      "Murder": 785,
-      "Carjacking": 420,
-      "Residential burglary": 11200,
-      "Sexual offences": 1804
+      "Murder": 192,
+      "Sexual offences": 837,
+      "Attempted murder": 590,
+      "Assault GBH": 3203,
+      "Common assault": 3607,
+      "Common robbery": 520,
+      "Robbery aggravating": 1012,
+      "Carjacking": 32,
+      "Malicious damage to property": 1607,
+      "Non-residential burglary": 952,
+      "Residential burglary": 2408,
+      "Stock-theft": 529
     },
     "Northern Cape": {
-      "Murder": 550,
-      "Carjacking": 197,
-      "Residential burglary": 11665,
-      "Sexual offences": 2900
+      "Murder": 77,
+      "Sexual offences": 307,
+      "Attempted murder": 578,
+      "Assault GBH": 1994,
+      "Common assault": 1321,
+      "Common robbery": 225,
+      "Robbery aggravating": 332,
+      "Carjacking": 6,
+      "Malicious damage to property": 914,
+      "Non-residential burglary": 497,
+      "Residential burglary": 1348,
+      "Stock-theft": 142
     }
   },
   "national_totals": {
-    "Murder": 17674,
-    "Carjacking": 15927,
-    "Residential burglary": 205765,
-    "Sexual offences": 46704
-  }
+    "Murder": 5181,
+    "Sexual offences": 12590,
+    "Attempted murder": 6916,
+    "Assault GBH": 43576,
+    "Common assault": 48715,
+    "Common robbery": 10493,
+    "Robbery aggravating": 26796,
+    "Carjacking": 3609,
+    "Malicious damage to property": 25838,
+    "Non-residential burglary": 10943,
+    "Residential burglary": 32387,
+    "Stock-theft": 5117
+  },
+  "crime_types": [
+    "Murder",
+    "Sexual offences",
+    "Attempted murder",
+    "Assault GBH",
+    "Carjacking",
+    "Robbery aggravating",
+    "Residential burglary",
+    "Common robbery"
+  ],
+  "stations": {
+    "Western Cape": [
+      {
+        "name": "Delft",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 21,
+          "Attempted murder": 17,
+          "Robbery aggravating": 81,
+          "Common robbery": 17,
+          "Assault GBH": 55,
+          "Common assault": 96,
+          "Non-residential burglary": 1,
+          "Residential burglary": 37,
+          "Stock-theft": 0,
+          "Malicious damage to property": 81,
+          "Carjacking": 19,
+          "Sexual offences": 16
+        },
+        "murders": 21
+      },
+      {
+        "name": "Harare",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 20,
+          "Attempted murder": 7,
+          "Robbery aggravating": 53,
+          "Common robbery": 5,
+          "Assault GBH": 27,
+          "Common assault": 51,
+          "Non-residential burglary": 0,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 24,
+          "Carjacking": 15,
+          "Sexual offences": 20
+        },
+        "murders": 20
+      },
+      {
+        "name": "Mfuleni",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 20,
+          "Attempted murder": 14,
+          "Robbery aggravating": 85,
+          "Common robbery": 13,
+          "Assault GBH": 55,
+          "Common assault": 208,
+          "Non-residential burglary": 2,
+          "Residential burglary": 35,
+          "Stock-theft": 0,
+          "Malicious damage to property": 74,
+          "Carjacking": 13,
+          "Sexual offences": 19
+        },
+        "murders": 20
+      },
+      {
+        "name": "Khayelitsha",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 17,
+          "Attempted murder": 6,
+          "Robbery aggravating": 50,
+          "Common robbery": 11,
+          "Assault GBH": 42,
+          "Common assault": 100,
+          "Non-residential burglary": 9,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 29,
+          "Carjacking": 6,
+          "Sexual offences": 18
+        },
+        "murders": 17
+      },
+      {
+        "name": "Philippi East",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 17,
+          "Attempted murder": 16,
+          "Robbery aggravating": 34,
+          "Common robbery": 18,
+          "Assault GBH": 19,
+          "Common assault": 41,
+          "Non-residential burglary": 1,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 31,
+          "Carjacking": 2,
+          "Sexual offences": 9
+        },
+        "murders": 17
+      },
+      {
+        "name": "Gugulethu",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 13,
+          "Attempted murder": 6,
+          "Robbery aggravating": 34,
+          "Common robbery": 7,
+          "Assault GBH": 41,
+          "Common assault": 52,
+          "Non-residential burglary": 3,
+          "Residential burglary": 15,
+          "Stock-theft": 0,
+          "Malicious damage to property": 47,
+          "Carjacking": 6,
+          "Sexual offences": 20
+        },
+        "murders": 13
+      },
+      {
+        "name": "Kraaifontein",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 13,
+          "Attempted murder": 3,
+          "Robbery aggravating": 48,
+          "Common robbery": 21,
+          "Assault GBH": 42,
+          "Common assault": 110,
+          "Non-residential burglary": 4,
+          "Residential burglary": 33,
+          "Stock-theft": 0,
+          "Malicious damage to property": 64,
+          "Carjacking": 4,
+          "Sexual offences": 14
+        },
+        "murders": 13
+      },
+      {
+        "name": "Lingelethu-West",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 12,
+          "Attempted murder": 5,
+          "Robbery aggravating": 58,
+          "Common robbery": 10,
+          "Assault GBH": 19,
+          "Common assault": 81,
+          "Non-residential burglary": 5,
+          "Residential burglary": 16,
+          "Stock-theft": 0,
+          "Malicious damage to property": 37,
+          "Carjacking": 19,
+          "Sexual offences": 7
+        },
+        "murders": 12
+      },
+      {
+        "name": "Mitchells Plain",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 12,
+          "Attempted murder": 13,
+          "Robbery aggravating": 39,
+          "Common robbery": 16,
+          "Assault GBH": 29,
+          "Common assault": 174,
+          "Non-residential burglary": 9,
+          "Residential burglary": 17,
+          "Stock-theft": 0,
+          "Malicious damage to property": 72,
+          "Carjacking": 3,
+          "Sexual offences": 11
+        },
+        "murders": 12
+      },
+      {
+        "name": "Nyanga",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 11,
+          "Attempted murder": 10,
+          "Robbery aggravating": 82,
+          "Common robbery": 40,
+          "Assault GBH": 62,
+          "Common assault": 69,
+          "Non-residential burglary": 0,
+          "Residential burglary": 17,
+          "Stock-theft": 0,
+          "Malicious damage to property": 54,
+          "Carjacking": 13,
+          "Sexual offences": 25
+        },
+        "murders": 11
+      },
+      {
+        "name": "Bishop Lavis",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 17,
+          "Robbery aggravating": 14,
+          "Common robbery": 33,
+          "Assault GBH": 29,
+          "Common assault": 60,
+          "Non-residential burglary": 8,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 44,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 10
+      },
+      {
+        "name": "Lwandle",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 8,
+          "Robbery aggravating": 31,
+          "Common robbery": 2,
+          "Assault GBH": 21,
+          "Common assault": 19,
+          "Non-residential burglary": 1,
+          "Residential burglary": 16,
+          "Stock-theft": 0,
+          "Malicious damage to property": 17,
+          "Carjacking": 1,
+          "Sexual offences": 6
+        },
+        "murders": 9
+      },
+      {
+        "name": "Ravensmead",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 10,
+          "Robbery aggravating": 6,
+          "Common robbery": 10,
+          "Assault GBH": 20,
+          "Common assault": 39,
+          "Non-residential burglary": 0,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 20,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 9
+      },
+      {
+        "name": "Samora Machel",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 2,
+          "Robbery aggravating": 19,
+          "Common robbery": 7,
+          "Assault GBH": 15,
+          "Common assault": 22,
+          "Non-residential burglary": 0,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 5,
+          "Sexual offences": 5
+        },
+        "murders": 7
+      },
+      {
+        "name": "Elsies River",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 15,
+          "Robbery aggravating": 13,
+          "Common robbery": 26,
+          "Assault GBH": 16,
+          "Common assault": 76,
+          "Non-residential burglary": 0,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 48,
+          "Carjacking": 3,
+          "Sexual offences": 4
+        },
+        "murders": 6
+      },
+      {
+        "name": "Grabouw",
+        "district": "Overberg",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 1,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 9,
+          "Common assault": 24,
+          "Non-residential burglary": 4,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Grassy Park",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 6,
+          "Robbery aggravating": 19,
+          "Common robbery": 9,
+          "Assault GBH": 11,
+          "Common assault": 65,
+          "Non-residential burglary": 4,
+          "Residential burglary": 13,
+          "Stock-theft": 0,
+          "Malicious damage to property": 44,
+          "Carjacking": 3,
+          "Sexual offences": 5
+        },
+        "murders": 6
+      },
+      {
+        "name": "Makhaza",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 2,
+          "Robbery aggravating": 46,
+          "Common robbery": 6,
+          "Assault GBH": 30,
+          "Common assault": 38,
+          "Non-residential burglary": 3,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 14,
+          "Carjacking": 3,
+          "Sexual offences": 6
+        },
+        "murders": 6
+      },
+      {
+        "name": "Manenberg",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 5,
+          "Robbery aggravating": 4,
+          "Common robbery": 3,
+          "Assault GBH": 26,
+          "Common assault": 48,
+          "Non-residential burglary": 4,
+          "Residential burglary": 15,
+          "Stock-theft": 0,
+          "Malicious damage to property": 45,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Ocean View",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 1,
+          "Assault GBH": 11,
+          "Common assault": 11,
+          "Non-residential burglary": 1,
+          "Residential burglary": 1,
+          "Stock-theft": 0,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 5
+      },
+      {
+        "name": "Stellenbosch",
+        "district": "Cape Winelands",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 12,
+          "Robbery aggravating": 36,
+          "Common robbery": 22,
+          "Assault GBH": 19,
+          "Common assault": 54,
+          "Non-residential burglary": 8,
+          "Residential burglary": 29,
+          "Stock-theft": 0,
+          "Malicious damage to property": 25,
+          "Carjacking": 2,
+          "Sexual offences": 5
+        },
+        "murders": 5
+      },
+      {
+        "name": "Villiersdorp",
+        "district": "Overberg",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 9,
+          "Common assault": 11,
+          "Non-residential burglary": 4,
+          "Residential burglary": 6,
+          "Stock-theft": 0,
+          "Malicious damage to property": 15,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 5
+      },
+      {
+        "name": "Belhar",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 4,
+          "Robbery aggravating": 9,
+          "Common robbery": 4,
+          "Assault GBH": 11,
+          "Common assault": 28,
+          "Non-residential burglary": 1,
+          "Residential burglary": 3,
+          "Stock-theft": 0,
+          "Malicious damage to property": 17,
+          "Carjacking": 4,
+          "Sexual offences": 4
+        },
+        "murders": 4
+      },
+      {
+        "name": "Durbanville",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 0,
+          "Robbery aggravating": 15,
+          "Common robbery": 3,
+          "Assault GBH": 9,
+          "Common assault": 15,
+          "Non-residential burglary": 5,
+          "Residential burglary": 26,
+          "Stock-theft": 0,
+          "Malicious damage to property": 14,
+          "Carjacking": 2,
+          "Sexual offences": 6
+        },
+        "murders": 4
+      },
+      {
+        "name": "Muizenberg",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 3,
+          "Robbery aggravating": 15,
+          "Common robbery": 7,
+          "Assault GBH": 9,
+          "Common assault": 31,
+          "Non-residential burglary": 0,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 3,
+          "Sexual offences": 3
+        },
+        "murders": 4
+      },
+      {
+        "name": "Paarl East",
+        "district": "Cape Winelands",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 4,
+          "Robbery aggravating": 15,
+          "Common robbery": 8,
+          "Assault GBH": 35,
+          "Common assault": 122,
+          "Non-residential burglary": 6,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 48,
+          "Carjacking": 1,
+          "Sexual offences": 9
+        },
+        "murders": 4
+      },
+      {
+        "name": "Philippi",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 7,
+          "Robbery aggravating": 5,
+          "Common robbery": 7,
+          "Assault GBH": 15,
+          "Common assault": 33,
+          "Non-residential burglary": 1,
+          "Residential burglary": 6,
+          "Stock-theft": 0,
+          "Malicious damage to property": 38,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 4
+      },
+      {
+        "name": "Steenberg",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 9,
+          "Robbery aggravating": 6,
+          "Common robbery": 8,
+          "Assault GBH": 4,
+          "Common assault": 18,
+          "Non-residential burglary": 1,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 19,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 4
+      },
+      {
+        "name": "Worcester",
+        "district": "Cape Winelands",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 29,
+          "Robbery aggravating": 24,
+          "Common robbery": 17,
+          "Assault GBH": 73,
+          "Common assault": 91,
+          "Non-residential burglary": 16,
+          "Residential burglary": 27,
+          "Stock-theft": 2,
+          "Malicious damage to property": 50,
+          "Carjacking": 0,
+          "Sexual offences": 24
+        },
+        "murders": 4
+      },
+      {
+        "name": "Atlantis",
+        "district": "City of Cape Town",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 9,
+          "Common robbery": 9,
+          "Assault GBH": 24,
+          "Common assault": 91,
+          "Non-residential burglary": 14,
+          "Residential burglary": 17,
+          "Stock-theft": 0,
+          "Malicious damage to property": 48,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 3
+      }
+    ],
+    "Gauteng": [
+      {
+        "name": "Alexandra",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 13,
+          "Attempted murder": 12,
+          "Robbery aggravating": 57,
+          "Common robbery": 16,
+          "Assault GBH": 52,
+          "Common assault": 72,
+          "Non-residential burglary": 3,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 43,
+          "Carjacking": 24,
+          "Sexual offences": 14
+        },
+        "murders": 13
+      },
+      {
+        "name": "Eldorado Park",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 13,
+          "Attempted murder": 28,
+          "Robbery aggravating": 38,
+          "Common robbery": 11,
+          "Assault GBH": 55,
+          "Common assault": 51,
+          "Non-residential burglary": 5,
+          "Residential burglary": 19,
+          "Stock-theft": 0,
+          "Malicious damage to property": 31,
+          "Carjacking": 10,
+          "Sexual offences": 10
+        },
+        "murders": 13
+      },
+      {
+        "name": "Orange Farms",
+        "district": "Sedibeng",
+        "crimes": {
+          "Murder": 12,
+          "Attempted murder": 6,
+          "Robbery aggravating": 35,
+          "Common robbery": 6,
+          "Assault GBH": 61,
+          "Common assault": 41,
+          "Non-residential burglary": 4,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 28,
+          "Carjacking": 4,
+          "Sexual offences": 15
+        },
+        "murders": 12
+      },
+      {
+        "name": "Dobsonville",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 11,
+          "Attempted murder": 19,
+          "Robbery aggravating": 46,
+          "Common robbery": 13,
+          "Assault GBH": 47,
+          "Common assault": 83,
+          "Non-residential burglary": 5,
+          "Residential burglary": 18,
+          "Stock-theft": 0,
+          "Malicious damage to property": 35,
+          "Carjacking": 4,
+          "Sexual offences": 10
+        },
+        "murders": 11
+      },
+      {
+        "name": "JHB Central",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 15,
+          "Robbery aggravating": 82,
+          "Common robbery": 46,
+          "Assault GBH": 56,
+          "Common assault": 35,
+          "Non-residential burglary": 25,
+          "Residential burglary": 3,
+          "Stock-theft": 0,
+          "Malicious damage to property": 18,
+          "Carjacking": 7,
+          "Sexual offences": 12
+        },
+        "murders": 10
+      },
+      {
+        "name": "Katlehong",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 15,
+          "Robbery aggravating": 8,
+          "Common robbery": 3,
+          "Assault GBH": 35,
+          "Common assault": 16,
+          "Non-residential burglary": 4,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 14,
+          "Carjacking": 3,
+          "Sexual offences": 7
+        },
+        "murders": 10
+      },
+      {
+        "name": "Moroka",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 6,
+          "Robbery aggravating": 42,
+          "Common robbery": 8,
+          "Assault GBH": 48,
+          "Common assault": 43,
+          "Non-residential burglary": 6,
+          "Residential burglary": 23,
+          "Stock-theft": 0,
+          "Malicious damage to property": 28,
+          "Carjacking": 11,
+          "Sexual offences": 13
+        },
+        "murders": 10
+      },
+      {
+        "name": "Tokoza",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 5,
+          "Robbery aggravating": 9,
+          "Common robbery": 0,
+          "Assault GBH": 12,
+          "Common assault": 20,
+          "Non-residential burglary": 1,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 1,
+          "Sexual offences": 6
+        },
+        "murders": 10
+      },
+      {
+        "name": "Bekkersdal",
+        "district": "West Rand",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 6,
+          "Robbery aggravating": 18,
+          "Common robbery": 4,
+          "Assault GBH": 32,
+          "Common assault": 26,
+          "Non-residential burglary": 4,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 6,
+          "Sexual offences": 10
+        },
+        "murders": 9
+      },
+      {
+        "name": "Crystalpark",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 5,
+          "Robbery aggravating": 19,
+          "Common robbery": 1,
+          "Assault GBH": 1,
+          "Common assault": 16,
+          "Non-residential burglary": 3,
+          "Residential burglary": 8,
+          "Stock-theft": 2,
+          "Malicious damage to property": 13,
+          "Carjacking": 4,
+          "Sexual offences": 2
+        },
+        "murders": 9
+      },
+      {
+        "name": "Cleveland",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 10,
+          "Robbery aggravating": 37,
+          "Common robbery": 10,
+          "Assault GBH": 16,
+          "Common assault": 19,
+          "Non-residential burglary": 8,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 15,
+          "Carjacking": 6,
+          "Sexual offences": 5
+        },
+        "murders": 8
+      },
+      {
+        "name": "De Deur",
+        "district": "Sedibeng",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 1,
+          "Robbery aggravating": 22,
+          "Common robbery": 4,
+          "Assault GBH": 29,
+          "Common assault": 31,
+          "Non-residential burglary": 10,
+          "Residential burglary": 26,
+          "Stock-theft": 0,
+          "Malicious damage to property": 12,
+          "Carjacking": 5,
+          "Sexual offences": 10
+        },
+        "murders": 8
+      },
+      {
+        "name": "Diepsloot",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 11,
+          "Robbery aggravating": 38,
+          "Common robbery": 8,
+          "Assault GBH": 93,
+          "Common assault": 42,
+          "Non-residential burglary": 3,
+          "Residential burglary": 12,
+          "Stock-theft": 0,
+          "Malicious damage to property": 30,
+          "Carjacking": 9,
+          "Sexual offences": 15
+        },
+        "murders": 8
+      },
+      {
+        "name": "Ennerdale",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 15,
+          "Robbery aggravating": 37,
+          "Common robbery": 6,
+          "Assault GBH": 39,
+          "Common assault": 40,
+          "Non-residential burglary": 4,
+          "Residential burglary": 24,
+          "Stock-theft": 0,
+          "Malicious damage to property": 25,
+          "Carjacking": 12,
+          "Sexual offences": 18
+        },
+        "murders": 8
+      },
+      {
+        "name": "Evaton",
+        "district": "Sedibeng",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 13,
+          "Robbery aggravating": 53,
+          "Common robbery": 8,
+          "Assault GBH": 34,
+          "Common assault": 54,
+          "Non-residential burglary": 16,
+          "Residential burglary": 25,
+          "Stock-theft": 2,
+          "Malicious damage to property": 23,
+          "Carjacking": 6,
+          "Sexual offences": 8
+        },
+        "murders": 8
+      },
+      {
+        "name": "Germiston",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 8,
+          "Robbery aggravating": 32,
+          "Common robbery": 17,
+          "Assault GBH": 22,
+          "Common assault": 44,
+          "Non-residential burglary": 9,
+          "Residential burglary": 18,
+          "Stock-theft": 0,
+          "Malicious damage to property": 19,
+          "Carjacking": 6,
+          "Sexual offences": 9
+        },
+        "murders": 8
+      },
+      {
+        "name": "Ivory Park",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 11,
+          "Robbery aggravating": 45,
+          "Common robbery": 15,
+          "Assault GBH": 51,
+          "Common assault": 101,
+          "Non-residential burglary": 4,
+          "Residential burglary": 23,
+          "Stock-theft": 0,
+          "Malicious damage to property": 36,
+          "Carjacking": 12,
+          "Sexual offences": 20
+        },
+        "murders": 8
+      },
+      {
+        "name": "Jeppe",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 13,
+          "Robbery aggravating": 72,
+          "Common robbery": 27,
+          "Assault GBH": 47,
+          "Common assault": 74,
+          "Non-residential burglary": 6,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 25,
+          "Carjacking": 16,
+          "Sexual offences": 9
+        },
+        "murders": 8
+      },
+      {
+        "name": "Rabie Ridge",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 6,
+          "Robbery aggravating": 20,
+          "Common robbery": 8,
+          "Assault GBH": 36,
+          "Common assault": 28,
+          "Non-residential burglary": 3,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 15,
+          "Carjacking": 4,
+          "Sexual offences": 8
+        },
+        "murders": 8
+      },
+      {
+        "name": "Bronkhorstspruit",
+        "district": "Tshwane",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 5,
+          "Robbery aggravating": 20,
+          "Common robbery": 4,
+          "Assault GBH": 29,
+          "Common assault": 32,
+          "Non-residential burglary": 7,
+          "Residential burglary": 8,
+          "Stock-theft": 3,
+          "Malicious damage to property": 16,
+          "Carjacking": 1,
+          "Sexual offences": 3
+        },
+        "murders": 7
+      },
+      {
+        "name": "Hillbrow",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 7,
+          "Robbery aggravating": 68,
+          "Common robbery": 54,
+          "Assault GBH": 33,
+          "Common assault": 55,
+          "Non-residential burglary": 3,
+          "Residential burglary": 6,
+          "Stock-theft": 0,
+          "Malicious damage to property": 5,
+          "Carjacking": 4,
+          "Sexual offences": 13
+        },
+        "murders": 7
+      },
+      {
+        "name": "Kagiso",
+        "district": "West Rand",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 6,
+          "Robbery aggravating": 59,
+          "Common robbery": 15,
+          "Assault GBH": 41,
+          "Common assault": 71,
+          "Non-residential burglary": 10,
+          "Residential burglary": 23,
+          "Stock-theft": 0,
+          "Malicious damage to property": 42,
+          "Carjacking": 7,
+          "Sexual offences": 15
+        },
+        "murders": 7
+      },
+      {
+        "name": "Khutsong",
+        "district": "West Rand",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 1,
+          "Robbery aggravating": 9,
+          "Common robbery": 2,
+          "Assault GBH": 25,
+          "Common assault": 13,
+          "Non-residential burglary": 3,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 10,
+          "Carjacking": 1,
+          "Sexual offences": 2
+        },
+        "murders": 7
+      },
+      {
+        "name": "Meadowlands",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 9,
+          "Robbery aggravating": 33,
+          "Common robbery": 17,
+          "Assault GBH": 15,
+          "Common assault": 38,
+          "Non-residential burglary": 5,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 28,
+          "Carjacking": 3,
+          "Sexual offences": 8
+        },
+        "murders": 7
+      },
+      {
+        "name": "Yeoville",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 6,
+          "Robbery aggravating": 30,
+          "Common robbery": 10,
+          "Assault GBH": 21,
+          "Common assault": 6,
+          "Non-residential burglary": 3,
+          "Residential burglary": 1,
+          "Stock-theft": 0,
+          "Malicious damage to property": 10,
+          "Carjacking": 5,
+          "Sexual offences": 5
+        },
+        "murders": 7
+      },
+      {
+        "name": "Cosmo City",
+        "district": "Johannesburg",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 20,
+          "Robbery aggravating": 39,
+          "Common robbery": 11,
+          "Assault GBH": 17,
+          "Common assault": 23,
+          "Non-residential burglary": 5,
+          "Residential burglary": 19,
+          "Stock-theft": 0,
+          "Malicious damage to property": 16,
+          "Carjacking": 14,
+          "Sexual offences": 4
+        },
+        "murders": 6
+      },
+      {
+        "name": "Etwatwa",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 0,
+          "Robbery aggravating": 13,
+          "Common robbery": 4,
+          "Assault GBH": 52,
+          "Common assault": 19,
+          "Non-residential burglary": 5,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 3,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Katlehong North",
+        "district": "Ekurhuleni",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 5,
+          "Robbery aggravating": 8,
+          "Common robbery": 3,
+          "Assault GBH": 24,
+          "Common assault": 28,
+          "Non-residential burglary": 5,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Mamelodi East",
+        "district": "Tshwane",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 5,
+          "Robbery aggravating": 36,
+          "Common robbery": 12,
+          "Assault GBH": 65,
+          "Common assault": 93,
+          "Non-residential burglary": 2,
+          "Residential burglary": 26,
+          "Stock-theft": 1,
+          "Malicious damage to property": 39,
+          "Carjacking": 8,
+          "Sexual offences": 14
+        },
+        "murders": 6
+      },
+      {
+        "name": "Silverton",
+        "district": "Tshwane",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 4,
+          "Robbery aggravating": 30,
+          "Common robbery": 6,
+          "Assault GBH": 7,
+          "Common assault": 53,
+          "Non-residential burglary": 7,
+          "Residential burglary": 17,
+          "Stock-theft": 0,
+          "Malicious damage to property": 16,
+          "Carjacking": 5,
+          "Sexual offences": 8
+        },
+        "murders": 6
+      }
+    ],
+    "KwaZulu-Natal": [
+      {
+        "name": "Inanda",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 16,
+          "Attempted murder": 43,
+          "Robbery aggravating": 109,
+          "Common robbery": 17,
+          "Assault GBH": 84,
+          "Common assault": 101,
+          "Non-residential burglary": 13,
+          "Residential burglary": 50,
+          "Stock-theft": 3,
+          "Malicious damage to property": 63,
+          "Carjacking": 6,
+          "Sexual offences": 39
+        },
+        "murders": 16
+      },
+      {
+        "name": "Verulam",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 12,
+          "Attempted murder": 19,
+          "Robbery aggravating": 65,
+          "Common robbery": 8,
+          "Assault GBH": 33,
+          "Common assault": 75,
+          "Non-residential burglary": 9,
+          "Residential burglary": 40,
+          "Stock-theft": 0,
+          "Malicious damage to property": 34,
+          "Carjacking": 2,
+          "Sexual offences": 23
+        },
+        "murders": 12
+      },
+      {
+        "name": "Kwadukuza",
+        "district": "Ilembe",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 17,
+          "Robbery aggravating": 47,
+          "Common robbery": 5,
+          "Assault GBH": 79,
+          "Common assault": 81,
+          "Non-residential burglary": 9,
+          "Residential burglary": 56,
+          "Stock-theft": 4,
+          "Malicious damage to property": 34,
+          "Carjacking": 1,
+          "Sexual offences": 16
+        },
+        "murders": 9
+      },
+      {
+        "name": "Mountain Rise",
+        "district": "Umgungundlovu",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 17,
+          "Robbery aggravating": 24,
+          "Common robbery": 12,
+          "Assault GBH": 45,
+          "Common assault": 55,
+          "Non-residential burglary": 3,
+          "Residential burglary": 43,
+          "Stock-theft": 0,
+          "Malicious damage to property": 22,
+          "Carjacking": 3,
+          "Sexual offences": 18
+        },
+        "murders": 9
+      },
+      {
+        "name": "Umlazi",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 24,
+          "Robbery aggravating": 64,
+          "Common robbery": 13,
+          "Assault GBH": 69,
+          "Common assault": 87,
+          "Non-residential burglary": 4,
+          "Residential burglary": 18,
+          "Stock-theft": 3,
+          "Malicious damage to property": 37,
+          "Carjacking": 16,
+          "Sexual offences": 23
+        },
+        "murders": 9
+      },
+      {
+        "name": "Chatsworth",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 11,
+          "Robbery aggravating": 45,
+          "Common robbery": 15,
+          "Assault GBH": 53,
+          "Common assault": 122,
+          "Non-residential burglary": 4,
+          "Residential burglary": 26,
+          "Stock-theft": 1,
+          "Malicious damage to property": 22,
+          "Carjacking": 1,
+          "Sexual offences": 11
+        },
+        "murders": 8
+      },
+      {
+        "name": "Mariannhill",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 10,
+          "Robbery aggravating": 36,
+          "Common robbery": 5,
+          "Assault GBH": 22,
+          "Common assault": 27,
+          "Non-residential burglary": 3,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 9,
+          "Carjacking": 8,
+          "Sexual offences": 8
+        },
+        "murders": 8
+      },
+      {
+        "name": "Ezinqoleni",
+        "district": "Ugu",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 1,
+          "Robbery aggravating": 11,
+          "Common robbery": 0,
+          "Assault GBH": 17,
+          "Common assault": 8,
+          "Non-residential burglary": 5,
+          "Residential burglary": 8,
+          "Stock-theft": 2,
+          "Malicious damage to property": 4,
+          "Carjacking": 2,
+          "Sexual offences": 3
+        },
+        "murders": 7
+      },
+      {
+        "name": "Folweni",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 5,
+          "Robbery aggravating": 10,
+          "Common robbery": 0,
+          "Assault GBH": 10,
+          "Common assault": 4,
+          "Non-residential burglary": 3,
+          "Residential burglary": 9,
+          "Stock-theft": 1,
+          "Malicious damage to property": 3,
+          "Carjacking": 2,
+          "Sexual offences": 1
+        },
+        "murders": 7
+      },
+      {
+        "name": "Kwamakhutha",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 4,
+          "Robbery aggravating": 35,
+          "Common robbery": 2,
+          "Assault GBH": 25,
+          "Common assault": 20,
+          "Non-residential burglary": 7,
+          "Residential burglary": 26,
+          "Stock-theft": 0,
+          "Malicious damage to property": 9,
+          "Carjacking": 6,
+          "Sexual offences": 9
+        },
+        "murders": 7
+      },
+      {
+        "name": "Cato Manor",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 5,
+          "Robbery aggravating": 18,
+          "Common robbery": 9,
+          "Assault GBH": 38,
+          "Common assault": 34,
+          "Non-residential burglary": 0,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 7,
+          "Carjacking": 4,
+          "Sexual offences": 13
+        },
+        "murders": 6
+      },
+      {
+        "name": "Empangeni",
+        "district": "King Cetshwayo",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 6,
+          "Robbery aggravating": 41,
+          "Common robbery": 18,
+          "Assault GBH": 43,
+          "Common assault": 83,
+          "Non-residential burglary": 9,
+          "Residential burglary": 57,
+          "Stock-theft": 1,
+          "Malicious damage to property": 23,
+          "Carjacking": 5,
+          "Sexual offences": 18
+        },
+        "murders": 6
+      },
+      {
+        "name": "Kwamashu E",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 11,
+          "Robbery aggravating": 29,
+          "Common robbery": 10,
+          "Assault GBH": 34,
+          "Common assault": 26,
+          "Non-residential burglary": 1,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 2,
+          "Sexual offences": 14
+        },
+        "murders": 6
+      },
+      {
+        "name": "Ladysmith",
+        "district": "Uthukela",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 7,
+          "Robbery aggravating": 18,
+          "Common robbery": 9,
+          "Assault GBH": 56,
+          "Common assault": 73,
+          "Non-residential burglary": 5,
+          "Residential burglary": 17,
+          "Stock-theft": 6,
+          "Malicious damage to property": 18,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Msinga",
+        "district": "Umzinyathi",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 4,
+          "Robbery aggravating": 2,
+          "Common robbery": 1,
+          "Assault GBH": 23,
+          "Common assault": 4,
+          "Non-residential burglary": 1,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 5,
+          "Carjacking": 1,
+          "Sexual offences": 8
+        },
+        "murders": 6
+      },
+      {
+        "name": "Nquthu",
+        "district": "Umzinyathi",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 2,
+          "Robbery aggravating": 2,
+          "Common robbery": 2,
+          "Assault GBH": 19,
+          "Common assault": 1,
+          "Non-residential burglary": 6,
+          "Residential burglary": 7,
+          "Stock-theft": 5,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 10
+        },
+        "murders": 6
+      },
+      {
+        "name": "Osizweni",
+        "district": "Amajuba",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 5,
+          "Robbery aggravating": 17,
+          "Common robbery": 3,
+          "Assault GBH": 73,
+          "Common assault": 51,
+          "Non-residential burglary": 8,
+          "Residential burglary": 34,
+          "Stock-theft": 5,
+          "Malicious damage to property": 21,
+          "Carjacking": 0,
+          "Sexual offences": 28
+        },
+        "murders": 6
+      },
+      {
+        "name": "Plessislaer",
+        "district": "Umgungundlovu",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 4,
+          "Robbery aggravating": 35,
+          "Common robbery": 17,
+          "Assault GBH": 128,
+          "Common assault": 95,
+          "Non-residential burglary": 9,
+          "Residential burglary": 71,
+          "Stock-theft": 14,
+          "Malicious damage to property": 37,
+          "Carjacking": 2,
+          "Sexual offences": 21
+        },
+        "murders": 6
+      },
+      {
+        "name": "Sydenham",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 5,
+          "Robbery aggravating": 35,
+          "Common robbery": 4,
+          "Assault GBH": 16,
+          "Common assault": 25,
+          "Non-residential burglary": 4,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 10,
+          "Carjacking": 3,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Umhlali",
+        "district": "Ilembe",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 8,
+          "Robbery aggravating": 27,
+          "Common robbery": 5,
+          "Assault GBH": 30,
+          "Common assault": 22,
+          "Non-residential burglary": 3,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 6
+      },
+      {
+        "name": "Esikhaleni",
+        "district": "King Cetshwayo",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 6,
+          "Robbery aggravating": 14,
+          "Common robbery": 5,
+          "Assault GBH": 49,
+          "Common assault": 46,
+          "Non-residential burglary": 3,
+          "Residential burglary": 24,
+          "Stock-theft": 2,
+          "Malicious damage to property": 17,
+          "Carjacking": 1,
+          "Sexual offences": 8
+        },
+        "murders": 5
+      },
+      {
+        "name": "Hillcrest",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 10,
+          "Robbery aggravating": 12,
+          "Common robbery": 3,
+          "Assault GBH": 22,
+          "Common assault": 49,
+          "Non-residential burglary": 3,
+          "Residential burglary": 22,
+          "Stock-theft": 2,
+          "Malicious damage to property": 15,
+          "Carjacking": 0,
+          "Sexual offences": 8
+        },
+        "murders": 5
+      },
+      {
+        "name": "Kranskop",
+        "district": "Umzinyathi",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 3,
+          "Robbery aggravating": 5,
+          "Common robbery": 0,
+          "Assault GBH": 26,
+          "Common assault": 10,
+          "Non-residential burglary": 4,
+          "Residential burglary": 2,
+          "Stock-theft": 4,
+          "Malicious damage to property": 2,
+          "Carjacking": 1,
+          "Sexual offences": 2
+        },
+        "murders": 5
+      },
+      {
+        "name": "Kwandengezi",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 7,
+          "Robbery aggravating": 8,
+          "Common robbery": 0,
+          "Assault GBH": 12,
+          "Common assault": 9,
+          "Non-residential burglary": 3,
+          "Residential burglary": 10,
+          "Stock-theft": 3,
+          "Malicious damage to property": 4,
+          "Carjacking": 2,
+          "Sexual offences": 4
+        },
+        "murders": 5
+      },
+      {
+        "name": "Madadeni",
+        "district": "Amajuba",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 3,
+          "Robbery aggravating": 18,
+          "Common robbery": 15,
+          "Assault GBH": 65,
+          "Common assault": 52,
+          "Non-residential burglary": 9,
+          "Residential burglary": 18,
+          "Stock-theft": 1,
+          "Malicious damage to property": 26,
+          "Carjacking": 0,
+          "Sexual offences": 14
+        },
+        "murders": 5
+      },
+      {
+        "name": "Ntuzuma",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 27,
+          "Robbery aggravating": 58,
+          "Common robbery": 12,
+          "Assault GBH": 59,
+          "Common assault": 60,
+          "Non-residential burglary": 3,
+          "Residential burglary": 28,
+          "Stock-theft": 5,
+          "Malicious damage to property": 24,
+          "Carjacking": 3,
+          "Sexual offences": 17
+        },
+        "murders": 5
+      },
+      {
+        "name": "Alexandra Road",
+        "district": "Umgungundlovu",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 5,
+          "Robbery aggravating": 24,
+          "Common robbery": 11,
+          "Assault GBH": 13,
+          "Common assault": 28,
+          "Non-residential burglary": 4,
+          "Residential burglary": 28,
+          "Stock-theft": 3,
+          "Malicious damage to property": 14,
+          "Carjacking": 2,
+          "Sexual offences": 6
+        },
+        "murders": 4
+      },
+      {
+        "name": "Bellair",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 1,
+          "Robbery aggravating": 2,
+          "Common robbery": 2,
+          "Assault GBH": 2,
+          "Common assault": 12,
+          "Non-residential burglary": 2,
+          "Residential burglary": 16,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 4
+      },
+      {
+        "name": "Bulwer",
+        "district": "Harry Gwala",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 2,
+          "Robbery aggravating": 1,
+          "Common robbery": 0,
+          "Assault GBH": 8,
+          "Common assault": 2,
+          "Non-residential burglary": 2,
+          "Residential burglary": 2,
+          "Stock-theft": 6,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 4
+      },
+      {
+        "name": "Durban Central",
+        "district": "eThekwini",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 3,
+          "Robbery aggravating": 83,
+          "Common robbery": 63,
+          "Assault GBH": 23,
+          "Common assault": 65,
+          "Non-residential burglary": 18,
+          "Residential burglary": 7,
+          "Stock-theft": 0,
+          "Malicious damage to property": 17,
+          "Carjacking": 2,
+          "Sexual offences": 9
+        },
+        "murders": 4
+      }
+    ],
+    "Eastern Cape": [
+      {
+        "name": "Kwazakele",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 20,
+          "Attempted murder": 5,
+          "Robbery aggravating": 28,
+          "Common robbery": 0,
+          "Assault GBH": 14,
+          "Common assault": 7,
+          "Non-residential burglary": 2,
+          "Residential burglary": 12,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 8,
+          "Sexual offences": 5
+        },
+        "murders": 20
+      },
+      {
+        "name": "Walmer",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 18,
+          "Attempted murder": 8,
+          "Robbery aggravating": 9,
+          "Common robbery": 3,
+          "Assault GBH": 7,
+          "Common assault": 19,
+          "Non-residential burglary": 8,
+          "Residential burglary": 25,
+          "Stock-theft": 0,
+          "Malicious damage to property": 17,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 18
+      },
+      {
+        "name": "Kwadwesi",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 5,
+          "Robbery aggravating": 36,
+          "Common robbery": 9,
+          "Assault GBH": 18,
+          "Common assault": 7,
+          "Non-residential burglary": 2,
+          "Residential burglary": 6,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 5,
+          "Sexual offences": 3
+        },
+        "murders": 10
+      },
+      {
+        "name": "Kwanobuhle",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 7,
+          "Robbery aggravating": 10,
+          "Common robbery": 2,
+          "Assault GBH": 26,
+          "Common assault": 28,
+          "Non-residential burglary": 4,
+          "Residential burglary": 18,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 2,
+          "Sexual offences": 10
+        },
+        "murders": 10
+      },
+      {
+        "name": "Mthatha",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 3,
+          "Robbery aggravating": 11,
+          "Common robbery": 6,
+          "Assault GBH": 50,
+          "Common assault": 61,
+          "Non-residential burglary": 6,
+          "Residential burglary": 29,
+          "Stock-theft": 13,
+          "Malicious damage to property": 23,
+          "Carjacking": 1,
+          "Sexual offences": 17
+        },
+        "murders": 10
+      },
+      {
+        "name": "Tsolo",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 10,
+          "Attempted murder": 5,
+          "Robbery aggravating": 12,
+          "Common robbery": 4,
+          "Assault GBH": 25,
+          "Common assault": 6,
+          "Non-residential burglary": 1,
+          "Residential burglary": 11,
+          "Stock-theft": 40,
+          "Malicious damage to property": 12,
+          "Carjacking": 2,
+          "Sexual offences": 9
+        },
+        "murders": 10
+      },
+      {
+        "name": "Gelvandale",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 9,
+          "Robbery aggravating": 5,
+          "Common robbery": 4,
+          "Assault GBH": 10,
+          "Common assault": 7,
+          "Non-residential burglary": 4,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 16,
+          "Carjacking": 1,
+          "Sexual offences": 8
+        },
+        "murders": 9
+      },
+      {
+        "name": "Motherwell",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 5,
+          "Robbery aggravating": 9,
+          "Common robbery": 1,
+          "Assault GBH": 13,
+          "Common assault": 17,
+          "Non-residential burglary": 12,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 5,
+          "Carjacking": 1,
+          "Sexual offences": 12
+        },
+        "murders": 9
+      },
+      {
+        "name": "New Brighton",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 3,
+          "Robbery aggravating": 35,
+          "Common robbery": 1,
+          "Assault GBH": 21,
+          "Common assault": 12,
+          "Non-residential burglary": 1,
+          "Residential burglary": 17,
+          "Stock-theft": 0,
+          "Malicious damage to property": 8,
+          "Carjacking": 11,
+          "Sexual offences": 10
+        },
+        "murders": 9
+      },
+      {
+        "name": "Ngqamakhwe",
+        "district": "Amathole",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 3,
+          "Robbery aggravating": 7,
+          "Common robbery": 2,
+          "Assault GBH": 17,
+          "Common assault": 6,
+          "Non-residential burglary": 5,
+          "Residential burglary": 13,
+          "Stock-theft": 10,
+          "Malicious damage to property": 9,
+          "Carjacking": 0,
+          "Sexual offences": 11
+        },
+        "murders": 9
+      },
+      {
+        "name": "Cofimvaba",
+        "district": "Chris Hani",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 3,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 16,
+          "Common assault": 5,
+          "Non-residential burglary": 4,
+          "Residential burglary": 4,
+          "Stock-theft": 6,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 7
+      },
+      {
+        "name": "Lusikisiki",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 6,
+          "Robbery aggravating": 15,
+          "Common robbery": 5,
+          "Assault GBH": 53,
+          "Common assault": 19,
+          "Non-residential burglary": 2,
+          "Residential burglary": 11,
+          "Stock-theft": 6,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 22
+        },
+        "murders": 6
+      },
+      {
+        "name": "Ngqeleni",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 0,
+          "Robbery aggravating": 6,
+          "Common robbery": 1,
+          "Assault GBH": 35,
+          "Common assault": 18,
+          "Non-residential burglary": 9,
+          "Residential burglary": 3,
+          "Stock-theft": 5,
+          "Malicious damage to property": 13,
+          "Carjacking": 0,
+          "Sexual offences": 12
+        },
+        "murders": 6
+      },
+      {
+        "name": "Qumbu",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 2,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 15,
+          "Common assault": 2,
+          "Non-residential burglary": 10,
+          "Residential burglary": 11,
+          "Stock-theft": 33,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 9
+        },
+        "murders": 6
+      },
+      {
+        "name": "Willowvale",
+        "district": "Amathole",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 4,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 16,
+          "Common assault": 3,
+          "Non-residential burglary": 1,
+          "Residential burglary": 6,
+          "Stock-theft": 2,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 10
+        },
+        "murders": 6
+      },
+      {
+        "name": "Algoapark",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 1,
+          "Robbery aggravating": 13,
+          "Common robbery": 1,
+          "Assault GBH": 10,
+          "Common assault": 18,
+          "Non-residential burglary": 6,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 5
+      },
+      {
+        "name": "Bethelsdorp",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 8,
+          "Robbery aggravating": 11,
+          "Common robbery": 4,
+          "Assault GBH": 31,
+          "Common assault": 22,
+          "Non-residential burglary": 3,
+          "Residential burglary": 12,
+          "Stock-theft": 0,
+          "Malicious damage to property": 15,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 5
+      },
+      {
+        "name": "Chatty",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 10,
+          "Common assault": 18,
+          "Non-residential burglary": 0,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 5
+      },
+      {
+        "name": "Ikamvelihle",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 2,
+          "Robbery aggravating": 4,
+          "Common robbery": 2,
+          "Assault GBH": 16,
+          "Common assault": 9,
+          "Non-residential burglary": 1,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 5
+      },
+      {
+        "name": "Kamesh",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 14,
+          "Robbery aggravating": 7,
+          "Common robbery": 0,
+          "Assault GBH": 9,
+          "Common assault": 22,
+          "Non-residential burglary": 2,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 5
+      },
+      {
+        "name": "Kugompo",
+        "district": "Buffalo City",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 2,
+          "Robbery aggravating": 38,
+          "Common robbery": 9,
+          "Assault GBH": 52,
+          "Common assault": 31,
+          "Non-residential burglary": 22,
+          "Residential burglary": 39,
+          "Stock-theft": 1,
+          "Malicious damage to property": 32,
+          "Carjacking": 3,
+          "Sexual offences": 13
+        },
+        "murders": 5
+      },
+      {
+        "name": "Madeira",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 0,
+          "Robbery aggravating": 15,
+          "Common robbery": 6,
+          "Assault GBH": 14,
+          "Common assault": 22,
+          "Non-residential burglary": 10,
+          "Residential burglary": 6,
+          "Stock-theft": 0,
+          "Malicious damage to property": 10,
+          "Carjacking": 2,
+          "Sexual offences": 5
+        },
+        "murders": 5
+      },
+      {
+        "name": "Ngcobo",
+        "district": "Chris Hani",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 3,
+          "Robbery aggravating": 7,
+          "Common robbery": 2,
+          "Assault GBH": 33,
+          "Common assault": 11,
+          "Non-residential burglary": 8,
+          "Residential burglary": 8,
+          "Stock-theft": 11,
+          "Malicious damage to property": 9,
+          "Carjacking": 2,
+          "Sexual offences": 15
+        },
+        "murders": 5
+      },
+      {
+        "name": "Ntabankulu",
+        "district": "Alfred Nzo",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 23,
+          "Common assault": 9,
+          "Non-residential burglary": 4,
+          "Residential burglary": 13,
+          "Stock-theft": 7,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 5
+      },
+      {
+        "name": "Tsomo",
+        "district": "Chris Hani",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 1,
+          "Assault GBH": 11,
+          "Common assault": 4,
+          "Non-residential burglary": 2,
+          "Residential burglary": 4,
+          "Stock-theft": 5,
+          "Malicious damage to property": 2,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 5
+      },
+      {
+        "name": "Cala",
+        "district": "Chris Hani",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 2,
+          "Assault GBH": 15,
+          "Common assault": 3,
+          "Non-residential burglary": 1,
+          "Residential burglary": 9,
+          "Stock-theft": 2,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 4
+      },
+      {
+        "name": "Kabega Park",
+        "district": "Nelson Mandela",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 6,
+          "Robbery aggravating": 11,
+          "Common robbery": 4,
+          "Assault GBH": 18,
+          "Common assault": 32,
+          "Non-residential burglary": 9,
+          "Residential burglary": 27,
+          "Stock-theft": 2,
+          "Malicious damage to property": 23,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 4
+      },
+      {
+        "name": "Komani",
+        "district": "Chris Hani",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 1,
+          "Robbery aggravating": 6,
+          "Common robbery": 6,
+          "Assault GBH": 16,
+          "Common assault": 22,
+          "Non-residential burglary": 8,
+          "Residential burglary": 15,
+          "Stock-theft": 7,
+          "Malicious damage to property": 18,
+          "Carjacking": 1,
+          "Sexual offences": 6
+        },
+        "murders": 4
+      },
+      {
+        "name": "Libode",
+        "district": "OR Tambo",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 5,
+          "Robbery aggravating": 9,
+          "Common robbery": 1,
+          "Assault GBH": 24,
+          "Common assault": 14,
+          "Non-residential burglary": 5,
+          "Residential burglary": 15,
+          "Stock-theft": 9,
+          "Malicious damage to property": 7,
+          "Carjacking": 1,
+          "Sexual offences": 7
+        },
+        "murders": 4
+      },
+      {
+        "name": "Maloti",
+        "district": "Alfred Nzo",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 2,
+          "Robbery aggravating": 4,
+          "Common robbery": 1,
+          "Assault GBH": 9,
+          "Common assault": 5,
+          "Non-residential burglary": 2,
+          "Residential burglary": 8,
+          "Stock-theft": 1,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 8
+        },
+        "murders": 4
+      }
+    ],
+    "Limpopo": [
+      {
+        "name": "Seshego",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 4,
+          "Robbery aggravating": 33,
+          "Common robbery": 18,
+          "Assault GBH": 50,
+          "Common assault": 51,
+          "Non-residential burglary": 17,
+          "Residential burglary": 51,
+          "Stock-theft": 4,
+          "Malicious damage to property": 33,
+          "Carjacking": 0,
+          "Sexual offences": 19
+        },
+        "murders": 7
+      },
+      {
+        "name": "Magatle",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 2,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 6,
+          "Common assault": 2,
+          "Non-residential burglary": 8,
+          "Residential burglary": 6,
+          "Stock-theft": 2,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 6
+      },
+      {
+        "name": "Mankweng",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 2,
+          "Robbery aggravating": 41,
+          "Common robbery": 19,
+          "Assault GBH": 41,
+          "Common assault": 43,
+          "Non-residential burglary": 18,
+          "Residential burglary": 89,
+          "Stock-theft": 6,
+          "Malicious damage to property": 23,
+          "Carjacking": 1,
+          "Sexual offences": 18
+        },
+        "murders": 5
+      },
+      {
+        "name": "Mahwelereng",
+        "district": "Waterberg",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 7,
+          "Common robbery": 4,
+          "Assault GBH": 26,
+          "Common assault": 22,
+          "Non-residential burglary": 5,
+          "Residential burglary": 19,
+          "Stock-theft": 4,
+          "Malicious damage to property": 14,
+          "Carjacking": 0,
+          "Sexual offences": 13
+        },
+        "murders": 3
+      },
+      {
+        "name": "Nebo",
+        "district": "Sekhukhune",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 6,
+          "Common robbery": 2,
+          "Assault GBH": 12,
+          "Common assault": 4,
+          "Non-residential burglary": 4,
+          "Residential burglary": 16,
+          "Stock-theft": 0,
+          "Malicious damage to property": 8,
+          "Carjacking": 1,
+          "Sexual offences": 3
+        },
+        "murders": 3
+      },
+      {
+        "name": "Siloam",
+        "district": "Vhembe",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 2,
+          "Assault GBH": 17,
+          "Common assault": 4,
+          "Non-residential burglary": 2,
+          "Residential burglary": 9,
+          "Stock-theft": 1,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 3
+      },
+      {
+        "name": "Thohoyandou",
+        "district": "Vhembe",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 4,
+          "Robbery aggravating": 38,
+          "Common robbery": 17,
+          "Assault GBH": 67,
+          "Common assault": 70,
+          "Non-residential burglary": 21,
+          "Residential burglary": 33,
+          "Stock-theft": 2,
+          "Malicious damage to property": 52,
+          "Carjacking": 1,
+          "Sexual offences": 39
+        },
+        "murders": 3
+      },
+      {
+        "name": "Tzaneen",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 0,
+          "Robbery aggravating": 8,
+          "Common robbery": 3,
+          "Assault GBH": 16,
+          "Common assault": 19,
+          "Non-residential burglary": 9,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 7,
+          "Carjacking": 1,
+          "Sexual offences": 9
+        },
+        "murders": 3
+      },
+      {
+        "name": "Westenburg",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 0,
+          "Robbery aggravating": 18,
+          "Common robbery": 6,
+          "Assault GBH": 12,
+          "Common assault": 20,
+          "Non-residential burglary": 4,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 10,
+          "Carjacking": 0,
+          "Sexual offences": 9
+        },
+        "murders": 3
+      },
+      {
+        "name": "Bolobedu",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 9,
+          "Common robbery": 4,
+          "Assault GBH": 32,
+          "Common assault": 29,
+          "Non-residential burglary": 5,
+          "Residential burglary": 17,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 2
+      },
+      {
+        "name": "Jane Furse",
+        "district": "Sekhukhune",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 3,
+          "Robbery aggravating": 5,
+          "Common robbery": 3,
+          "Assault GBH": 12,
+          "Common assault": 5,
+          "Non-residential burglary": 7,
+          "Residential burglary": 7,
+          "Stock-theft": 3,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 2
+      },
+      {
+        "name": "Lebowakgomo",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 13,
+          "Common robbery": 7,
+          "Assault GBH": 26,
+          "Common assault": 20,
+          "Non-residential burglary": 13,
+          "Residential burglary": 22,
+          "Stock-theft": 4,
+          "Malicious damage to property": 21,
+          "Carjacking": 0,
+          "Sexual offences": 9
+        },
+        "murders": 2
+      },
+      {
+        "name": "Malamulele",
+        "district": "Vhembe",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 14,
+          "Common robbery": 2,
+          "Assault GBH": 13,
+          "Common assault": 12,
+          "Non-residential burglary": 14,
+          "Residential burglary": 20,
+          "Stock-theft": 3,
+          "Malicious damage to property": 6,
+          "Carjacking": 2,
+          "Sexual offences": 9
+        },
+        "murders": 2
+      },
+      {
+        "name": "Mashashane",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 1,
+          "Common robbery": 1,
+          "Assault GBH": 8,
+          "Common assault": 2,
+          "Non-residential burglary": 3,
+          "Residential burglary": 5,
+          "Stock-theft": 2,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 2
+      },
+      {
+        "name": "Mokwakwaila",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 4,
+          "Common robbery": 2,
+          "Assault GBH": 6,
+          "Common assault": 3,
+          "Non-residential burglary": 3,
+          "Residential burglary": 5,
+          "Stock-theft": 2,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 2
+      },
+      {
+        "name": "Pienaarsrivier",
+        "district": "Waterberg",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 0,
+          "Common assault": 0,
+          "Non-residential burglary": 0,
+          "Residential burglary": 1,
+          "Stock-theft": 1,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 2
+      },
+      {
+        "name": "Tshilwavhusiku",
+        "district": "Vhembe",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 3,
+          "Robbery aggravating": 13,
+          "Common robbery": 1,
+          "Assault GBH": 22,
+          "Common assault": 12,
+          "Non-residential burglary": 3,
+          "Residential burglary": 11,
+          "Stock-theft": 1,
+          "Malicious damage to property": 10,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 2
+      },
+      {
+        "name": "Tubatse",
+        "district": "Sekhukhune",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 3,
+          "Common robbery": 7,
+          "Assault GBH": 23,
+          "Common assault": 13,
+          "Non-residential burglary": 6,
+          "Residential burglary": 14,
+          "Stock-theft": 1,
+          "Malicious damage to property": 8,
+          "Carjacking": 1,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Waterval",
+        "district": "Vhembe",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 13,
+          "Common robbery": 5,
+          "Assault GBH": 17,
+          "Common assault": 11,
+          "Non-residential burglary": 14,
+          "Residential burglary": 16,
+          "Stock-theft": 1,
+          "Malicious damage to property": 12,
+          "Carjacking": 0,
+          "Sexual offences": 8
+        },
+        "murders": 2
+      },
+      {
+        "name": "Botlokwa",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 4,
+          "Assault GBH": 12,
+          "Common assault": 4,
+          "Non-residential burglary": 6,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 1
+      },
+      {
+        "name": "Gilead",
+        "district": "Waterberg",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 3,
+          "Assault GBH": 13,
+          "Common assault": 11,
+          "Non-residential burglary": 0,
+          "Residential burglary": 3,
+          "Stock-theft": 2,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 1
+      },
+      {
+        "name": "Giyani",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 20,
+          "Common robbery": 5,
+          "Assault GBH": 23,
+          "Common assault": 15,
+          "Non-residential burglary": 9,
+          "Residential burglary": 18,
+          "Stock-theft": 2,
+          "Malicious damage to property": 16,
+          "Carjacking": 2,
+          "Sexual offences": 17
+        },
+        "murders": 1
+      },
+      {
+        "name": "Hlogotlou",
+        "district": "Sekhukhune",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 3,
+          "Common robbery": 2,
+          "Assault GBH": 15,
+          "Common assault": 14,
+          "Non-residential burglary": 6,
+          "Residential burglary": 11,
+          "Stock-theft": 8,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Lephalale",
+        "district": "Waterberg",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 7,
+          "Common robbery": 0,
+          "Assault GBH": 5,
+          "Common assault": 8,
+          "Non-residential burglary": 6,
+          "Residential burglary": 21,
+          "Stock-theft": 1,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 1
+      },
+      {
+        "name": "Letsitele",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 2,
+          "Robbery aggravating": 6,
+          "Common robbery": 2,
+          "Assault GBH": 13,
+          "Common assault": 11,
+          "Non-residential burglary": 9,
+          "Residential burglary": 10,
+          "Stock-theft": 1,
+          "Malicious damage to property": 12,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 1
+      },
+      {
+        "name": "Maake",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 3,
+          "Robbery aggravating": 7,
+          "Common robbery": 5,
+          "Assault GBH": 29,
+          "Common assault": 16,
+          "Non-residential burglary": 15,
+          "Residential burglary": 22,
+          "Stock-theft": 2,
+          "Malicious damage to property": 13,
+          "Carjacking": 0,
+          "Sexual offences": 16
+        },
+        "murders": 1
+      },
+      {
+        "name": "Matlelerekeng",
+        "district": "Sekhukhune",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 7,
+          "Common assault": 3,
+          "Non-residential burglary": 3,
+          "Residential burglary": 9,
+          "Stock-theft": 2,
+          "Malicious damage to property": 4,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Mecklenburg",
+        "district": "Sekhukhune",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 1,
+          "Common robbery": 3,
+          "Assault GBH": 18,
+          "Common assault": 12,
+          "Non-residential burglary": 6,
+          "Residential burglary": 7,
+          "Stock-theft": 3,
+          "Malicious damage to property": 15,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      },
+      {
+        "name": "Modjadjiskloof",
+        "district": "Mopani",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 8,
+          "Common assault": 2,
+          "Non-residential burglary": 0,
+          "Residential burglary": 7,
+          "Stock-theft": 0,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 1
+      },
+      {
+        "name": "Moletlane",
+        "district": "Capricorn",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 11,
+          "Common robbery": 3,
+          "Assault GBH": 13,
+          "Common assault": 5,
+          "Non-residential burglary": 11,
+          "Residential burglary": 8,
+          "Stock-theft": 1,
+          "Malicious damage to property": 9,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      }
+    ],
+    "Mpumalanga": [
+      {
+        "name": "Kwamhlanga",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 9,
+          "Attempted murder": 6,
+          "Robbery aggravating": 24,
+          "Common robbery": 5,
+          "Assault GBH": 49,
+          "Common assault": 42,
+          "Non-residential burglary": 15,
+          "Residential burglary": 27,
+          "Stock-theft": 6,
+          "Malicious damage to property": 21,
+          "Carjacking": 5,
+          "Sexual offences": 2
+        },
+        "murders": 9
+      },
+      {
+        "name": "Barberton",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 5,
+          "Robbery aggravating": 14,
+          "Common robbery": 2,
+          "Assault GBH": 31,
+          "Common assault": 21,
+          "Non-residential burglary": 2,
+          "Residential burglary": 14,
+          "Stock-theft": 1,
+          "Malicious damage to property": 8,
+          "Carjacking": 2,
+          "Sexual offences": 7
+        },
+        "murders": 7
+      },
+      {
+        "name": "Embalenhle",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 3,
+          "Robbery aggravating": 10,
+          "Common robbery": 5,
+          "Assault GBH": 51,
+          "Common assault": 26,
+          "Non-residential burglary": 3,
+          "Residential burglary": 12,
+          "Stock-theft": 3,
+          "Malicious damage to property": 17,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 6
+      },
+      {
+        "name": "Calcutta",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 5,
+          "Robbery aggravating": 13,
+          "Common robbery": 0,
+          "Assault GBH": 29,
+          "Common assault": 12,
+          "Non-residential burglary": 3,
+          "Residential burglary": 13,
+          "Stock-theft": 0,
+          "Malicious damage to property": 9,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 5
+      },
+      {
+        "name": "Masoyi",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 5,
+          "Robbery aggravating": 19,
+          "Common robbery": 4,
+          "Assault GBH": 33,
+          "Common assault": 20,
+          "Non-residential burglary": 9,
+          "Residential burglary": 13,
+          "Stock-theft": 1,
+          "Malicious damage to property": 16,
+          "Carjacking": 1,
+          "Sexual offences": 19
+        },
+        "murders": 5
+      },
+      {
+        "name": "Piet Retief",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 5,
+          "Attempted murder": 3,
+          "Robbery aggravating": 8,
+          "Common robbery": 1,
+          "Assault GBH": 24,
+          "Common assault": 12,
+          "Non-residential burglary": 5,
+          "Residential burglary": 15,
+          "Stock-theft": 7,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 22
+        },
+        "murders": 5
+      },
+      {
+        "name": "Acornhoek",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 5,
+          "Robbery aggravating": 5,
+          "Common robbery": 3,
+          "Assault GBH": 32,
+          "Common assault": 20,
+          "Non-residential burglary": 6,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 0,
+          "Sexual offences": 11
+        },
+        "murders": 4
+      },
+      {
+        "name": "Bushbuckridge",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 4,
+          "Robbery aggravating": 18,
+          "Common robbery": 8,
+          "Assault GBH": 32,
+          "Common assault": 21,
+          "Non-residential burglary": 9,
+          "Residential burglary": 16,
+          "Stock-theft": 1,
+          "Malicious damage to property": 9,
+          "Carjacking": 4,
+          "Sexual offences": 8
+        },
+        "murders": 4
+      },
+      {
+        "name": "Pienaar",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 6,
+          "Robbery aggravating": 22,
+          "Common robbery": 6,
+          "Assault GBH": 47,
+          "Common assault": 24,
+          "Non-residential burglary": 2,
+          "Residential burglary": 17,
+          "Stock-theft": 1,
+          "Malicious damage to property": 13,
+          "Carjacking": 1,
+          "Sexual offences": 12
+        },
+        "murders": 4
+      },
+      {
+        "name": "Kabokweni",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 20,
+          "Common robbery": 3,
+          "Assault GBH": 39,
+          "Common assault": 19,
+          "Non-residential burglary": 2,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 12,
+          "Carjacking": 3,
+          "Sexual offences": 13
+        },
+        "murders": 3
+      },
+      {
+        "name": "Kwaggafontein",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 5,
+          "Common robbery": 3,
+          "Assault GBH": 9,
+          "Common assault": 10,
+          "Non-residential burglary": 6,
+          "Residential burglary": 10,
+          "Stock-theft": 2,
+          "Malicious damage to property": 4,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 3
+      },
+      {
+        "name": "Mhala",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 10,
+          "Common robbery": 2,
+          "Assault GBH": 20,
+          "Common assault": 9,
+          "Non-residential burglary": 9,
+          "Residential burglary": 10,
+          "Stock-theft": 1,
+          "Malicious damage to property": 6,
+          "Carjacking": 2,
+          "Sexual offences": 7
+        },
+        "murders": 3
+      },
+      {
+        "name": "Tweefontein",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 7,
+          "Common robbery": 0,
+          "Assault GBH": 14,
+          "Common assault": 3,
+          "Non-residential burglary": 1,
+          "Residential burglary": 6,
+          "Stock-theft": 9,
+          "Malicious damage to property": 7,
+          "Carjacking": 2,
+          "Sexual offences": 1
+        },
+        "murders": 3
+      },
+      {
+        "name": "Verena",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 12,
+          "Common assault": 6,
+          "Non-residential burglary": 0,
+          "Residential burglary": 6,
+          "Stock-theft": 2,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 3
+      },
+      {
+        "name": "Vosman",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 10,
+          "Robbery aggravating": 42,
+          "Common robbery": 15,
+          "Assault GBH": 54,
+          "Common assault": 29,
+          "Non-residential burglary": 8,
+          "Residential burglary": 27,
+          "Stock-theft": 2,
+          "Malicious damage to property": 25,
+          "Carjacking": 7,
+          "Sexual offences": 21
+        },
+        "murders": 3
+      },
+      {
+        "name": "Carolina",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 9,
+          "Common robbery": 1,
+          "Assault GBH": 13,
+          "Common assault": 14,
+          "Non-residential burglary": 11,
+          "Residential burglary": 10,
+          "Stock-theft": 1,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 2
+      },
+      {
+        "name": "Hazyview",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 5,
+          "Common robbery": 0,
+          "Assault GBH": 12,
+          "Common assault": 5,
+          "Non-residential burglary": 3,
+          "Residential burglary": 7,
+          "Stock-theft": 1,
+          "Malicious damage to property": 3,
+          "Carjacking": 1,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Kriel",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 4,
+          "Robbery aggravating": 6,
+          "Common robbery": 2,
+          "Assault GBH": 10,
+          "Common assault": 12,
+          "Non-residential burglary": 1,
+          "Residential burglary": 15,
+          "Stock-theft": 4,
+          "Malicious damage to property": 3,
+          "Carjacking": 1,
+          "Sexual offences": 3
+        },
+        "murders": 2
+      },
+      {
+        "name": "Mhluzi",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 7,
+          "Common robbery": 2,
+          "Assault GBH": 22,
+          "Common assault": 13,
+          "Non-residential burglary": 4,
+          "Residential burglary": 13,
+          "Stock-theft": 2,
+          "Malicious damage to property": 8,
+          "Carjacking": 5,
+          "Sexual offences": 1
+        },
+        "murders": 2
+      },
+      {
+        "name": "Middelburg Mpumalang",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 4,
+          "Robbery aggravating": 22,
+          "Common robbery": 5,
+          "Assault GBH": 18,
+          "Common assault": 27,
+          "Non-residential burglary": 17,
+          "Residential burglary": 32,
+          "Stock-theft": 2,
+          "Malicious damage to property": 14,
+          "Carjacking": 3,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Ogies",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 8,
+          "Common robbery": 1,
+          "Assault GBH": 5,
+          "Common assault": 0,
+          "Non-residential burglary": 5,
+          "Residential burglary": 1,
+          "Stock-theft": 0,
+          "Malicious damage to property": 3,
+          "Carjacking": 3,
+          "Sexual offences": 2
+        },
+        "murders": 2
+      },
+      {
+        "name": "Siyabuswa",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 4,
+          "Robbery aggravating": 16,
+          "Common robbery": 5,
+          "Assault GBH": 37,
+          "Common assault": 15,
+          "Non-residential burglary": 5,
+          "Residential burglary": 14,
+          "Stock-theft": 4,
+          "Malicious damage to property": 19,
+          "Carjacking": 1,
+          "Sexual offences": 14
+        },
+        "murders": 2
+      },
+      {
+        "name": "Tonga",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 8,
+          "Robbery aggravating": 9,
+          "Common robbery": 0,
+          "Assault GBH": 14,
+          "Common assault": 16,
+          "Non-residential burglary": 11,
+          "Residential burglary": 10,
+          "Stock-theft": 1,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 16
+        },
+        "murders": 2
+      },
+      {
+        "name": "Wakkerstroom",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 8,
+          "Non-residential burglary": 0,
+          "Residential burglary": 5,
+          "Stock-theft": 5,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 2
+      },
+      {
+        "name": "Belfast",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 6,
+          "Common robbery": 1,
+          "Assault GBH": 9,
+          "Common assault": 4,
+          "Non-residential burglary": 4,
+          "Residential burglary": 4,
+          "Stock-theft": 5,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bethal",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 3,
+          "Common assault": 3,
+          "Non-residential burglary": 4,
+          "Residential burglary": 7,
+          "Stock-theft": 3,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Charl Cilliers",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 0,
+          "Common assault": 2,
+          "Non-residential burglary": 0,
+          "Residential burglary": 1,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Delmas",
+        "district": "Nkangala",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 10,
+          "Robbery aggravating": 26,
+          "Common robbery": 11,
+          "Assault GBH": 24,
+          "Common assault": 26,
+          "Non-residential burglary": 5,
+          "Residential burglary": 23,
+          "Stock-theft": 5,
+          "Malicious damage to property": 16,
+          "Carjacking": 5,
+          "Sexual offences": 6
+        },
+        "murders": 1
+      },
+      {
+        "name": "Dientjie",
+        "district": "Ehlanzeni",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 1,
+          "Common robbery": 0,
+          "Assault GBH": 4,
+          "Common assault": 0,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Dirkiesdorp",
+        "district": "Gert Sibande",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 2,
+          "Common robbery": 1,
+          "Assault GBH": 12,
+          "Common assault": 2,
+          "Non-residential burglary": 2,
+          "Residential burglary": 1,
+          "Stock-theft": 8,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      }
+    ],
+    "North West": [
+      {
+        "name": "Phokeng",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 8,
+          "Attempted murder": 10,
+          "Robbery aggravating": 22,
+          "Common robbery": 4,
+          "Assault GBH": 39,
+          "Common assault": 31,
+          "Non-residential burglary": 6,
+          "Residential burglary": 13,
+          "Stock-theft": 5,
+          "Malicious damage to property": 13,
+          "Carjacking": 2,
+          "Sexual offences": 13
+        },
+        "murders": 8
+      },
+      {
+        "name": "Boitekong",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 7,
+          "Attempted murder": 6,
+          "Robbery aggravating": 43,
+          "Common robbery": 4,
+          "Assault GBH": 45,
+          "Common assault": 41,
+          "Non-residential burglary": 1,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 29,
+          "Carjacking": 4,
+          "Sexual offences": 6
+        },
+        "murders": 7
+      },
+      {
+        "name": "Mooinooi",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 6,
+          "Attempted murder": 4,
+          "Robbery aggravating": 22,
+          "Common robbery": 3,
+          "Assault GBH": 13,
+          "Common assault": 19,
+          "Non-residential burglary": 2,
+          "Residential burglary": 10,
+          "Stock-theft": 2,
+          "Malicious damage to property": 12,
+          "Carjacking": 2,
+          "Sexual offences": 3
+        },
+        "murders": 6
+      },
+      {
+        "name": "Brits",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 4,
+          "Robbery aggravating": 41,
+          "Common robbery": 12,
+          "Assault GBH": 40,
+          "Common assault": 67,
+          "Non-residential burglary": 8,
+          "Residential burglary": 27,
+          "Stock-theft": 1,
+          "Malicious damage to property": 23,
+          "Carjacking": 4,
+          "Sexual offences": 10
+        },
+        "murders": 4
+      },
+      {
+        "name": "Makapanstad",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 1,
+          "Robbery aggravating": 7,
+          "Common robbery": 3,
+          "Assault GBH": 26,
+          "Common assault": 18,
+          "Non-residential burglary": 3,
+          "Residential burglary": 25,
+          "Stock-theft": 8,
+          "Malicious damage to property": 12,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 4
+      },
+      {
+        "name": "Orkney",
+        "district": "Dr Kenneth Kaunda",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 0,
+          "Robbery aggravating": 7,
+          "Common robbery": 2,
+          "Assault GBH": 6,
+          "Common assault": 3,
+          "Non-residential burglary": 3,
+          "Residential burglary": 9,
+          "Stock-theft": 1,
+          "Malicious damage to property": 3,
+          "Carjacking": 2,
+          "Sexual offences": 4
+        },
+        "murders": 4
+      },
+      {
+        "name": "Ganyesa",
+        "district": "Dr Ruth Segomotsi Mompati",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 20,
+          "Common assault": 6,
+          "Non-residential burglary": 2,
+          "Residential burglary": 8,
+          "Stock-theft": 7,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 3
+      },
+      {
+        "name": "Jouberton",
+        "district": "Dr Kenneth Kaunda",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 21,
+          "Common robbery": 4,
+          "Assault GBH": 45,
+          "Common assault": 37,
+          "Non-residential burglary": 4,
+          "Residential burglary": 23,
+          "Stock-theft": 0,
+          "Malicious damage to property": 21,
+          "Carjacking": 1,
+          "Sexual offences": 7
+        },
+        "murders": 3
+      },
+      {
+        "name": "Kanana",
+        "district": "Dr Kenneth Kaunda",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 11,
+          "Common robbery": 1,
+          "Assault GBH": 42,
+          "Common assault": 14,
+          "Non-residential burglary": 3,
+          "Residential burglary": 10,
+          "Stock-theft": 2,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 10
+        },
+        "murders": 3
+      },
+      {
+        "name": "Khuma",
+        "district": "Dr Kenneth Kaunda",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 5,
+          "Common robbery": 0,
+          "Assault GBH": 26,
+          "Common assault": 6,
+          "Non-residential burglary": 3,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 9,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 3
+      },
+      {
+        "name": "Klerksdorp",
+        "district": "Dr Kenneth Kaunda",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 4,
+          "Robbery aggravating": 22,
+          "Common robbery": 10,
+          "Assault GBH": 19,
+          "Common assault": 38,
+          "Non-residential burglary": 7,
+          "Residential burglary": 37,
+          "Stock-theft": 3,
+          "Malicious damage to property": 18,
+          "Carjacking": 2,
+          "Sexual offences": 10
+        },
+        "murders": 3
+      },
+      {
+        "name": "Lethabong",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 3,
+          "Common robbery": 4,
+          "Assault GBH": 12,
+          "Common assault": 13,
+          "Non-residential burglary": 4,
+          "Residential burglary": 7,
+          "Stock-theft": 1,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 3
+      },
+      {
+        "name": "Mahikeng",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 20,
+          "Common robbery": 9,
+          "Assault GBH": 36,
+          "Common assault": 28,
+          "Non-residential burglary": 9,
+          "Residential burglary": 26,
+          "Stock-theft": 3,
+          "Malicious damage to property": 17,
+          "Carjacking": 0,
+          "Sexual offences": 11
+        },
+        "murders": 3
+      },
+      {
+        "name": "Marikana",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 3,
+          "Robbery aggravating": 8,
+          "Common robbery": 0,
+          "Assault GBH": 21,
+          "Common assault": 12,
+          "Non-residential burglary": 2,
+          "Residential burglary": 11,
+          "Stock-theft": 0,
+          "Malicious damage to property": 11,
+          "Carjacking": 1,
+          "Sexual offences": 9
+        },
+        "murders": 3
+      },
+      {
+        "name": "Mogwase",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 3,
+          "Robbery aggravating": 23,
+          "Common robbery": 15,
+          "Assault GBH": 41,
+          "Common assault": 62,
+          "Non-residential burglary": 11,
+          "Residential burglary": 33,
+          "Stock-theft": 5,
+          "Malicious damage to property": 25,
+          "Carjacking": 1,
+          "Sexual offences": 8
+        },
+        "murders": 3
+      },
+      {
+        "name": "Rustenburg",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 5,
+          "Robbery aggravating": 26,
+          "Common robbery": 14,
+          "Assault GBH": 25,
+          "Common assault": 52,
+          "Non-residential burglary": 21,
+          "Residential burglary": 43,
+          "Stock-theft": 0,
+          "Malicious damage to property": 28,
+          "Carjacking": 2,
+          "Sexual offences": 11
+        },
+        "murders": 3
+      },
+      {
+        "name": "Tlhabane",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 2,
+          "Robbery aggravating": 15,
+          "Common robbery": 2,
+          "Assault GBH": 30,
+          "Common assault": 54,
+          "Non-residential burglary": 2,
+          "Residential burglary": 20,
+          "Stock-theft": 1,
+          "Malicious damage to property": 12,
+          "Carjacking": 1,
+          "Sexual offences": 3
+        },
+        "murders": 3
+      },
+      {
+        "name": "Coligny",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 15,
+          "Common assault": 8,
+          "Non-residential burglary": 6,
+          "Residential burglary": 4,
+          "Stock-theft": 4,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 2
+      },
+      {
+        "name": "Groot Marico",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 1,
+          "Common assault": 2,
+          "Non-residential burglary": 1,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 2
+      },
+      {
+        "name": "Koster",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 8,
+          "Common assault": 10,
+          "Non-residential burglary": 3,
+          "Residential burglary": 12,
+          "Stock-theft": 1,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Lehurutshe",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 4,
+          "Common robbery": 4,
+          "Assault GBH": 41,
+          "Common assault": 10,
+          "Non-residential burglary": 6,
+          "Residential burglary": 23,
+          "Stock-theft": 5,
+          "Malicious damage to property": 15,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Lichtenburg",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 3,
+          "Common robbery": 2,
+          "Assault GBH": 51,
+          "Common assault": 25,
+          "Non-residential burglary": 8,
+          "Residential burglary": 28,
+          "Stock-theft": 1,
+          "Malicious damage to property": 18,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 2
+      },
+      {
+        "name": "Ottosdal",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 2,
+          "Common robbery": 1,
+          "Assault GBH": 14,
+          "Common assault": 7,
+          "Non-residential burglary": 2,
+          "Residential burglary": 1,
+          "Stock-theft": 2,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 2
+      },
+      {
+        "name": "Sun City",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 6,
+          "Common robbery": 0,
+          "Assault GBH": 14,
+          "Common assault": 19,
+          "Non-residential burglary": 3,
+          "Residential burglary": 1,
+          "Stock-theft": 4,
+          "Malicious damage to property": 11,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 2
+      },
+      {
+        "name": "Taung",
+        "district": "Dr Ruth Segomotsi Mompati",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 3,
+          "Robbery aggravating": 9,
+          "Common robbery": 2,
+          "Assault GBH": 34,
+          "Common assault": 18,
+          "Non-residential burglary": 8,
+          "Residential burglary": 21,
+          "Stock-theft": 4,
+          "Malicious damage to property": 9,
+          "Carjacking": 0,
+          "Sexual offences": 11
+        },
+        "murders": 2
+      },
+      {
+        "name": "Bedwang",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 1,
+          "Common assault": 4,
+          "Non-residential burglary": 1,
+          "Residential burglary": 5,
+          "Stock-theft": 2,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Biesiesvlei",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 1,
+          "Common robbery": 0,
+          "Assault GBH": 5,
+          "Common assault": 4,
+          "Non-residential burglary": 1,
+          "Residential burglary": 5,
+          "Stock-theft": 1,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bray",
+        "district": "Dr Ruth Segomotsi Mompati",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 1,
+          "Common assault": 0,
+          "Non-residential burglary": 1,
+          "Residential burglary": 1,
+          "Stock-theft": 2,
+          "Malicious damage to property": 2,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Hartbeespoortdam",
+        "district": "Bojanala",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 15,
+          "Common robbery": 1,
+          "Assault GBH": 6,
+          "Common assault": 17,
+          "Non-residential burglary": 4,
+          "Residential burglary": 16,
+          "Stock-theft": 2,
+          "Malicious damage to property": 13,
+          "Carjacking": 3,
+          "Sexual offences": 3
+        },
+        "murders": 1
+      },
+      {
+        "name": "Lomanyaneng",
+        "district": "Ngaka Modiri Molema",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 2,
+          "Assault GBH": 26,
+          "Common assault": 11,
+          "Non-residential burglary": 4,
+          "Residential burglary": 16,
+          "Stock-theft": 2,
+          "Malicious damage to property": 13,
+          "Carjacking": 1,
+          "Sexual offences": 4
+        },
+        "murders": 1
+      }
+    ],
+    "Free State": [
+      {
+        "name": "Harrismith",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 3,
+          "Robbery aggravating": 9,
+          "Common robbery": 3,
+          "Assault GBH": 12,
+          "Common assault": 12,
+          "Non-residential burglary": 8,
+          "Residential burglary": 23,
+          "Stock-theft": 8,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 4
+      },
+      {
+        "name": "Kopanong",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 3,
+          "Robbery aggravating": 6,
+          "Common robbery": 2,
+          "Assault GBH": 28,
+          "Common assault": 18,
+          "Non-residential burglary": 4,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 7
+        },
+        "murders": 4
+      },
+      {
+        "name": "Boithuso",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 9,
+          "Robbery aggravating": 19,
+          "Common robbery": 6,
+          "Assault GBH": 61,
+          "Common assault": 58,
+          "Non-residential burglary": 7,
+          "Residential burglary": 29,
+          "Stock-theft": 4,
+          "Malicious damage to property": 27,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 3
+      },
+      {
+        "name": "Ladybrand",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 6,
+          "Common assault": 5,
+          "Non-residential burglary": 5,
+          "Residential burglary": 9,
+          "Stock-theft": 2,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 3
+      },
+      {
+        "name": "Selosesha",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 1,
+          "Robbery aggravating": 6,
+          "Common robbery": 3,
+          "Assault GBH": 32,
+          "Common assault": 31,
+          "Non-residential burglary": 7,
+          "Residential burglary": 25,
+          "Stock-theft": 9,
+          "Malicious damage to property": 9,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 3
+      },
+      {
+        "name": "Sonskyn",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 13,
+          "Robbery aggravating": 13,
+          "Common robbery": 7,
+          "Assault GBH": 42,
+          "Common assault": 39,
+          "Non-residential burglary": 1,
+          "Residential burglary": 20,
+          "Stock-theft": 0,
+          "Malicious damage to property": 22,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 3
+      },
+      {
+        "name": "Zamdela",
+        "district": "Fezile Dabi",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 14,
+          "Robbery aggravating": 17,
+          "Common robbery": 3,
+          "Assault GBH": 45,
+          "Common assault": 31,
+          "Non-residential burglary": 13,
+          "Residential burglary": 13,
+          "Stock-theft": 1,
+          "Malicious damage to property": 14,
+          "Carjacking": 1,
+          "Sexual offences": 9
+        },
+        "murders": 3
+      },
+      {
+        "name": "Heidedal",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 9,
+          "Common robbery": 4,
+          "Assault GBH": 12,
+          "Common assault": 21,
+          "Non-residential burglary": 5,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 16,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 2
+      },
+      {
+        "name": "Hennenman",
+        "district": "Lejweleputswa",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 3,
+          "Common robbery": 2,
+          "Assault GBH": 13,
+          "Common assault": 18,
+          "Non-residential burglary": 2,
+          "Residential burglary": 12,
+          "Stock-theft": 1,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Namahadi",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 4,
+          "Common robbery": 0,
+          "Assault GBH": 18,
+          "Common assault": 4,
+          "Non-residential burglary": 4,
+          "Residential burglary": 12,
+          "Stock-theft": 4,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Tumahole",
+        "district": "Fezile Dabi",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 5,
+          "Robbery aggravating": 3,
+          "Common robbery": 0,
+          "Assault GBH": 17,
+          "Common assault": 19,
+          "Non-residential burglary": 3,
+          "Residential burglary": 9,
+          "Stock-theft": 0,
+          "Malicious damage to property": 10,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 2
+      },
+      {
+        "name": "Viljoenskroon",
+        "district": "Fezile Dabi",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 22,
+          "Common assault": 15,
+          "Non-residential burglary": 1,
+          "Residential burglary": 6,
+          "Stock-theft": 2,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 2
+      },
+      {
+        "name": "Vrede",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 0,
+          "Robbery aggravating": 3,
+          "Common robbery": 1,
+          "Assault GBH": 10,
+          "Common assault": 7,
+          "Non-residential burglary": 2,
+          "Residential burglary": 5,
+          "Stock-theft": 3,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 2
+      },
+      {
+        "name": "Welkom",
+        "district": "Lejweleputswa",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 5,
+          "Robbery aggravating": 18,
+          "Common robbery": 8,
+          "Assault GBH": 12,
+          "Common assault": 46,
+          "Non-residential burglary": 12,
+          "Residential burglary": 30,
+          "Stock-theft": 0,
+          "Malicious damage to property": 19,
+          "Carjacking": 0,
+          "Sexual offences": 8
+        },
+        "murders": 2
+      },
+      {
+        "name": "Allanridge",
+        "district": "Lejweleputswa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 5,
+          "Robbery aggravating": 1,
+          "Common robbery": 1,
+          "Assault GBH": 12,
+          "Common assault": 8,
+          "Non-residential burglary": 0,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 4,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bainsvlei",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 1,
+          "Common robbery": 2,
+          "Assault GBH": 2,
+          "Common assault": 5,
+          "Non-residential burglary": 2,
+          "Residential burglary": 6,
+          "Stock-theft": 1,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Batho",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 4,
+          "Common robbery": 0,
+          "Assault GBH": 14,
+          "Common assault": 2,
+          "Non-residential burglary": 3,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bayswater",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 2,
+          "Common assault": 4,
+          "Non-residential burglary": 3,
+          "Residential burglary": 6,
+          "Stock-theft": 0,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bethlehem",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 3,
+          "Common robbery": 2,
+          "Assault GBH": 8,
+          "Common assault": 10,
+          "Non-residential burglary": 4,
+          "Residential burglary": 9,
+          "Stock-theft": 4,
+          "Malicious damage to property": 8,
+          "Carjacking": 1,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bothaville",
+        "district": "Lejweleputswa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 15,
+          "Robbery aggravating": 10,
+          "Common robbery": 2,
+          "Assault GBH": 23,
+          "Common assault": 29,
+          "Non-residential burglary": 7,
+          "Residential burglary": 5,
+          "Stock-theft": 4,
+          "Malicious damage to property": 13,
+          "Carjacking": 1,
+          "Sexual offences": 5
+        },
+        "murders": 1
+      },
+      {
+        "name": "Botshabelo",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 10,
+          "Robbery aggravating": 12,
+          "Common robbery": 1,
+          "Assault GBH": 59,
+          "Common assault": 41,
+          "Non-residential burglary": 9,
+          "Residential burglary": 22,
+          "Stock-theft": 5,
+          "Malicious damage to property": 22,
+          "Carjacking": 0,
+          "Sexual offences": 9
+        },
+        "murders": 1
+      },
+      {
+        "name": "Bultfontein",
+        "district": "Lejweleputswa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 6,
+          "Robbery aggravating": 3,
+          "Common robbery": 0,
+          "Assault GBH": 13,
+          "Common assault": 12,
+          "Non-residential burglary": 1,
+          "Residential burglary": 6,
+          "Stock-theft": 3,
+          "Malicious damage to property": 10,
+          "Carjacking": 0,
+          "Sexual offences": 15
+        },
+        "murders": 1
+      },
+      {
+        "name": "Ficksburg",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 5,
+          "Common robbery": 1,
+          "Assault GBH": 14,
+          "Common assault": 18,
+          "Non-residential burglary": 12,
+          "Residential burglary": 12,
+          "Stock-theft": 1,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      },
+      {
+        "name": "Heilbron",
+        "district": "Fezile Dabi",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 3,
+          "Robbery aggravating": 8,
+          "Common robbery": 4,
+          "Assault GBH": 13,
+          "Common assault": 24,
+          "Non-residential burglary": 5,
+          "Residential burglary": 27,
+          "Stock-theft": 3,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Hertzogville",
+        "district": "Lejweleputswa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 1,
+          "Assault GBH": 6,
+          "Common assault": 6,
+          "Non-residential burglary": 3,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 4,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Hobhouse",
+        "district": "Thabo Mofutsanyana",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 1,
+          "Common assault": 2,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Jacobsdal",
+        "district": "Xhariep",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 1,
+          "Common assault": 2,
+          "Non-residential burglary": 2,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Kagisanong",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 6,
+          "Robbery aggravating": 17,
+          "Common robbery": 3,
+          "Assault GBH": 39,
+          "Common assault": 43,
+          "Non-residential burglary": 8,
+          "Residential burglary": 34,
+          "Stock-theft": 0,
+          "Malicious damage to property": 35,
+          "Carjacking": 0,
+          "Sexual offences": 13
+        },
+        "murders": 1
+      },
+      {
+        "name": "Luckhoff",
+        "district": "Xhariep",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 4,
+          "Non-residential burglary": 3,
+          "Residential burglary": 1,
+          "Stock-theft": 0,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Mangaung",
+        "district": "Mangaung",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 3,
+          "Robbery aggravating": 14,
+          "Common robbery": 2,
+          "Assault GBH": 23,
+          "Common assault": 26,
+          "Non-residential burglary": 7,
+          "Residential burglary": 16,
+          "Stock-theft": 0,
+          "Malicious damage to property": 18,
+          "Carjacking": 1,
+          "Sexual offences": 6
+        },
+        "murders": 1
+      }
+    ],
+    "Northern Cape": [
+      {
+        "name": "Galeshewe",
+        "district": "Frances Baard",
+        "crimes": {
+          "Murder": 4,
+          "Attempted murder": 22,
+          "Robbery aggravating": 16,
+          "Common robbery": 11,
+          "Assault GBH": 73,
+          "Common assault": 35,
+          "Non-residential burglary": 3,
+          "Residential burglary": 38,
+          "Stock-theft": 2,
+          "Malicious damage to property": 42,
+          "Carjacking": 0,
+          "Sexual offences": 11
+        },
+        "murders": 4
+      },
+      {
+        "name": "Batlharos",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 3,
+          "Attempted murder": 5,
+          "Robbery aggravating": 1,
+          "Common robbery": 1,
+          "Assault GBH": 6,
+          "Common assault": 2,
+          "Non-residential burglary": 1,
+          "Residential burglary": 7,
+          "Stock-theft": 0,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 3
+      },
+      {
+        "name": "Bothithong",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 2,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 4,
+          "Common assault": 0,
+          "Non-residential burglary": 1,
+          "Residential burglary": 0,
+          "Stock-theft": 1,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 2
+      },
+      {
+        "name": "Kimberley",
+        "district": "Frances Baard",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 16,
+          "Robbery aggravating": 29,
+          "Common robbery": 17,
+          "Assault GBH": 52,
+          "Common assault": 41,
+          "Non-residential burglary": 10,
+          "Residential burglary": 26,
+          "Stock-theft": 3,
+          "Malicious damage to property": 22,
+          "Carjacking": 0,
+          "Sexual offences": 6
+        },
+        "murders": 2
+      },
+      {
+        "name": "Mothibistad",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 6,
+          "Robbery aggravating": 11,
+          "Common robbery": 1,
+          "Assault GBH": 11,
+          "Common assault": 8,
+          "Non-residential burglary": 8,
+          "Residential burglary": 12,
+          "Stock-theft": 2,
+          "Malicious damage to property": 11,
+          "Carjacking": 1,
+          "Sexual offences": 5
+        },
+        "murders": 2
+      },
+      {
+        "name": "Olifantshoek",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 1,
+          "Robbery aggravating": 1,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 0,
+          "Non-residential burglary": 0,
+          "Residential burglary": 2,
+          "Stock-theft": 1,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 2
+      },
+      {
+        "name": "Postmasburg",
+        "district": "ZF Mgcawu",
+        "crimes": {
+          "Murder": 2,
+          "Attempted murder": 6,
+          "Robbery aggravating": 2,
+          "Common robbery": 5,
+          "Assault GBH": 18,
+          "Common assault": 5,
+          "Non-residential burglary": 12,
+          "Residential burglary": 15,
+          "Stock-theft": 1,
+          "Malicious damage to property": 10,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 2
+      },
+      {
+        "name": "Colesberg",
+        "district": "Pixley ka Seme",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 1,
+          "Assault GBH": 1,
+          "Common assault": 1,
+          "Non-residential burglary": 1,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Douglas",
+        "district": "Pixley ka Seme",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 3,
+          "Robbery aggravating": 3,
+          "Common robbery": 0,
+          "Assault GBH": 10,
+          "Common assault": 14,
+          "Non-residential burglary": 4,
+          "Residential burglary": 16,
+          "Stock-theft": 0,
+          "Malicious damage to property": 2,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      },
+      {
+        "name": "Fraserburg",
+        "district": "Namakwa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 0,
+          "Common assault": 1,
+          "Non-residential burglary": 1,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Hartswater",
+        "district": "Frances Baard",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 2,
+          "Common robbery": 2,
+          "Assault GBH": 6,
+          "Common assault": 7,
+          "Non-residential burglary": 15,
+          "Residential burglary": 8,
+          "Stock-theft": 0,
+          "Malicious damage to property": 6,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      },
+      {
+        "name": "Jan Kempdorp",
+        "district": "Frances Baard",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 1,
+          "Assault GBH": 15,
+          "Common assault": 16,
+          "Non-residential burglary": 11,
+          "Residential burglary": 10,
+          "Stock-theft": 0,
+          "Malicious damage to property": 8,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Kakamas",
+        "district": "ZF Mgcawu",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 13,
+          "Robbery aggravating": 2,
+          "Common robbery": 0,
+          "Assault GBH": 18,
+          "Common assault": 15,
+          "Non-residential burglary": 4,
+          "Residential burglary": 12,
+          "Stock-theft": 1,
+          "Malicious damage to property": 11,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Kanoneiland",
+        "district": "ZF Mgcawu",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 1,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Kathu",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 2,
+          "Robbery aggravating": 5,
+          "Common robbery": 1,
+          "Assault GBH": 18,
+          "Common assault": 6,
+          "Non-residential burglary": 2,
+          "Residential burglary": 5,
+          "Stock-theft": 1,
+          "Malicious damage to property": 4,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 1
+      },
+      {
+        "name": "Kenhardt",
+        "district": "ZF Mgcawu",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 1,
+          "Assault GBH": 6,
+          "Common assault": 3,
+          "Non-residential burglary": 0,
+          "Residential burglary": 3,
+          "Stock-theft": 0,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Komaggas",
+        "district": "Namakwa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 0,
+          "Common assault": 1,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Kuruman",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 2,
+          "Robbery aggravating": 12,
+          "Common robbery": 1,
+          "Assault GBH": 5,
+          "Common assault": 3,
+          "Non-residential burglary": 14,
+          "Residential burglary": 13,
+          "Stock-theft": 2,
+          "Malicious damage to property": 2,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Petrusville",
+        "district": "Pixley ka Seme",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 2,
+          "Non-residential burglary": 0,
+          "Residential burglary": 3,
+          "Stock-theft": 2,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 4
+        },
+        "murders": 1
+      },
+      {
+        "name": "Rosedale",
+        "district": "ZF Mgcawu",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 13,
+          "Robbery aggravating": 1,
+          "Common robbery": 1,
+          "Assault GBH": 22,
+          "Common assault": 10,
+          "Non-residential burglary": 5,
+          "Residential burglary": 14,
+          "Stock-theft": 0,
+          "Malicious damage to property": 13,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 1
+      },
+      {
+        "name": "Sunrise",
+        "district": "Pixley ka Seme",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 14,
+          "Robbery aggravating": 0,
+          "Common robbery": 2,
+          "Assault GBH": 14,
+          "Common assault": 14,
+          "Non-residential burglary": 1,
+          "Residential burglary": 5,
+          "Stock-theft": 0,
+          "Malicious damage to property": 7,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Tsineng",
+        "district": "John Taolo Gaetsewe",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 2,
+          "Assault GBH": 14,
+          "Common assault": 2,
+          "Non-residential burglary": 2,
+          "Residential burglary": 3,
+          "Stock-theft": 0,
+          "Malicious damage to property": 1,
+          "Carjacking": 0,
+          "Sexual offences": 2
+        },
+        "murders": 1
+      },
+      {
+        "name": "Vosburg",
+        "district": "Pixley ka Seme",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 2,
+          "Non-residential burglary": 0,
+          "Residential burglary": 1,
+          "Stock-theft": 1,
+          "Malicious damage to property": 2,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 1
+      },
+      {
+        "name": "Williston",
+        "district": "Namakwa",
+        "crimes": {
+          "Murder": 1,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 3,
+          "Common assault": 2,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 1
+      },
+      {
+        "name": "Aggeneys",
+        "district": "Namakwa",
+        "crimes": {
+          "Murder": 0,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 1,
+          "Common assault": 1,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 0
+      },
+      {
+        "name": "Alexander Bay",
+        "district": "Namakwa",
+        "crimes": {
+          "Murder": 0,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 2,
+          "Common assault": 1,
+          "Non-residential burglary": 0,
+          "Residential burglary": 1,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 0
+      },
+      {
+        "name": "Augrabies",
+        "district": "ZF Mgcawu",
+        "crimes": {
+          "Murder": 0,
+          "Attempted murder": 1,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 6,
+          "Common assault": 1,
+          "Non-residential burglary": 0,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 3,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 0
+      },
+      {
+        "name": "Barkly West",
+        "district": "Frances Baard",
+        "crimes": {
+          "Murder": 0,
+          "Attempted murder": 4,
+          "Robbery aggravating": 2,
+          "Common robbery": 1,
+          "Assault GBH": 14,
+          "Common assault": 11,
+          "Non-residential burglary": 3,
+          "Residential burglary": 4,
+          "Stock-theft": 0,
+          "Malicious damage to property": 5,
+          "Carjacking": 0,
+          "Sexual offences": 3
+        },
+        "murders": 0
+      },
+      {
+        "name": "Belmont",
+        "district": "Pixley ka Seme",
+        "crimes": {
+          "Murder": 0,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 0,
+          "Common assault": 0,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 1
+        },
+        "murders": 0
+      },
+      {
+        "name": "Boetsap",
+        "district": "Frances Baard",
+        "crimes": {
+          "Murder": 0,
+          "Attempted murder": 0,
+          "Robbery aggravating": 0,
+          "Common robbery": 0,
+          "Assault GBH": 0,
+          "Common assault": 0,
+          "Non-residential burglary": 0,
+          "Residential burglary": 0,
+          "Stock-theft": 0,
+          "Malicious damage to property": 0,
+          "Carjacking": 0,
+          "Sexual offences": 0
+        },
+        "murders": 0
+      }
+    ]
+  },
+  "districts": {
+    "Western Cape": {
+      "Garden Route": {
+        "Murder": 15,
+        "Attempted murder": 33,
+        "Robbery aggravating": 83,
+        "Common robbery": 54,
+        "Assault GBH": 340,
+        "Common assault": 459,
+        "Non-residential burglary": 76,
+        "Residential burglary": 262,
+        "Stock-theft": 6,
+        "Malicious damage to property": 220,
+        "Carjacking": 2,
+        "Sexual offences": 72
+      },
+      "Cape Winelands": {
+        "Murder": 31,
+        "Attempted murder": 86,
+        "Robbery aggravating": 141,
+        "Common robbery": 98,
+        "Assault GBH": 471,
+        "Common assault": 655,
+        "Non-residential burglary": 85,
+        "Residential burglary": 225,
+        "Stock-theft": 6,
+        "Malicious damage to property": 323,
+        "Carjacking": 6,
+        "Sexual offences": 116
+      },
+      "City of Cape Town": {
+        "Murder": 274,
+        "Attempted murder": 235,
+        "Robbery aggravating": 1209,
+        "Common robbery": 732,
+        "Assault GBH": 893,
+        "Common assault": 2470,
+        "Non-residential burglary": 158,
+        "Residential burglary": 716,
+        "Stock-theft": 1,
+        "Malicious damage to property": 1380,
+        "Carjacking": 172,
+        "Sexual offences": 333
+      },
+      "Overberg": {
+        "Murder": 15,
+        "Attempted murder": 11,
+        "Robbery aggravating": 24,
+        "Common robbery": 17,
+        "Assault GBH": 145,
+        "Common assault": 202,
+        "Non-residential burglary": 33,
+        "Residential burglary": 153,
+        "Stock-theft": 3,
+        "Malicious damage to property": 101,
+        "Carjacking": 0,
+        "Sexual offences": 38
+      },
+      "Central Karoo": {
+        "Murder": 5,
+        "Attempted murder": 3,
+        "Robbery aggravating": 2,
+        "Common robbery": 3,
+        "Assault GBH": 57,
+        "Common assault": 62,
+        "Non-residential burglary": 5,
+        "Residential burglary": 26,
+        "Stock-theft": 8,
+        "Malicious damage to property": 21,
+        "Carjacking": 0,
+        "Sexual offences": 5
+      },
+      "West Coast": {
+        "Murder": 11,
+        "Attempted murder": 19,
+        "Robbery aggravating": 29,
+        "Common robbery": 16,
+        "Assault GBH": 188,
+        "Common assault": 261,
+        "Non-residential burglary": 30,
+        "Residential burglary": 141,
+        "Stock-theft": 9,
+        "Malicious damage to property": 131,
+        "Carjacking": 0,
+        "Sexual offences": 36
+      }
+    },
+    "Gauteng": {
+      "Ekurhuleni": {
+        "Murder": 138,
+        "Attempted murder": 149,
+        "Robbery aggravating": 788,
+        "Common robbery": 172,
+        "Assault GBH": 816,
+        "Common assault": 1022,
+        "Non-residential burglary": 168,
+        "Residential burglary": 531,
+        "Stock-theft": 7,
+        "Malicious damage to property": 440,
+        "Carjacking": 187,
+        "Sexual offences": 220
+      },
+      "Tshwane": {
+        "Murder": 50,
+        "Attempted murder": 88,
+        "Robbery aggravating": 686,
+        "Common robbery": 288,
+        "Assault GBH": 677,
+        "Common assault": 1124,
+        "Non-residential burglary": 210,
+        "Residential burglary": 681,
+        "Stock-theft": 12,
+        "Malicious damage to property": 538,
+        "Carjacking": 126,
+        "Sexual offences": 194
+      },
+      "Johannesburg": {
+        "Murder": 186,
+        "Attempted murder": 301,
+        "Robbery aggravating": 1413,
+        "Common robbery": 603,
+        "Assault GBH": 1064,
+        "Common assault": 1440,
+        "Non-residential burglary": 224,
+        "Residential burglary": 589,
+        "Stock-theft": 3,
+        "Malicious damage to property": 755,
+        "Carjacking": 278,
+        "Sexual offences": 288
+      },
+      "West Rand": {
+        "Murder": 39,
+        "Attempted murder": 34,
+        "Robbery aggravating": 226,
+        "Common robbery": 54,
+        "Assault GBH": 273,
+        "Common assault": 309,
+        "Non-residential burglary": 73,
+        "Residential burglary": 162,
+        "Stock-theft": 2,
+        "Malicious damage to property": 176,
+        "Carjacking": 30,
+        "Sexual offences": 52
+      },
+      "Sedibeng": {
+        "Murder": 45,
+        "Attempted murder": 52,
+        "Robbery aggravating": 281,
+        "Common robbery": 49,
+        "Assault GBH": 294,
+        "Common assault": 315,
+        "Non-residential burglary": 81,
+        "Residential burglary": 189,
+        "Stock-theft": 16,
+        "Malicious damage to property": 154,
+        "Carjacking": 48,
+        "Sexual offences": 70
+      },
+      "Gauteng: ports of entry: Air": {
+        "Murder": 0,
+        "Attempted murder": 0,
+        "Robbery aggravating": 2,
+        "Common robbery": 1,
+        "Assault GBH": 0,
+        "Common assault": 8,
+        "Non-residential burglary": 0,
+        "Residential burglary": 0,
+        "Stock-theft": 0,
+        "Malicious damage to property": 2,
+        "Carjacking": 0,
+        "Sexual offences": 1
+      }
+    },
+    "KwaZulu-Natal": {
+      "Umgungundlovu": {
+        "Murder": 45,
+        "Attempted murder": 41,
+        "Robbery aggravating": 149,
+        "Common robbery": 84,
+        "Assault GBH": 369,
+        "Common assault": 336,
+        "Non-residential burglary": 57,
+        "Residential burglary": 253,
+        "Stock-theft": 49,
+        "Malicious damage to property": 131,
+        "Carjacking": 9,
+        "Sexual offences": 100
+      },
+      "Uthukela": {
+        "Murder": 22,
+        "Attempted murder": 22,
+        "Robbery aggravating": 51,
+        "Common robbery": 31,
+        "Assault GBH": 188,
+        "Common assault": 160,
+        "Non-residential burglary": 26,
+        "Residential burglary": 79,
+        "Stock-theft": 49,
+        "Malicious damage to property": 54,
+        "Carjacking": 2,
+        "Sexual offences": 64
+      },
+      "eThekwini": {
+        "Murder": 150,
+        "Attempted murder": 290,
+        "Robbery aggravating": 1031,
+        "Common robbery": 324,
+        "Assault GBH": 807,
+        "Common assault": 1291,
+        "Non-residential burglary": 168,
+        "Residential burglary": 656,
+        "Stock-theft": 31,
+        "Malicious damage to property": 545,
+        "Carjacking": 116,
+        "Sexual offences": 301
+      },
+      "Zululand": {
+        "Murder": 13,
+        "Attempted murder": 25,
+        "Robbery aggravating": 55,
+        "Common robbery": 29,
+        "Assault GBH": 272,
+        "Common assault": 160,
+        "Non-residential burglary": 45,
+        "Residential burglary": 110,
+        "Stock-theft": 65,
+        "Malicious damage to property": 71,
+        "Carjacking": 0,
+        "Sexual offences": 73
+      },
+      "Harry Gwala": {
+        "Murder": 14,
+        "Attempted murder": 8,
+        "Robbery aggravating": 28,
+        "Common robbery": 20,
+        "Assault GBH": 122,
+        "Common assault": 78,
+        "Non-residential burglary": 22,
+        "Residential burglary": 65,
+        "Stock-theft": 38,
+        "Malicious damage to property": 32,
+        "Carjacking": 1,
+        "Sexual offences": 34
+      },
+      "Amajuba": {
+        "Murder": 15,
+        "Attempted murder": 19,
+        "Robbery aggravating": 50,
+        "Common robbery": 30,
+        "Assault GBH": 215,
+        "Common assault": 191,
+        "Non-residential burglary": 42,
+        "Residential burglary": 99,
+        "Stock-theft": 39,
+        "Malicious damage to property": 90,
+        "Carjacking": 0,
+        "Sexual offences": 58
+      },
+      "Ugu": {
+        "Murder": 22,
+        "Attempted murder": 40,
+        "Robbery aggravating": 104,
+        "Common robbery": 22,
+        "Assault GBH": 239,
+        "Common assault": 208,
+        "Non-residential burglary": 59,
+        "Residential burglary": 240,
+        "Stock-theft": 17,
+        "Malicious damage to property": 85,
+        "Carjacking": 5,
+        "Sexual offences": 69
+      },
+      "Umzinyathi": {
+        "Murder": 28,
+        "Attempted murder": 18,
+        "Robbery aggravating": 27,
+        "Common robbery": 7,
+        "Assault GBH": 146,
+        "Common assault": 50,
+        "Non-residential burglary": 20,
+        "Residential burglary": 40,
+        "Stock-theft": 34,
+        "Malicious damage to property": 37,
+        "Carjacking": 4,
+        "Sexual offences": 42
+      },
+      "King Cetshwayo": {
+        "Murder": 21,
+        "Attempted murder": 39,
+        "Robbery aggravating": 117,
+        "Common robbery": 49,
+        "Assault GBH": 278,
+        "Common assault": 262,
+        "Non-residential burglary": 62,
+        "Residential burglary": 218,
+        "Stock-theft": 26,
+        "Malicious damage to property": 103,
+        "Carjacking": 10,
+        "Sexual offences": 93
+      },
+      "Umkhanyakude": {
+        "Murder": 20,
+        "Attempted murder": 14,
+        "Robbery aggravating": 28,
+        "Common robbery": 14,
+        "Assault GBH": 144,
+        "Common assault": 66,
+        "Non-residential burglary": 23,
+        "Residential burglary": 41,
+        "Stock-theft": 22,
+        "Malicious damage to property": 38,
+        "Carjacking": 1,
+        "Sexual offences": 45
+      },
+      "Ilembe": {
+        "Murder": 24,
+        "Attempted murder": 51,
+        "Robbery aggravating": 123,
+        "Common robbery": 20,
+        "Assault GBH": 204,
+        "Common assault": 168,
+        "Non-residential burglary": 38,
+        "Residential burglary": 121,
+        "Stock-theft": 19,
+        "Malicious damage to property": 69,
+        "Carjacking": 6,
+        "Sexual offences": 54
+      },
+      "Kwazulu-Natal: ports of entry: Air": {
+        "Murder": 0,
+        "Attempted murder": 0,
+        "Robbery aggravating": 1,
+        "Common robbery": 0,
+        "Assault GBH": 0,
+        "Common assault": 1,
+        "Non-residential burglary": 1,
+        "Residential burglary": 0,
+        "Stock-theft": 0,
+        "Malicious damage to property": 0,
+        "Carjacking": 0,
+        "Sexual offences": 0
+      },
+      "Kwazulu-Natal: ports of entry: Sea": {
+        "Murder": 0,
+        "Attempted murder": 0,
+        "Robbery aggravating": 0,
+        "Common robbery": 0,
+        "Assault GBH": 1,
+        "Common assault": 0,
+        "Non-residential burglary": 0,
+        "Residential burglary": 0,
+        "Stock-theft": 0,
+        "Malicious damage to property": 1,
+        "Carjacking": 0,
+        "Sexual offences": 0
+      }
+    },
+    "Eastern Cape": {
+      "Sarah Baartman": {
+        "Murder": 15,
+        "Attempted murder": 10,
+        "Robbery aggravating": 32,
+        "Common robbery": 31,
+        "Assault GBH": 226,
+        "Common assault": 218,
+        "Non-residential burglary": 52,
+        "Residential burglary": 202,
+        "Stock-theft": 22,
+        "Malicious damage to property": 110,
+        "Carjacking": 0,
+        "Sexual offences": 49
+      },
+      "Amathole": {
+        "Murder": 38,
+        "Attempted murder": 30,
+        "Robbery aggravating": 62,
+        "Common robbery": 30,
+        "Assault GBH": 320,
+        "Common assault": 134,
+        "Non-residential burglary": 56,
+        "Residential burglary": 176,
+        "Stock-theft": 72,
+        "Malicious damage to property": 107,
+        "Carjacking": 3,
+        "Sexual offences": 79
+      },
+      "Alfred Nzo": {
+        "Murder": 22,
+        "Attempted murder": 10,
+        "Robbery aggravating": 19,
+        "Common robbery": 6,
+        "Assault GBH": 142,
+        "Common assault": 63,
+        "Non-residential burglary": 17,
+        "Residential burglary": 45,
+        "Stock-theft": 35,
+        "Malicious damage to property": 27,
+        "Carjacking": 6,
+        "Sexual offences": 73
+      },
+      "Nelson Mandela": {
+        "Murder": 118,
+        "Attempted murder": 82,
+        "Robbery aggravating": 251,
+        "Common robbery": 55,
+        "Assault GBH": 221,
+        "Common assault": 274,
+        "Non-residential burglary": 80,
+        "Residential burglary": 202,
+        "Stock-theft": 2,
+        "Malicious damage to property": 197,
+        "Carjacking": 33,
+        "Sexual offences": 93
+      },
+      "Joe Gqabi": {
+        "Murder": 12,
+        "Attempted murder": 4,
+        "Robbery aggravating": 12,
+        "Common robbery": 12,
+        "Assault GBH": 187,
+        "Common assault": 52,
+        "Non-residential burglary": 21,
+        "Residential burglary": 86,
+        "Stock-theft": 42,
+        "Malicious damage to property": 44,
+        "Carjacking": 1,
+        "Sexual offences": 42
+      },
+      "Buffalo City": {
+        "Murder": 30,
+        "Attempted murder": 20,
+        "Robbery aggravating": 114,
+        "Common robbery": 55,
+        "Assault GBH": 446,
+        "Common assault": 216,
+        "Non-residential burglary": 117,
+        "Residential burglary": 301,
+        "Stock-theft": 32,
+        "Malicious damage to property": 237,
+        "Carjacking": 5,
+        "Sexual offences": 85
+      },
+      "OR Tambo": {
+        "Murder": 65,
+        "Attempted murder": 30,
+        "Robbery aggravating": 99,
+        "Common robbery": 28,
+        "Assault GBH": 339,
+        "Common assault": 192,
+        "Non-residential burglary": 61,
+        "Residential burglary": 126,
+        "Stock-theft": 188,
+        "Malicious damage to property": 105,
+        "Carjacking": 8,
+        "Sexual offences": 128
+      },
+      "Chris Hani": {
+        "Murder": 43,
+        "Attempted murder": 17,
+        "Robbery aggravating": 36,
+        "Common robbery": 28,
+        "Assault GBH": 290,
+        "Common assault": 199,
+        "Non-residential burglary": 58,
+        "Residential burglary": 133,
+        "Stock-theft": 82,
+        "Malicious damage to property": 119,
+        "Carjacking": 4,
+        "Sexual offences": 76
+      }
+    },
+    "Limpopo": {
+      "Capricorn": {
+        "Murder": 30,
+        "Attempted murder": 18,
+        "Robbery aggravating": 182,
+        "Common robbery": 88,
+        "Assault GBH": 244,
+        "Common assault": 228,
+        "Non-residential burglary": 124,
+        "Residential burglary": 262,
+        "Stock-theft": 29,
+        "Malicious damage to property": 156,
+        "Carjacking": 2,
+        "Sexual offences": 98
+      },
+      "Sekhukhune": {
+        "Murder": 11,
+        "Attempted murder": 14,
+        "Robbery aggravating": 61,
+        "Common robbery": 38,
+        "Assault GBH": 194,
+        "Common assault": 151,
+        "Non-residential burglary": 84,
+        "Residential burglary": 137,
+        "Stock-theft": 38,
+        "Malicious damage to property": 114,
+        "Carjacking": 6,
+        "Sexual offences": 66
+      },
+      "Vhembe": {
+        "Murder": 17,
+        "Attempted murder": 23,
+        "Robbery aggravating": 123,
+        "Common robbery": 38,
+        "Assault GBH": 241,
+        "Common assault": 186,
+        "Non-residential burglary": 106,
+        "Residential burglary": 173,
+        "Stock-theft": 12,
+        "Malicious damage to property": 131,
+        "Carjacking": 5,
+        "Sexual offences": 92
+      },
+      "Waterberg": {
+        "Murder": 9,
+        "Attempted murder": 14,
+        "Robbery aggravating": 53,
+        "Common robbery": 23,
+        "Assault GBH": 129,
+        "Common assault": 124,
+        "Non-residential burglary": 51,
+        "Residential burglary": 168,
+        "Stock-theft": 19,
+        "Malicious damage to property": 81,
+        "Carjacking": 1,
+        "Sexual offences": 62
+      },
+      "Mopani": {
+        "Murder": 12,
+        "Attempted murder": 11,
+        "Robbery aggravating": 82,
+        "Common robbery": 38,
+        "Assault GBH": 203,
+        "Common assault": 139,
+        "Non-residential burglary": 81,
+        "Residential burglary": 152,
+        "Stock-theft": 14,
+        "Malicious damage to property": 129,
+        "Carjacking": 5,
+        "Sexual offences": 96
+      }
+    },
+    "Mpumalanga": {
+      "Ehlanzeni": {
+        "Murder": 43,
+        "Attempted murder": 52,
+        "Robbery aggravating": 208,
+        "Common robbery": 56,
+        "Assault GBH": 424,
+        "Common assault": 262,
+        "Non-residential burglary": 103,
+        "Residential burglary": 257,
+        "Stock-theft": 12,
+        "Malicious damage to property": 148,
+        "Carjacking": 26,
+        "Sexual offences": 137
+      },
+      "Gert Sibande": {
+        "Murder": 28,
+        "Attempted murder": 15,
+        "Robbery aggravating": 93,
+        "Common robbery": 27,
+        "Assault GBH": 300,
+        "Common assault": 207,
+        "Non-residential burglary": 62,
+        "Residential burglary": 238,
+        "Stock-theft": 108,
+        "Malicious damage to property": 119,
+        "Carjacking": 8,
+        "Sexual offences": 106
+      },
+      "Nkangala": {
+        "Murder": 35,
+        "Attempted murder": 53,
+        "Robbery aggravating": 257,
+        "Common robbery": 74,
+        "Assault GBH": 346,
+        "Common assault": 288,
+        "Non-residential burglary": 93,
+        "Residential burglary": 266,
+        "Stock-theft": 64,
+        "Malicious damage to property": 175,
+        "Carjacking": 51,
+        "Sexual offences": 83
+      }
+    },
+    "North West": {
+      "Dr Ruth Segomotsi Mompati": {
+        "Murder": 6,
+        "Attempted murder": 8,
+        "Robbery aggravating": 34,
+        "Common robbery": 21,
+        "Assault GBH": 219,
+        "Common assault": 88,
+        "Non-residential burglary": 63,
+        "Residential burglary": 127,
+        "Stock-theft": 57,
+        "Malicious damage to property": 67,
+        "Carjacking": 0,
+        "Sexual offences": 39
+      },
+      "Bojanala": {
+        "Murder": 51,
+        "Attempted murder": 53,
+        "Robbery aggravating": 304,
+        "Common robbery": 84,
+        "Assault GBH": 497,
+        "Common assault": 571,
+        "Non-residential burglary": 108,
+        "Residential burglary": 364,
+        "Stock-theft": 53,
+        "Malicious damage to property": 274,
+        "Carjacking": 23,
+        "Sexual offences": 109
+      },
+      "Ngaka Modiri Molema": {
+        "Murder": 16,
+        "Attempted murder": 20,
+        "Robbery aggravating": 83,
+        "Common robbery": 34,
+        "Assault GBH": 384,
+        "Common assault": 200,
+        "Non-residential burglary": 89,
+        "Residential burglary": 199,
+        "Stock-theft": 65,
+        "Malicious damage to property": 135,
+        "Carjacking": 1,
+        "Sexual offences": 73
+      },
+      "Dr Kenneth Kaunda": {
+        "Murder": 18,
+        "Attempted murder": 16,
+        "Robbery aggravating": 136,
+        "Common robbery": 45,
+        "Assault GBH": 346,
+        "Common assault": 231,
+        "Non-residential burglary": 65,
+        "Residential burglary": 222,
+        "Stock-theft": 36,
+        "Malicious damage to property": 156,
+        "Carjacking": 6,
+        "Sexual offences": 64
+      }
+    },
+    "Free State": {
+      "Lejweleputswa": {
+        "Murder": 13,
+        "Attempted murder": 87,
+        "Robbery aggravating": 95,
+        "Common robbery": 32,
+        "Assault GBH": 262,
+        "Common assault": 378,
+        "Non-residential burglary": 50,
+        "Residential burglary": 186,
+        "Stock-theft": 31,
+        "Malicious damage to property": 159,
+        "Carjacking": 4,
+        "Sexual offences": 91
+      },
+      "Thabo Mofutsanyana": {
+        "Murder": 18,
+        "Attempted murder": 17,
+        "Robbery aggravating": 58,
+        "Common robbery": 25,
+        "Assault GBH": 236,
+        "Common assault": 167,
+        "Non-residential burglary": 72,
+        "Residential burglary": 186,
+        "Stock-theft": 63,
+        "Malicious damage to property": 91,
+        "Carjacking": 1,
+        "Sexual offences": 62
+      },
+      "Mangaung": {
+        "Murder": 21,
+        "Attempted murder": 70,
+        "Robbery aggravating": 163,
+        "Common robbery": 110,
+        "Assault GBH": 407,
+        "Common assault": 397,
+        "Non-residential burglary": 111,
+        "Residential burglary": 259,
+        "Stock-theft": 32,
+        "Malicious damage to property": 214,
+        "Carjacking": 1,
+        "Sexual offences": 87
+      },
+      "Xhariep": {
+        "Murder": 2,
+        "Attempted murder": 13,
+        "Robbery aggravating": 4,
+        "Common robbery": 4,
+        "Assault GBH": 71,
+        "Common assault": 65,
+        "Non-residential burglary": 22,
+        "Residential burglary": 41,
+        "Stock-theft": 25,
+        "Malicious damage to property": 33,
+        "Carjacking": 0,
+        "Sexual offences": 12
+      },
+      "Fezile Dabi": {
+        "Murder": 9,
+        "Attempted murder": 44,
+        "Robbery aggravating": 70,
+        "Common robbery": 29,
+        "Assault GBH": 179,
+        "Common assault": 271,
+        "Non-residential burglary": 56,
+        "Residential burglary": 182,
+        "Stock-theft": 29,
+        "Malicious damage to property": 104,
+        "Carjacking": 5,
+        "Sexual offences": 42
+      }
+    },
+    "Northern Cape": {
+      "Namakwa": {
+        "Murder": 3,
+        "Attempted murder": 14,
+        "Robbery aggravating": 1,
+        "Common robbery": 2,
+        "Assault GBH": 59,
+        "Common assault": 66,
+        "Non-residential burglary": 11,
+        "Residential burglary": 27,
+        "Stock-theft": 12,
+        "Malicious damage to property": 26,
+        "Carjacking": 0,
+        "Sexual offences": 10
+      },
+      "ZF Mgcawu": {
+        "Murder": 6,
+        "Attempted murder": 54,
+        "Robbery aggravating": 7,
+        "Common robbery": 12,
+        "Assault GBH": 168,
+        "Common assault": 79,
+        "Non-residential burglary": 44,
+        "Residential burglary": 100,
+        "Stock-theft": 6,
+        "Malicious damage to property": 81,
+        "Carjacking": 0,
+        "Sexual offences": 19
+      },
+      "Frances Baard": {
+        "Murder": 8,
+        "Attempted murder": 75,
+        "Robbery aggravating": 68,
+        "Common robbery": 46,
+        "Assault GBH": 271,
+        "Common assault": 186,
+        "Non-residential burglary": 54,
+        "Residential burglary": 199,
+        "Stock-theft": 11,
+        "Malicious damage to property": 146,
+        "Carjacking": 1,
+        "Sexual offences": 38
+      },
+      "John Taolo Gaetsewe": {
+        "Murder": 12,
+        "Attempted murder": 23,
+        "Robbery aggravating": 32,
+        "Common robbery": 7,
+        "Assault GBH": 71,
+        "Common assault": 29,
+        "Non-residential burglary": 28,
+        "Residential burglary": 50,
+        "Stock-theft": 7,
+        "Malicious damage to property": 26,
+        "Carjacking": 1,
+        "Sexual offences": 16
+      },
+      "Pixley ka Seme": {
+        "Murder": 5,
+        "Attempted murder": 35,
+        "Robbery aggravating": 7,
+        "Common robbery": 5,
+        "Assault GBH": 109,
+        "Common assault": 89,
+        "Non-residential burglary": 27,
+        "Residential burglary": 57,
+        "Stock-theft": 12,
+        "Malicious damage to property": 40,
+        "Carjacking": 0,
+        "Sexual offences": 27
+      }
+    }
+  },
+  "national_hotspots": [
+    {
+      "rank": 1,
+      "station": "City of Cape Town District",
+      "district": "Western Cape",
+      "province": "2653",
+      "serious_crime": 2824
+    },
+    {
+      "rank": 1,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "1379",
+      "serious_crime": 1787
+    },
+    {
+      "rank": 1,
+      "station": "Mangaung District",
+      "district": "Free State",
+      "province": "1903",
+      "serious_crime": 1682
+    },
+    {
+      "rank": 1,
+      "station": "Johannesburg District",
+      "district": "Gauteng",
+      "province": "1420",
+      "serious_crime": 1679
+    },
+    {
+      "rank": 1,
+      "station": "Bojanala District",
+      "district": "North West",
+      "province": "1681",
+      "serious_crime": 1433
+    },
+    {
+      "rank": 1,
+      "station": "Capricorn District",
+      "district": "Limpopo",
+      "province": "1165",
+      "serious_crime": 1342
+    },
+    {
+      "rank": 2,
+      "station": "City of Cape Town District",
+      "district": "Western Cape",
+      "province": "1973",
+      "serious_crime": 1861
+    },
+    {
+      "rank": 2,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "2037",
+      "serious_crime": 1784
+    },
+    {
+      "rank": 2,
+      "station": "Johannesburg District",
+      "district": "Gauteng",
+      "province": "2149",
+      "serious_crime": 1665
+    },
+    {
+      "rank": 2,
+      "station": "Vhembe District",
+      "district": "Limpopo",
+      "province": "1236",
+      "serious_crime": 1285
+    },
+    {
+      "rank": 3,
+      "station": "City of Cape Town District",
+      "district": "Western Cape",
+      "province": "1433",
+      "serious_crime": 1691
+    },
+    {
+      "rank": 3,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "1816",
+      "serious_crime": 1612
+    },
+    {
+      "rank": 3,
+      "station": "Johannesburg District",
+      "district": "Gauteng",
+      "province": "1367",
+      "serious_crime": 1558
+    },
+    {
+      "rank": 3,
+      "station": "Capricorn District",
+      "district": "Limpopo",
+      "province": "1018",
+      "serious_crime": 1276
+    },
+    {
+      "rank": 4,
+      "station": "City of Cape Town District",
+      "district": "Western Cape",
+      "province": "1564",
+      "serious_crime": 1576
+    },
+    {
+      "rank": 4,
+      "station": "Umgungundlovu District",
+      "district": "KwaZulu-Natal",
+      "province": "1494",
+      "serious_crime": 1567
+    },
+    {
+      "rank": 4,
+      "station": "Johannesburg District",
+      "district": "Gauteng",
+      "province": "2021",
+      "serious_crime": 1505
+    },
+    {
+      "rank": 5,
+      "station": "City of Cape Town District",
+      "district": "Western Cape",
+      "province": "1450",
+      "serious_crime": 1502
+    },
+    {
+      "rank": 5,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "1284",
+      "serious_crime": 1463
+    },
+    {
+      "rank": 5,
+      "station": "Ekurhuleni District",
+      "district": "Gauteng",
+      "province": "1342",
+      "serious_crime": 1407
+    },
+    {
+      "rank": 6,
+      "station": "Ilembe District",
+      "district": "KwaZulu-Natal",
+      "province": "1445",
+      "serious_crime": 1404
+    },
+    {
+      "rank": 6,
+      "station": "Ekurhuleni District",
+      "district": "Gauteng",
+      "province": "1473",
+      "serious_crime": 1397
+    },
+    {
+      "rank": 6,
+      "station": "Cape Winelands District",
+      "district": "Western Cape",
+      "province": "1574",
+      "serious_crime": 1306
+    },
+    {
+      "rank": 7,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "1516",
+      "serious_crime": 1392
+    },
+    {
+      "rank": 7,
+      "station": "Tshwane District",
+      "district": "Gauteng",
+      "province": "1631",
+      "serious_crime": 1359
+    },
+    {
+      "rank": 7,
+      "station": "Cape Winelands District",
+      "district": "Western Cape",
+      "province": "1428",
+      "serious_crime": 1286
+    },
+    {
+      "rank": 8,
+      "station": "King Cetshwayo District",
+      "district": "KwaZulu-Natal",
+      "province": "1476",
+      "serious_crime": 1333
+    },
+    {
+      "rank": 8,
+      "station": "Johannesburg District",
+      "district": "Gauteng",
+      "province": "1320",
+      "serious_crime": 1329
+    },
+    {
+      "rank": 9,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "1195",
+      "serious_crime": 1285
+    },
+    {
+      "rank": 10,
+      "station": "eThekwini District",
+      "district": "KwaZulu-Natal",
+      "province": "1158",
+      "serious_crime": 1277
+    },
+    {
+      "rank": 29,
+      "station": "2",
+      "district": "3",
+      "province": "10",
+      "serious_crime": 26
+    }
+  ]
 }

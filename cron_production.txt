@@ -11,8 +11,11 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # Realtime scrapers (forex + energy) - Every 30 minutes
 */30 * * * * /opt/sa-insight-hub/cron_production.sh realtime "forex energy" "data: realtime update — forex + energy [skip ci]" "data/forex.json data/energy.json data/manifest.json"
 
-# Weekly scrapers (water + finance + property) - Every Monday at 06:00 UTC (08:00 SAST)
-0 6 * * 1 /opt/sa-insight-hub/cron_production.sh weekly "water finance property" "data: weekly update — water + finance + property [skip ci]" "data/water.json data/finance.json data/property.json data/manifest.json"
+# Weekly scrapers (water) - Every Monday at 06:00 UTC
+0 6 * * 1 /opt/sa-insight-hub/cron_production.sh weekly "water" "data: weekly update — water [skip ci]" "data/water.json data/manifest.json"
+
+# Monthly scrapers (finance + property) - 1st of each month at 05:00 UTC
+0 5 1 * * /opt/sa-insight-hub/cron_production.sh monthly "finance property" "data: monthly update — finance + property [skip ci]" "data/finance.json data/property.json data/manifest.json"
 
 # Quarterly scrapers (all 10 topics) - 1st of January, April, July, October at 04:00 UTC
 0 4 1 1,4,7,10 * /opt/sa-insight-hub/cron_production.sh quarterly "crime forex water finance energy employment health education property fraud" "data: quarterly full refresh — all 10 topics [skip ci]" "data/*.json"

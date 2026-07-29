@@ -1,0 +1,19 @@
+<svg viewBox="0 0 50 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="icon-pin-head">
+      <circle cx="25" cy="22" r="17"/>
+    </clipPath>
+  </defs>
+  <path
+    d="M25 58 L9 31 A18 18 0 1 0 41 31 Z"
+    fill="#1d4ed8"
+    stroke="#1e40af"
+    stroke-width="1.5"
+    stroke-linejoin="round"
+  />
+  <g clip-path="url(#icon-pin-head)">
+    <circle cx="25" cy="22" r="14" stroke="#93c5fd" stroke-width="1.2" opacity="0.55"/>
+    <circle cx="25" cy="22" r="9" stroke="#bfdbfe" stroke-width="1.2" opacity="0.75"/>
+  </g>
+  <circle cx="25" cy="22" r="4" fill="#ffffff"/>
+</svg>

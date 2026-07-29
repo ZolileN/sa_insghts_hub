@@ -117,7 +117,11 @@ main() {
             commit_changes "$commit_msg" "$files"
             ;;
         "weekly")
-            run_scrapers "$topics" 1800 "weekly"    # 30 minutes timeout
+            run_scrapers "$topics" 1800 "weekly"
+            commit_changes "$commit_msg" "$files"
+            ;;
+        "monthly")
+            run_scrapers "$topics" 1800 "monthly"
             commit_changes "$commit_msg" "$files"
             ;;
         "quarterly")
