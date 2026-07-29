@@ -110,25 +110,18 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 
 ---
 
-## Cron automation (production)
+## Production data refresh
 
-Scrapers run on your **VPS** when **[cron-job.org](https://cron-job.org)** calls the webhook (`webhook_server.py`). Commits push `data/*.json` to `master`; Vercel redeploys on push.
+**Recommended:** [Cursor Automations](https://cursor.com/automations) run Cloud Agents on a schedule. See **[CURSOR_AUTOMATIONS.md](CURSOR_AUTOMATIONS.md)** for four copy-paste automations (realtime / weekly / monthly / quarterly).
 
-Full setup: **[CRON_SETUP.md](CRON_SETUP.md)** (cron-job.org URLs, schedules, HTTPS).
+| Schedule (UTC) | Script | Topics |
+|----------------|--------|--------|
+| Every 30 min | `cursor_agent_refresh.sh realtime` | forex, energy |
+| Mon 06:00 | `cursor_agent_refresh.sh weekly` | water |
+| 1st 05:00 | `cursor_agent_refresh.sh monthly` | finance, property, employment, health |
+| Jan/Apr/Jul/Oct 04:00 | `cursor_agent_refresh.sh quarterly` | all 10 |
 
-| cron-job.org schedule | Endpoint | Topics |
-|----------------------|----------|--------|
-| Every 30 min | `/cron/realtime` | forex, energy |
-| Mon 06:00 UTC | `/cron/weekly` | water |
-| 1st 05:00 UTC | `/cron/monthly` | finance, property, employment, health |
-| Jan/Apr/Jul/Oct 04:00 UTC | `/cron/quarterly` | all 10 |
-
-```bash
-cp .env.example .env   # set CRON_WEBHOOK_SECRET
-./scripts/start-webhook.sh
-```
-
-Alternative: local crontab via `./cron_manager.sh install`.
+Manual runs and alternatives (local cron, cron-job.org webhook): **[CRON_SETUP.md](CRON_SETUP.md)**.
 
 ---
 
@@ -145,7 +138,8 @@ sa_insghts_hub/
 ├── run_scrapers.py           # CLI orchestrator
 ├── cron_*.sh                 # Scheduled scraper wrappers
 ├── DATA_SOURCES.md           # Public & commercial data catalog
-├── CRON_SETUP.md             # Cron install guide
+├── CURSOR_AUTOMATIONS.md     # Scheduled Cloud Agent setup
+├── CRON_SETUP.md             # Manual / cron alternatives
 └── requirements.txt          # Python scraper dependencies
 ```
 

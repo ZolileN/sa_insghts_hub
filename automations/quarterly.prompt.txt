@@ -1,0 +1,6 @@
+Run data refresh only. Do not edit source code.
+
+1. Ensure dependencies: if `.venv` is missing, run `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
+2. Run: `./scripts/cursor_agent_refresh.sh quarterly`
+3. That script runs all 10 scrapers (parallel, up to 30 min) and pushes to `origin/master` if JSON changed.
+4. Do not open a pull request — push must land on `master`.

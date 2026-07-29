@@ -1,0 +1,8 @@
+Run data refresh only. Do not edit source code.
+
+1. Ensure dependencies: if `.venv` is missing, run `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
+2. Run: `./scripts/cursor_agent_refresh.sh realtime`
+3. That script runs forex + energy scrapers and pushes to `origin/master` if JSON changed.
+4. If the script exits 0 with "No changes to commit", report success with no deploy needed.
+5. If git push fails, report the error. Do not modify files outside `data/` or `logs/`.
+6. Do not open a pull request — changes must land on `master` for Vercel.
