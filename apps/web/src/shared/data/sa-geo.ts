@@ -69,5 +69,5 @@ export type CrimeMapMarker = {
   longitude: number;
   latitude: number;
   value: number;
-  kind: "province" | "district" | "station";
+  kind: "province" | "district" | "station" | "suburb";
 };

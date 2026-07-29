@@ -1,6 +1,4 @@
-import { Suspense } from "react";
 import { CrimeMap } from "@/components/maps/crime-map";
-import { CityFilter } from "@/components/layout/city-filter";
 import {
   ChartPanel,
   KpiCard,
@@ -220,13 +218,7 @@ export default async function CrimePage({
       <PageHeader
         title="Crime Statistics"
         description={`SAPS quarterly data — ${period}. Drill down: province → city/metro → police precinct.`}
-      >
-        {province !== "All Provinces" && districtNames.length > 0 && (
-          <Suspense fallback={null}>
-            <CityFilter districts={districtNames} />
-          </Suspense>
-        )}
-      </PageHeader>
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {CRIME_KPI_KEYS.map((key) => (

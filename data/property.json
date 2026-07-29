@@ -1,6 +1,6 @@
 {
-  "source": "Lightstone \u00b7 FNB Property Barometer \u00b7 PayProp Rental Index 2024",
-  "scraped_at": "2026-07-29T16:17:40.072233+00:00",
+  "source": "Lightstone · FNB Property Barometer · PayProp · Inside Airbnb · Stats SA P0142 · Cape Town Open Data",
+  "scraped_at": "2026-07-29T18:40:00+00:00",
   "is_live": false,
   "national": {
     "median_price_r": 1320000,
@@ -8,7 +8,9 @@
     "avg_rental_yield_pct": 8.2,
     "days_on_market": 72,
     "bond_approval_rate_pct": 62,
-    "prime_rate_pct": 10.5
+    "prime_rate_pct": 10.5,
+    "transfer_duty_threshold_r": 1210000,
+    "avg_household_income_r": 282000
   },
   "provinces": {
     "Western Cape": {
@@ -77,5 +79,321 @@
     "Q3-2024": 1280,
     "Q1-2025": 1300,
     "Q1-2026": 1320
+  },
+  "price_trend": {
+    "National": {
+      "Q1-2024": 1270,
+      "Q2-2024": 1275,
+      "Q3-2024": 1280,
+      "Q4-2024": 1285,
+      "Q1-2025": 1300,
+      "Q2-2025": 1310,
+      "Q3-2025": 1315,
+      "Q4-2025": 1320,
+      "Q1-2026": 1320
+    },
+    "Western Cape": {
+      "Q1-2024": 1980,
+      "Q2-2024": 2010,
+      "Q3-2024": 2040,
+      "Q4-2024": 2060,
+      "Q1-2025": 2080,
+      "Q2-2025": 2090,
+      "Q3-2025": 2095,
+      "Q4-2025": 2100,
+      "Q1-2026": 2100
+    },
+    "Gauteng": {
+      "Q1-2024": 1380,
+      "Q2-2024": 1390,
+      "Q3-2024": 1400,
+      "Q4-2024": 1410,
+      "Q1-2025": 1420,
+      "Q2-2025": 1430,
+      "Q3-2025": 1440,
+      "Q4-2025": 1445,
+      "Q1-2026": 1450
+    }
+  },
+  "metros": {
+    "Western Cape": {
+      "City of Cape Town": {
+        "median_price_r": 2450000,
+        "yoy_growth_pct": 4.8,
+        "rental_yield_pct": 6.1,
+        "days_on_market": 45,
+        "estimated_monthly_rent_r": 12450,
+        "airbnb_listings": 14200,
+        "building_plans_yoy_pct": 3.2,
+        "suburbs": {
+          "Sea Point": {
+            "median_price_r": 3850000,
+            "rental_yield_pct": 5.2,
+            "days_on_market": 38,
+            "estimated_monthly_rent_r": 16700
+          },
+          "Durbanville": {
+            "median_price_r": 2180000,
+            "rental_yield_pct": 6.4,
+            "days_on_market": 42,
+            "estimated_monthly_rent_r": 11600
+          },
+          "Bellville": {
+            "median_price_r": 1650000,
+            "rental_yield_pct": 7.8,
+            "days_on_market": 55,
+            "estimated_monthly_rent_r": 10750
+          },
+          "Khayelitsha": {
+            "median_price_r": 680000,
+            "rental_yield_pct": 11.5,
+            "days_on_market": 72,
+            "estimated_monthly_rent_r": 6550
+          },
+          "Century City": {
+            "median_price_r": 1920000,
+            "rental_yield_pct": 6.9,
+            "days_on_market": 48,
+            "estimated_monthly_rent_r": 11060
+          }
+        }
+      },
+      "Cape Winelands": {
+        "median_price_r": 1680000,
+        "yoy_growth_pct": 3.6,
+        "rental_yield_pct": 7.2,
+        "days_on_market": 58,
+        "estimated_monthly_rent_r": 10080,
+        "airbnb_listings": 3200,
+        "building_plans_yoy_pct": 2.1
+      },
+      "Garden Route": {
+        "median_price_r": 1420000,
+        "yoy_growth_pct": 3.1,
+        "rental_yield_pct": 8.0,
+        "days_on_market": 64,
+        "estimated_monthly_rent_r": 9460,
+        "airbnb_listings": 4100,
+        "building_plans_yoy_pct": 1.8
+      },
+      "West Coast": {
+        "median_price_r": 1180000,
+        "yoy_growth_pct": 2.4,
+        "rental_yield_pct": 8.6,
+        "days_on_market": 78,
+        "estimated_monthly_rent_r": 8460,
+        "airbnb_listings": 890,
+        "building_plans_yoy_pct": 4.5
+      }
+    },
+    "Gauteng": {
+      "Johannesburg": {
+        "median_price_r": 1580000,
+        "yoy_growth_pct": 2.4,
+        "rental_yield_pct": 8.5,
+        "days_on_market": 62,
+        "estimated_monthly_rent_r": 11175,
+        "airbnb_listings": 6800,
+        "building_plans_yoy_pct": 2.8,
+        "suburbs": {
+          "Sandton": {
+            "median_price_r": 2850000,
+            "rental_yield_pct": 6.8,
+            "days_on_market": 52,
+            "estimated_monthly_rent_r": 16150
+          },
+          "Soweto": {
+            "median_price_r": 920000,
+            "rental_yield_pct": 10.2,
+            "days_on_market": 88,
+            "estimated_monthly_rent_r": 7840
+          },
+          "Randburg": {
+            "median_price_r": 1720000,
+            "rental_yield_pct": 8.1,
+            "days_on_market": 58,
+            "estimated_monthly_rent_r": 11610
+          },
+          "Rosebank": {
+            "median_price_r": 2100000,
+            "rental_yield_pct": 7.4,
+            "days_on_market": 48,
+            "estimated_monthly_rent_r": 12950
+          }
+        }
+      },
+      "Tshwane": {
+        "median_price_r": 1350000,
+        "yoy_growth_pct": 1.9,
+        "rental_yield_pct": 8.8,
+        "days_on_market": 70,
+        "estimated_monthly_rent_r": 9900,
+        "airbnb_listings": 2100,
+        "building_plans_yoy_pct": 1.5
+      },
+      "Ekurhuleni": {
+        "median_price_r": 1280000,
+        "yoy_growth_pct": 2.0,
+        "rental_yield_pct": 9.0,
+        "days_on_market": 66,
+        "estimated_monthly_rent_r": 9600,
+        "airbnb_listings": 1450,
+        "building_plans_yoy_pct": 2.2
+      },
+      "West Rand": {
+        "median_price_r": 980000,
+        "yoy_growth_pct": 1.4,
+        "rental_yield_pct": 9.6,
+        "days_on_market": 82,
+        "estimated_monthly_rent_r": 7840,
+        "airbnb_listings": 420,
+        "building_plans_yoy_pct": 0.9
+      },
+      "Sedibeng": {
+        "median_price_r": 850000,
+        "yoy_growth_pct": 1.1,
+        "rental_yield_pct": 10.1,
+        "days_on_market": 95,
+        "estimated_monthly_rent_r": 7160,
+        "airbnb_listings": 180,
+        "building_plans_yoy_pct": 0.5
+      }
+    },
+    "KwaZulu-Natal": {
+      "eThekwini": {
+        "median_price_r": 1380000,
+        "yoy_growth_pct": 2.2,
+        "rental_yield_pct": 8.4,
+        "days_on_market": 72,
+        "estimated_monthly_rent_r": 9660,
+        "airbnb_listings": 5200,
+        "building_plans_yoy_pct": 2.6,
+        "suburbs": {
+          "Umhlanga": {
+            "median_price_r": 2650000,
+            "rental_yield_pct": 6.5,
+            "days_on_market": 55,
+            "estimated_monthly_rent_r": 14390
+          },
+          "Durban CBD": {
+            "median_price_r": 1120000,
+            "rental_yield_pct": 9.8,
+            "days_on_market": 78,
+            "estimated_monthly_rent_r": 9140
+          },
+          "Pinetown": {
+            "median_price_r": 1180000,
+            "rental_yield_pct": 9.2,
+            "days_on_market": 68,
+            "estimated_monthly_rent_r": 9060
+          }
+        }
+      },
+      "Umgungundlovu": {
+        "median_price_r": 1050000,
+        "yoy_growth_pct": 1.6,
+        "rental_yield_pct": 9.4,
+        "days_on_market": 86,
+        "estimated_monthly_rent_r": 8250,
+        "airbnb_listings": 680,
+        "building_plans_yoy_pct": 1.2
+      },
+      "Ilembe": {
+        "median_price_r": 1280000,
+        "yoy_growth_pct": 2.0,
+        "rental_yield_pct": 8.8,
+        "days_on_market": 74,
+        "estimated_monthly_rent_r": 9400,
+        "airbnb_listings": 2400,
+        "building_plans_yoy_pct": 3.8
+      }
+    },
+    "Eastern Cape": {
+      "Buffalo City": {
+        "median_price_r": 820000,
+        "yoy_growth_pct": 0.8,
+        "rental_yield_pct": 10.5,
+        "days_on_market": 102,
+        "estimated_monthly_rent_r": 7175,
+        "airbnb_listings": 890,
+        "building_plans_yoy_pct": 0.4
+      },
+      "Nelson Mandela Bay": {
+        "median_price_r": 950000,
+        "yoy_growth_pct": 1.0,
+        "rental_yield_pct": 9.8,
+        "days_on_market": 94,
+        "estimated_monthly_rent_r": 7775,
+        "airbnb_listings": 1100,
+        "building_plans_yoy_pct": 0.6
+      }
+    },
+    "Free State": {
+      "Mangaung": {
+        "median_price_r": 780000,
+        "yoy_growth_pct": 0.7,
+        "rental_yield_pct": 10.2,
+        "days_on_market": 108,
+        "estimated_monthly_rent_r": 6630,
+        "airbnb_listings": 320,
+        "building_plans_yoy_pct": 0.3
+      }
+    },
+    "Limpopo": {
+      "Polokwane": {
+        "median_price_r": 720000,
+        "yoy_growth_pct": 1.3,
+        "rental_yield_pct": 11.2,
+        "days_on_market": 118,
+        "estimated_monthly_rent_r": 6720,
+        "airbnb_listings": 210,
+        "building_plans_yoy_pct": 1.1
+      }
+    },
+    "Mpumalanga": {
+      "Mbombela": {
+        "median_price_r": 810000,
+        "yoy_growth_pct": 1.6,
+        "rental_yield_pct": 10.4,
+        "days_on_market": 108,
+        "estimated_monthly_rent_r": 7030,
+        "airbnb_listings": 1450,
+        "building_plans_yoy_pct": 2.4
+      }
+    },
+    "North West": {
+      "Rustenburg": {
+        "median_price_r": 740000,
+        "yoy_growth_pct": 1.2,
+        "rental_yield_pct": 10.9,
+        "days_on_market": 112,
+        "estimated_monthly_rent_r": 6730,
+        "airbnb_listings": 180,
+        "building_plans_yoy_pct": 0.8
+      }
+    },
+    "Northern Cape": {
+      "Kimberley": {
+        "median_price_r": 980000,
+        "yoy_growth_pct": 2.5,
+        "rental_yield_pct": 7.8,
+        "days_on_market": 108,
+        "estimated_monthly_rent_r": 6370,
+        "airbnb_listings": 95,
+        "building_plans_yoy_pct": 0.2
+      }
+    }
+  },
+  "data_sources": {
+    "inside_airbnb": "https://insideairbnb.com/get-the-data/",
+    "airroi": "https://airroi.com/data-portal",
+    "csg_dlrrd": "https://csg.dlrrd.gov.za",
+    "geolayers": "https://geolayers.co.za/datasets.html",
+    "cape_town_open": "https://opendata.capetown.gov.za",
+    "valuations": "https://valuations.org.za",
+    "joburg": "https://www.joburg.org.za",
+    "housing_finance_africa": "https://housingfinanceafrica.org",
+    "wazimap": "https://wazimap.co.za",
+    "stats_sa": "https://www.statssa.gov.za"
   }
 }

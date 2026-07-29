@@ -1,3 +1,4 @@
+import { GeoMap } from "@/components/maps/crime-map";
 import {
   ChartPanel,
   KpiCard,
@@ -5,25 +6,35 @@ import {
   SourceBadge,
 } from "@/components/dashboard/page-parts";
 import {
+  MultiBarChart,
   SimpleBarChart,
   SimpleLineChart,
 } from "@/components/charts/recharts";
 import { PROVINCE_LIST } from "@/shared/data/constants";
 import { loadJson } from "@/shared/data/load";
-import { provinceLabel, resolveProvince } from "@/shared/data/province";
+import { resolveProvince } from "@/shared/data/province";
+import {
+  affordabilityVsNational,
+  estimateMonthlyBond,
+  estimateMonthlyRent,
+  rentVsBuyRatio,
+  resolveCity,
+  scopeLabel,
+  type PropertyMetro,
+  type PropertyNational,
+} from "@/shared/data/property";
+import {
+  districtCoords,
+  provinceCoords,
+  type CrimeMapMarker,
+} from "@/shared/data/sa-geo";
 import { formatCurrency, formatNumber } from "@/shared/utils";
 
 type PropertyData = {
   source?: string;
   scraped_at?: string;
   is_live?: boolean;
-  national?: {
-    median_price_r?: number;
-    yoy_growth_pct?: number;
-    avg_rental_yield_pct?: number;
-    days_on_market?: number;
-    prime_rate_pct?: number;
-  };
+  national?: PropertyNational;
   provinces?: Record<
     string,
     {
@@ -34,23 +45,168 @@ type PropertyData = {
     }
   >;
   price_trend?: Record<string, Record<string, number>>;
+  price_trend_r000?: Record<string, number>;
+  metros?: Record<string, Record<string, PropertyMetro>>;
 };
+
+function scopeMetrics(
+  d: PropertyData,
+  province: string,
+  city: string,
+): {
+  median: number;
+  yieldPct: number;
+  yoy: number;
+  dom: number;
+  rentR: number;
+  airbnb?: number;
+  buildingPlans?: number;
+} {
+  const nat = d.national ?? {};
+  const nationalMedian = nat.median_price_r ?? 1320000;
+  const prime = nat.prime_rate_pct ?? 10.5;
+
+  if (province === "All Provinces") {
+    const median = nationalMedian;
+    const yieldPct = nat.avg_rental_yield_pct ?? 8.2;
+    return {
+      median,
+      yieldPct,
+      yoy: nat.yoy_growth_pct ?? 2.8,
+      dom: nat.days_on_market ?? 72,
+      rentR: estimateMonthlyRent(median, yieldPct),
+      airbnb: undefined,
+      buildingPlans: undefined,
+    };
+  }
+
+  const metroMap = d.metros?.[province] ?? {};
+  const metroNames = Object.keys(metroMap);
+
+  if (city !== "All areas" && metroMap[city]) {
+    const metro = metroMap[city];
+    const median = metro.median_price_r ?? d.provinces?.[province]?.median_price_r ?? nationalMedian;
+    const yieldPct =
+      metro.rental_yield_pct ?? d.provinces?.[province]?.rental_yield_pct ?? 8.2;
+    const rentR =
+      metro.estimated_monthly_rent_r ?? estimateMonthlyRent(median, yieldPct);
+    return {
+      median,
+      yieldPct,
+      yoy: metro.yoy_growth_pct ?? d.provinces?.[province]?.yoy_growth_pct ?? 2,
+      dom: metro.days_on_market ?? d.provinces?.[province]?.days_on_market ?? 72,
+      rentR,
+      airbnb: metro.airbnb_listings,
+      buildingPlans: metro.building_plans_yoy_pct,
+    };
+  }
+
+  const prov = d.provinces?.[province];
+  const median = prov?.median_price_r ?? nationalMedian;
+  const yieldPct = prov?.rental_yield_pct ?? nat.avg_rental_yield_pct ?? 8.2;
+  return {
+    median,
+    yieldPct,
+    yoy: prov?.yoy_growth_pct ?? 2,
+    dom: prov?.days_on_market ?? 72,
+    rentR: estimateMonthlyRent(median, yieldPct),
+    airbnb: undefined,
+    buildingPlans: undefined,
+  };
+}
+
+function buildMapMarkers(
+  d: PropertyData,
+  province: string,
+  city: string,
+): CrimeMapMarker[] {
+  const provData = d.provinces ?? {};
+
+  if (province === "All Provinces") {
+    return PROVINCE_LIST.map((p) => ({
+      id: p,
+      label: p,
+      longitude: provinceCoords(p)[0],
+      latitude: provinceCoords(p)[1],
+      value: (provData[p]?.median_price_r ?? 0) / 1000,
+      kind: "province" as const,
+    })).filter((m) => m.value > 0);
+  }
+
+  const metroMap = d.metros?.[province] ?? {};
+
+  if (city === "All areas") {
+    return Object.entries(metroMap).map(([metro, data], i) => {
+      const [lng, lat] = districtCoords(metro, province, i);
+      return {
+        id: `${province}-${metro}`,
+        label: metro,
+        longitude: lng,
+        latitude: lat,
+        value: (data.median_price_r ?? 0) / 1000,
+        kind: "district" as const,
+      };
+    }).filter((m) => m.value > 0);
+  }
+
+  const metro = metroMap[city];
+  const suburbs = metro?.suburbs ?? {};
+  if (Object.keys(suburbs).length > 0) {
+    return Object.entries(suburbs).map(([name, sub], i) => {
+      const [lng, lat] = districtCoords(city, province, i);
+      return {
+        id: `${city}-${name}`,
+        label: name,
+        longitude: lng,
+        latitude: lat,
+        value: (sub.median_price_r ?? 0) / 1000,
+        kind: "suburb" as const,
+      };
+    }).filter((m) => m.value > 0);
+  }
+
+  const [lng, lat] = districtCoords(city, province, 0);
+  return [
+    {
+      id: `${province}-${city}`,
+      label: city,
+      longitude: lng,
+      latitude: lat,
+      value: (metro?.median_price_r ?? 0) / 1000,
+      kind: "district" as const,
+    },
+  ].filter((m) => m.value > 0);
+}
 
 export default async function PropertyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ province?: string }>;
+  searchParams: Promise<{ province?: string; city?: string }>;
 }) {
-  const { province: provinceParam } = await searchParams;
+  const { province: provinceParam, city: cityParam } = await searchParams;
   const province = resolveProvince(provinceParam);
   const d = await loadJson<PropertyData>("property");
   const nat = d?.national ?? {};
-  const prov = province !== "All Provinces" ? d?.provinces?.[province] : null;
 
-  const median = prov?.median_price_r ?? nat.median_price_r ?? 1280000;
-  const yieldPct = prov?.rental_yield_pct ?? nat.avg_rental_yield_pct ?? 8.4;
-  const yoy = prov?.yoy_growth_pct ?? nat.yoy_growth_pct ?? 2.3;
-  const dom = prov?.days_on_market ?? nat.days_on_market ?? 76;
+  const metroMap = d?.metros?.[province] ?? {};
+  const metroNames =
+    province !== "All Provinces"
+      ? Object.keys(metroMap).sort((a, b) => a.localeCompare(b))
+      : [];
+
+  const city = resolveCity(cityParam, metroNames);
+  const label = scopeLabel(province, city);
+  const metrics = scopeMetrics(d ?? {}, province, city);
+
+  const nationalMedian = nat.median_price_r ?? 1320000;
+  const prime = nat.prime_rate_pct ?? 10.5;
+  const monthlyBond = estimateMonthlyBond(metrics.median, prime);
+  const rentBuyRatio = rentVsBuyRatio(metrics.rentR, monthlyBond);
+  const affordability = affordabilityVsNational(metrics.median, nationalMedian);
+  const bondApproval = nat.bond_approval_rate_pct ?? 62;
+  const transferThreshold = nat.transfer_duty_threshold_r ?? 1210000;
+  const householdIncome = nat.avg_household_income_r ?? 282000;
+  const priceToIncome = Math.round((metrics.median / householdIncome) * 10) / 10;
 
   const scatter = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -63,77 +219,255 @@ export default async function PropertyPage({
     median_k: (d?.provinces?.[p]?.median_price_r ?? 0) / 1000,
   }));
 
-  const trendQuarters = ["Q1-24", "Q2-24", "Q3-24", "Q4-24"];
+  const metroMedians =
+    province !== "All Provinces"
+      ? metroNames.map((metro) => ({
+          metro,
+          median_k: (metroMap[metro]?.median_price_r ?? 0) / 1000,
+        }))
+      : [];
+
+  const suburbMedians =
+    province !== "All Provinces" && city !== "All areas"
+      ? Object.entries(metroMap[city]?.suburbs ?? {}).map(([name, sub]) => ({
+          suburb: name,
+          median_k: (sub.median_price_r ?? 0) / 1000,
+        }))
+      : [];
+
+  const trendQuarters = Object.keys(
+    d?.price_trend?.National ?? d?.price_trend_r000 ?? {},
+  ).slice(-8);
   const trendData = trendQuarters.map((q) => ({
     quarter: q,
-    National: d?.price_trend?.National?.[q] ?? 0,
+    National: d?.price_trend?.National?.[q] ?? d?.price_trend_r000?.[q] ?? 0,
     "Western Cape": d?.price_trend?.["Western Cape"]?.[q] ?? 0,
     Gauteng: d?.price_trend?.Gauteng?.[q] ?? 0,
   }));
+
+  const mapMarkers = buildMapMarkers(d ?? {}, province, city);
+  const mapDescription =
+    province === "All Provinces"
+      ? "Median price (R thousands) by province — blue markers scale with price"
+      : city === "All areas"
+        ? `Metro median prices in ${province} — orange markers`
+        : `Suburb medians in ${city} — red markers`;
+
+  const yieldCompare =
+    province === "All Provinces"
+      ? scatter.map((s) => ({ area: s.province, yield: s.yield }))
+      : city === "All areas"
+        ? metroNames.map((m) => ({
+            area: m,
+            yield: metroMap[m]?.rental_yield_pct ?? 0,
+          }))
+        : Object.entries(metroMap[city]?.suburbs ?? {}).map(([name, sub]) => ({
+            area: name,
+            yield: sub.rental_yield_pct ?? 0,
+          }));
 
   return (
     <div>
       <PageHeader
         title="Property Prices & Rental"
-        description="Median prices, rental yields, and market velocity — what matters for buy vs rent decisions."
+        description="Median prices, rental yields, affordability, and market velocity — drill down: province → metro → suburb. Built for buy vs rent decisions."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          label={`Median price (${provinceLabel(province)})`}
-          value={formatCurrency(median)}
-          hint="Published barometer figures"
+          label={`Median price (${label})`}
+          value={formatCurrency(metrics.median)}
+          hint="FNB/Lightstone barometer & metro estimates"
+        />
+        <KpiCard
+          label="Est. monthly bond"
+          value={formatCurrency(monthlyBond)}
+          hint={`90% loan · ${prime}% prime · 20 years`}
+          trend={monthlyBond < metrics.rentR ? "Bond cheaper than rent" : "Rent cheaper than bond"}
+          trendPositive={monthlyBond < metrics.rentR}
+        />
+        <KpiCard
+          label="Est. monthly rent"
+          value={formatCurrency(metrics.rentR)}
+          hint={`Gross yield ${metrics.yieldPct}%`}
         />
         <KpiCard
           label="Rental yield"
-          value={`${yieldPct}%`}
-          hint="Gross yield — income investors watch this"
-          trendPositive={yieldPct >= 8}
-          trend={yieldPct >= 8 ? "Above national average" : "Below national average"}
-        />
-        <KpiCard
-          label="YoY price growth"
-          value={`${yoy}%`}
-          trendPositive={yoy > 0}
-          trend={yoy > 0 ? "Prices rising" : "Prices flat or falling"}
-        />
-        <KpiCard
-          label="Days on market"
-          value={formatNumber(dom)}
-          hint={`Prime rate context: ${nat.prime_rate_pct ?? 10.25}%`}
+          value={`${metrics.yieldPct}%`}
+          trendPositive={metrics.yieldPct >= 8}
+          trend={
+            metrics.yieldPct >= 8
+              ? "Income-friendly market"
+              : "Growth-focused market"
+          }
         />
       </div>
 
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Rent vs bond ratio"
+          value={`${(rentBuyRatio * 100).toFixed(0)}%`}
+          hint="Rent as % of bond payment — under 100% favours buying"
+          trendPositive={rentBuyRatio < 1}
+          trend={
+            rentBuyRatio < 0.85
+              ? "Strong buy signal"
+              : rentBuyRatio < 1
+                ? "Rent below bond"
+                : "Rent exceeds bond"
+          }
+        />
+        <KpiCard
+          label="Affordability index"
+          value={`${affordability}`}
+          hint="Local median vs national (100 = national average)"
+          trendPositive={affordability <= 100}
+          trend={
+            affordability > 120
+              ? "Premium market"
+              : affordability < 90
+                ? "Value market"
+                : "Near national average"
+          }
+        />
+        <KpiCard
+          label="Price-to-income"
+          value={`${priceToIncome}x`}
+          hint={`Median vs household income (~R${formatNumber(householdIncome)})`}
+          trendPositive={priceToIncome <= 5}
+        />
+        <KpiCard
+          label="Days on market"
+          value={formatNumber(metrics.dom)}
+          hint={`Bond approval ~${bondApproval}% nationally`}
+          trendPositive={metrics.dom < 70}
+          trend={metrics.yoy > 0 ? `Prices +${metrics.yoy}% YoY` : "Flat prices"}
+        />
+      </div>
+
+      {(metrics.airbnb != null || metrics.buildingPlans != null) && (
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {metrics.airbnb != null && (
+            <KpiCard
+              label="Short-stay supply (Airbnb)"
+              value={formatNumber(metrics.airbnb)}
+              hint="Inside Airbnb listing count (metro proxy)"
+              trend="Higher supply can mean more rental competition"
+            />
+          )}
+          {metrics.buildingPlans != null && (
+            <KpiCard
+              label="Building plans growth"
+              value={`${metrics.buildingPlans}% YoY`}
+              hint="Stats SA P0142 / municipal open data proxy"
+              trendPositive={metrics.buildingPlans > 0}
+              trend={
+                metrics.buildingPlans > 2
+                  ? "New supply rising"
+                  : "Limited new supply"
+              }
+            />
+          )}
+          <KpiCard
+            label="Transfer duty threshold"
+            value={formatCurrency(transferThreshold)}
+            hint={
+              metrics.median > transferThreshold
+                ? "Median above zero-duty band"
+                : "Median within zero-duty band"
+            }
+          />
+          <KpiCard
+            label="YoY price growth"
+            value={`${metrics.yoy}%`}
+            trendPositive={metrics.yoy > 0}
+            trend={metrics.yoy > 2 ? "Above inflation target" : "Moderate growth"}
+          />
+        </div>
+      )}
+
+      <ChartPanel
+        title="Property map"
+        description={mapDescription}
+        className="mt-6"
+      >
+        <GeoMap
+          markers={mapMarkers}
+          province={province}
+          city={city}
+          valueLabel="median (R thousands)"
+        />
+      </ChartPanel>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        {province === "All Provinces" ? (
+          <ChartPanel
+            title="Median price by province (R thousands)"
+            description="Where entry prices differ most"
+          >
+            <SimpleBarChart
+              data={medians}
+              xKey="province"
+              yKey="median_k"
+              color="#2563eb"
+            />
+          </ChartPanel>
+        ) : city === "All areas" ? (
+          <ChartPanel
+            title={`Median price by metro — ${province}`}
+            description="City and district medians within the province"
+          >
+            <SimpleBarChart
+              data={metroMedians}
+              xKey="metro"
+              yKey="median_k"
+              layout="vertical"
+              color="#2563eb"
+            />
+          </ChartPanel>
+        ) : (
+          <ChartPanel
+            title={`Suburb medians — ${city}`}
+            description="Neighbourhood-level price spread"
+          >
+            <SimpleBarChart
+              data={suburbMedians}
+              xKey="suburb"
+              yKey="median_k"
+              layout="vertical"
+              color="#2563eb"
+            />
+          </ChartPanel>
+        )}
+
+        <ChartPanel
+          title="Rental yield by area"
+          description="Gross yield — what income investors compare"
+        >
+          <SimpleBarChart
+            data={yieldCompare}
+            xKey="area"
+            yKey="yield"
+            layout="vertical"
+            color="#059669"
+          />
+        </ChartPanel>
+
         <ChartPanel
           title="Yield vs growth by province"
           description="Higher yield often trades off with slower capital growth"
         >
-          <SimpleBarChart
-            data={scatter.map((s) => ({
-              province: s.province,
-              yield: s.yield,
-            }))}
+          <MultiBarChart
+            data={scatter}
             xKey="province"
-            yKey="yield"
-            color="#059669"
+            keys={[
+              { key: "yield", color: "#059669", name: "Yield %" },
+              { key: "growth", color: "#d97706", name: "YoY growth %" },
+            ]}
           />
         </ChartPanel>
-        <ChartPanel
-          title="Median price by province (R thousands)"
-          description="Where entry prices differ most"
-        >
-          <SimpleBarChart
-            data={medians}
-            xKey="province"
-            yKey="median_k"
-            color="#2563eb"
-          />
-        </ChartPanel>
-      </div>
 
-      <div className="mt-6">
-        <ChartPanel title="Price index trend (selected regions)">
+        <ChartPanel title="Price index trend (R thousands)">
           <SimpleLineChart
             data={trendData}
             xKey="quarter"
@@ -147,7 +481,10 @@ export default async function PropertyPage({
       </div>
 
       <SourceBadge
-        source={d?.source ?? "FNB · Lightstone · PayProp"}
+        source={
+          d?.source ??
+          "FNB · Lightstone · PayProp · Inside Airbnb · Stats SA · municipal open data"
+        }
         scrapedAt={d?.scraped_at}
         isLive={d?.is_live}
       />

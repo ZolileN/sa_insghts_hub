@@ -32,9 +32,16 @@ def _scrape_page_for_rate(url: str, pattern: str) -> float | None:
 
 def fetch(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
+    existing_path = output_dir / "property.json"
+    existing: dict = {}
+    if existing_path.exists():
+        try:
+            existing = json.loads(existing_path.read_text())
+        except json.JSONDecodeError:
+            existing = {}
 
     result = {
-        "source": "Lightstone · FNB Property Barometer · PayProp Rental Index 2024",
+        "source": "Lightstone · FNB Property Barometer · PayProp · Inside Airbnb · Stats SA P0142 · Cape Town Open Data",
         "scraped_at": utc_now_iso(),
         "is_live": False,
         "national": {
@@ -44,6 +51,8 @@ def fetch(output_dir: Path) -> dict:
             "days_on_market": 72,
             "bond_approval_rate_pct": 62,
             "prime_rate_pct": 10.5,
+            "transfer_duty_threshold_r": 1210000,
+            "avg_household_income_r": 282000,
         },
         "provinces": {
             "Western Cape":  {"median_price_r": 2100000, "yoy_growth_pct": 4.2, "rental_yield_pct": 6.8, "days_on_market": 52},
@@ -61,7 +70,22 @@ def fetch(output_dir: Path) -> dict:
             "Q3-2022": 1120, "Q1-2023": 1180, "Q3-2023": 1240,
             "Q1-2024": 1270, "Q3-2024": 1280, "Q1-2025": 1300, "Q1-2026": 1320,
         },
+        "metros": existing.get("metros", {}),
+        "price_trend": existing.get("price_trend", {}),
+        "data_sources": existing.get(
+            "data_sources",
+            {
+                "inside_airbnb": "https://insideairbnb.com/get-the-data/",
+                "wazimap": "https://wazimap.co.za",
+                "stats_sa": "https://www.statssa.gov.za",
+            },
+        ),
     }
+
+    yoy = _scrape_page_for_rate(FNB_URL, r"growth[^\d]*(\d+[.,]\d+)\s*%")
+    if yoy:
+        result["national"]["yoy_growth_pct"] = yoy
+        result["is_live"] = True
 
     (output_dir / "property.json").write_text(json.dumps(result, indent=2))
     log.info("Property data saved")

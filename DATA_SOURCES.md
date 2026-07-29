@@ -21,8 +21,20 @@ would unlock deeper drill-down than SAPS precinct data.
 |--------|-----------|-------------|---------|--------|
 | FNB Property Barometer | FNB / FirstRand | House price trends, regional commentary | Monthly | [fnb.co.za property research](https://www.fnb.co.za/downloads/property/property-barometer.html) |
 | PayProp Rental Index | PayProp | National rental growth (press releases) | Quarterly | [payprop.com/rental-index](https://payprop.com/rental-index) |
-| Stats SA building stats | Stats SA | Building plans passed (structural demand) | Monthly | P0142 releases |
+| Stats SA building stats | Stats SA | Building plans passed (structural demand) | Monthly | [P0142](https://www.statssa.gov.za) |
 | Lightstone / deeds | Lightstone | Suburb median prices | Commercial | License required for API |
+| Inside Airbnb | Community | Short-stay listing counts by city (CSV) | Periodic | [insideairbnb.com/get-the-data](https://insideairbnb.com/get-the-data/) — CSV on S3 (may block datacenter IPs) |
+| AirROI data portal | AirROI | Airbnb performance benchmarks | Ad hoc | [airroi.com/data-portal](https://airroi.com/data-portal) |
+| CSG DLRRD | Dept Rural Development & Land Reform | Cadastral / spatial layers | Ad hoc | [csg.dlrrd.gov.za](https://csg.dlrrd.gov.za) |
+| GeoLayers | GeoLayers | Boundary datasets | Ad hoc | [geolayers.co.za/datasets](https://geolayers.co.za/datasets.html) |
+| Cape Town Open Data | City of Cape Town | Property valuations, building stats | Monthly | [opendata.capetown.gov.za](https://opendata.capetown.gov.za) |
+| valuations.org.za | Municipal valuations | Guideline property values | Annual | [valuations.org.za](https://valuations.org.za) |
+| City of Joburg | Johannesburg | Municipal property & planning data | Ad hoc | [joburg.org.za](https://www.joburg.org.za) |
+| Housing Finance Africa | CAHF | Rental affordability, mortgage access | Annual | [housingfinanceafrica.org](https://housingfinanceafrica.org) |
+| Wazimap | OpenUp / Media Monitoring Africa | Census & community income/housing context | Census | [wazimap.co.za](https://wazimap.co.za) |
+
+**Drill-down today:** Province → metro/district → suburb (where curated in `property.json`).
+**Intelligence cards:** bond estimate, rent estimate, rent-vs-bond ratio, affordability index, price-to-income, Airbnb supply proxy, building-plans growth.
 
 ## Finance
 
