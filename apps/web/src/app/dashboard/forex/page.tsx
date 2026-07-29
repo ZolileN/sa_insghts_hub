@@ -62,7 +62,7 @@ export default async function ForexPage() {
     <div>
       <PageHeader
         title="ZAR Exchange Rate & Forex"
-        description="Live rand crosses — imports, remittances, and offshore limits. Sources: SARB, Frankfurter, open.er-api.com."
+        description="Live rand crosses — imports, remittances, and offshore limits."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

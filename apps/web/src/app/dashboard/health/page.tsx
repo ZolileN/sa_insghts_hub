@@ -104,7 +104,7 @@ export default async function HealthPage({
     <div>
       <PageHeader
         title="Healthcare & Disease Burden"
-        description="HIV, TB, and health system capacity. Sources: SAMRC, NICD, Healthsites.io, SANAC, DHIS2."
+        description="HIV, TB, and health system capacity — prevalence, treatment coverage, and provincial burden."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

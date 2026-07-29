@@ -81,7 +81,7 @@ export default async function EducationPage({
     <div>
       <PageHeader
         title="Education & Matric Data"
-        description={`NSC ${year} results — pass rates and university readiness. Sources: DBE EMIS, matric releases, DHET.`}
+        description={`NSC ${year} results — pass rates, subject performance, and university readiness.`}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

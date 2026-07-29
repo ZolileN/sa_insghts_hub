@@ -71,7 +71,7 @@ export default async function EnergyPage() {
     <div>
       <PageHeader
         title="Load Shedding & Energy"
-        description="Eskom stage, outage hours, tariffs, and generation mix. Sources: EskomSePush, CSIR, DMRE fuel prices."
+        description="Eskom stage, outage hours, tariffs, and generation mix — power reliability and cost."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

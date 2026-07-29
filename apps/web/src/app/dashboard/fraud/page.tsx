@@ -74,7 +74,7 @@ export default async function FraudPage() {
     <div>
       <PageHeader
         title="Bank Fraud & Financial Crime"
-        description="SABRIC banking fraud — digital threat vectors, loss momentum, and category risk. Sources: SABRIC, FSCA warnings, SIU reports."
+        description="Banking fraud trends — digital threat vectors, loss momentum, and category risk."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

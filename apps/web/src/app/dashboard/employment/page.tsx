@@ -85,7 +85,7 @@ export default async function EmploymentPage({
     <div>
       <PageHeader
         title="Unemployment & Income"
-        description={`Stats SA QLFS — labour market health and household income. ${d?.period ?? "Latest quarter"}. Sources: QLFS, Wazimap, labour.gov.za.`}
+        description={`Stats SA QLFS — labour market health and household income. ${d?.period ?? "Latest quarter"}.`}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -70,7 +70,7 @@ export default async function FinancePage() {
     <div>
       <PageHeader
         title="Interest Rates & Inflation"
-        description="SARB policy, prime lending, and CPI — what drives bonds, rents, and business costs. Sources: SARB, Stats SA, Vulekamali, eTenders."
+        description="SARB policy, prime lending, and CPI — what drives bonds, rents, and business costs."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

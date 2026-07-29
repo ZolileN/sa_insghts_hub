@@ -88,7 +88,7 @@ export default async function WaterPage({
     <div>
       <PageHeader
         title="Water & Service Delivery"
-        description="Dam and reservoir levels — water security for metros and agriculture. Sources: DWS NIWIS, OpenUp, Cape Town open data."
+        description="Dam and reservoir levels — water security for metros and agriculture."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
