@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { TOPICS } from "@/shared/data/constants";
+import { LiboLogo } from "@/components/brand/libo-logo";
 import { cn } from "@/shared/utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -44,17 +45,7 @@ export function DashboardSidebar() {
       style={{ width: "var(--sidebar-width)" }}
     >
       <div className="chrome-bar px-5 py-5">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-sm font-bold text-white">
-            L
-          </div>
-          <div>
-            <p className="text-sm font-semibold leading-none">Libo Insights</p>
-            <p className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">
-              Area intelligence
-            </p>
-          </div>
-        </Link>
+        <LiboLogo href="/" size="sm" className="px-1" />
       </div>
 
       <nav className="flex-1 overflow-y-auto p-3">

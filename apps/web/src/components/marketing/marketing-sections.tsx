@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LiboLogo } from "@/components/brand/libo-logo";
 import { HeroPreview } from "./hero-preview";
 import { cn } from "@/shared/utils";
 
@@ -215,9 +216,7 @@ export function MarketingFooter() {
   return (
     <footer className="border-t border-[var(--border)] px-6 py-10 lg:px-10">
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-        <p className="text-sm font-semibold">
-          Libo <span className="text-[var(--primary)]">Insights</span>
-        </p>
+        <LiboLogo href="/" showWordmark size="lg" />
         <div className="flex flex-wrap gap-6 text-sm text-[var(--muted-foreground)]">
           <Link href="#topics" className="hover:text-[var(--foreground)]">Topics</Link>
           <Link href="#pricing" className="hover:text-[var(--foreground)]">Pricing</Link>
