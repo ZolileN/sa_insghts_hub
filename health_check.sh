@@ -26,7 +26,7 @@ check_disk_space() {
 check_recent_data() {
     local data_dir="$PROJECT_DIR/data"
     local now=$(date +%s)
-    local max_age=3600  # 1 hour for realtime data
+    local max_age=93600  # 26 hours for daily realtime data
     
     for file in "$data_dir"/forex.json "$data_dir"/energy.json; do
         if [ -f "$file" ]; then
@@ -48,8 +48,8 @@ check_logs() {
         local now=$(date +%s)
         local age=$((now - last_update))
         
-        # Should update every 30 minutes
-        if [ "$age" -gt 2100 ]; then  # 35 minutes
+        # Should update once daily (07:00 UTC)
+        if [ "$age" -gt 93600 ]; then  # 26 hours
             echo "$(date): WARNING - Realtime log hasn't been updated for $((age/60)) minutes" >> "$LOG_DIR/health.log"
             return 1
         fi

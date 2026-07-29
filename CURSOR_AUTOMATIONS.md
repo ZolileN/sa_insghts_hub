@@ -21,7 +21,7 @@ Open [cursor.com/automations/new](https://cursor.com/automations/new) for each r
 
 | Name | Schedule (cron, UTC) | Prompt file |
 |------|----------------------|-------------|
-| Libo — realtime data | `*/30 * * * *` (every 30 min) | `automations/realtime.prompt.txt` |
+| Libo — realtime data | `0 7 * * *` (daily 07:00 UTC) | `automations/realtime.prompt.txt` |
 | Libo — weekly water | `0 6 * * 1` (Mon 06:00) | `automations/weekly.prompt.txt` |
 | Libo — monthly topics | `0 5 1 * *` (1st of month 05:00) | `automations/monthly.prompt.txt` |
 | Libo — quarterly full | `0 4 1 1,4,7,10 *` (Jan/Apr/Jul/Oct 04:00) | `automations/quarterly.prompt.txt` |

@@ -51,7 +51,7 @@ Vercel redeploys automatically (Root Directory: `apps/web`).
 
 | When | Mode / command |
 |------|----------------|
-| Every 30 min | `cursor_agent_refresh.sh realtime` |
+| Daily 07:00 UTC | `cursor_agent_refresh.sh realtime` |
 | Weekly (Mon) | `cursor_agent_refresh.sh weekly` |
 | Monthly (1st) | `cursor_agent_refresh.sh monthly` |
 | Quarterly | `cursor_agent_refresh.sh quarterly` |

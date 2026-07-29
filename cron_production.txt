@@ -8,8 +8,8 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # Load environment variables
 . /opt/sa-insight-hub/.env.production
 
-# Realtime scrapers (forex + energy) - Every 30 minutes
-*/30 * * * * /opt/sa-insight-hub/cron_production.sh realtime "forex energy" "data: realtime update — forex + energy [skip ci]" "data/forex.json data/energy.json data/manifest.json"
+# Realtime scrapers (forex + energy) - Daily at 07:00 UTC
+0 7 * * * /opt/sa-insight-hub/cron_production.sh realtime "forex energy" "data: realtime update — forex + energy [skip ci]" "data/forex.json data/energy.json data/manifest.json"
 
 # Weekly scrapers (water) - Every Monday at 06:00 UTC
 0 6 * * 1 /opt/sa-insight-hub/cron_production.sh weekly "water" "data: weekly update — water [skip ci]" "data/water.json data/manifest.json"

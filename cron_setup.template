@@ -3,8 +3,8 @@
 
 LIBO_INSIGHTS_ROOT=__LIBO_INSIGHTS_ROOT__
 
-# Realtime — forex + energy every 30 minutes
-*/30 * * * * $LIBO_INSIGHTS_ROOT/cron_realtime.sh
+# Realtime — forex + energy once daily at 07:00 UTC
+0 7 * * * $LIBO_INSIGHTS_ROOT/cron_realtime.sh
 
 # Weekly — DWS dam levels every Monday 06:00 UTC
 0 6 * * 1 $LIBO_INSIGHTS_ROOT/cron_weekly.sh

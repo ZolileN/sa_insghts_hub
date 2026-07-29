@@ -116,7 +116,7 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 
 | Schedule (UTC) | Script | Topics |
 |----------------|--------|--------|
-| Every 30 min | `cursor_agent_refresh.sh realtime` | forex, energy |
+| Daily 07:00 UTC | `cursor_agent_refresh.sh realtime` | forex, energy |
 | Mon 06:00 | `cursor_agent_refresh.sh weekly` | water |
 | 1st 05:00 | `cursor_agent_refresh.sh monthly` | finance, property, employment, health |
 | Jan/Apr/Jul/Oct 04:00 | `cursor_agent_refresh.sh quarterly` | all 10 |

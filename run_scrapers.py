@@ -68,7 +68,7 @@ SCRAPERS = {
 
 # ── Recommended run frequency ─────────────────────────────────────────────────
 CADENCE_SCHEDULE = {
-    "realtime":  "Every 15 min (forex) / hourly (energy stage)",
+    "realtime":  "Once daily (forex + energy, 07:00 UTC)",
     "weekly":    "Every Monday 06:00 SAST",
     "monthly":   "1st of each month",
     "quarterly": "Jan, Apr, Jul, Oct (Stats SA release schedule)",

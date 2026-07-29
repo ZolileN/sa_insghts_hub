@@ -1,6 +1,6 @@
 #!/bin/bash
 # Libo Insights — Realtime scrapers (forex + energy)
-# Schedule: every 30 minutes (see cron_setup.template)
+# Schedule: once daily at 07:00 UTC (see cron_setup.template)
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT" || exit 1
