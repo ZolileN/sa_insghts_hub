@@ -57,6 +57,36 @@ KNOWN_XLSX_FALLBACKS = [
     "/services/downloads/2024-2025_-_3rd_Quarter_WEB.xlsx",
 ]
 
+# RAW Data sheet category labels → dashboard keys
+RAW_CATEGORY_MAP = {
+    "Murder": "Murder",
+    "Sexual offences": "Sexual offences",
+    "Attempted murder": "Attempted murder",
+    "Assault with the intent to inflict grievous bodily harm": "Assault GBH",
+    "Common assault": "Common assault",
+    "Common robbery": "Common robbery",
+    "Robbery with aggravating circumstances": "Robbery aggravating",
+    "Carjacking": "Carjacking",
+    "Burglary at residential premises": "Residential burglary",
+    "Burglary at non-residential premises": "Non-residential burglary",
+    "Stock-theft": "Stock-theft",
+    "Malicious damage to property": "Malicious damage to property",
+}
+
+DASHBOARD_CRIME_TYPES = [
+    "Murder",
+    "Sexual offences",
+    "Attempted murder",
+    "Assault GBH",
+    "Carjacking",
+    "Robbery aggravating",
+    "Residential burglary",
+    "Common robbery",
+]
+
+RAW_CURRENT_QUARTER_COL = 27
+STATIONS_PER_PROVINCE = 30
+
 
 def _find_latest_xlsx_url(html: str) -> str | None:
     """Parse the SAPS crime stats page and return the most recent .xlsx link."""
@@ -180,6 +210,138 @@ def _parse_province_totals(raw_bytes: bytes) -> dict:
     return _parse_summary_sheet(raw_bytes)
 
 
+def _district_label(raw: str) -> str:
+    """Turn SAPS district names into city/metro labels for drill-down."""
+    label = str(raw).strip()
+    for suffix in (" District", " Metropolitan Municipality"):
+        if label.endswith(suffix):
+            label = label[:-len(suffix)]
+    return label.strip() or "Unknown"
+
+
+def _parse_station_drilldown(xls: pd.ExcelFile) -> dict:
+    """
+    Parse SAPS RAW Data for station and district (city/metro) breakdown.
+    Uses the latest quarter column (Jan–Mar 2026 in current workbook).
+    """
+    if "RAW Data" not in xls.sheet_names:
+        return {"stations": {}, "districts": {}, "national_hotspots": []}
+
+    df = pd.read_excel(xls, sheet_name="RAW Data", header=None, skiprows=3)
+    stations_by_province: dict[str, list[dict]] = {p: [] for p in PROVINCES}
+    districts_by_province: dict[str, dict[str, dict[str, int]]] = {
+        p: {} for p in PROVINCES
+    }
+    station_index: dict[tuple[str, str, str], dict[str, int]] = {}
+
+    for _, row in df.iterrows():
+        province = str(row.iloc[6]).strip()
+        if province not in PROVINCES:
+            continue
+
+        raw_cat = str(row.iloc[7]).strip()
+        key = RAW_CATEGORY_MAP.get(raw_cat)
+        if not key:
+            continue
+
+        try:
+            count = int(float(row.iloc[RAW_CURRENT_QUARTER_COL]))
+        except (TypeError, ValueError):
+            continue
+
+        station = str(row.iloc[4]).strip()
+        district_raw = str(row.iloc[5]).strip()
+        district = _district_label(district_raw)
+        if not station or station == "Station":
+            continue
+
+        station_key = (province, district, station)
+        if station_key not in station_index:
+            station_index[station_key] = {}
+        station_index[station_key][key] = count
+
+        district_bucket = districts_by_province[province].setdefault(district, {})
+        district_bucket[key] = district_bucket.get(key, 0) + count
+
+    for (province, district, station), crimes in station_index.items():
+        stations_by_province[province].append({
+            "name": station,
+            "district": district,
+            "crimes": crimes,
+            "murders": crimes.get("Murder", 0),
+        })
+
+    for province in PROVINCES:
+        stations_by_province[province].sort(
+            key=lambda s: s.get("murders", 0),
+            reverse=True,
+        )
+        stations_by_province[province] = stations_by_province[province][:STATIONS_PER_PROVINCE]
+
+    national_hotspots = _parse_national_hotspots(xls)
+
+    log.info(
+        "Parsed station drill-down: %s provinces, %s national hotspots",
+        sum(1 for p in stations_by_province if stations_by_province[p]),
+        len(national_hotspots),
+    )
+
+    return {
+        "stations": stations_by_province,
+        "districts": districts_by_province,
+        "national_hotspots": national_hotspots,
+    }
+
+
+def _parse_national_hotspots(xls: pd.ExcelFile) -> list[dict]:
+    """Top 30 police precincts by community-reported serious crime (SAPS TOP30 sheet)."""
+    sheet = "TOP30 stations"
+    if sheet not in xls.sheet_names:
+        return []
+
+    df = pd.read_excel(xls, sheet_name=sheet, header=None)
+    hotspots: list[dict] = []
+
+    for _, row in df.iterrows():
+        try:
+            rank = int(float(row.iloc[3]))
+        except (TypeError, ValueError):
+            continue
+        if rank < 1 or rank > 30:
+            continue
+
+        station = str(row.iloc[5]).strip()
+        district_raw = str(row.iloc[6]).strip()
+        province = str(row.iloc[7]).strip()
+        if not station or station == "Station":
+            continue
+
+        try:
+            serious_crime = int(float(row.iloc[11]))
+        except (TypeError, ValueError):
+            serious_crime = 0
+
+        hotspots.append({
+            "rank": rank,
+            "station": station,
+            "district": _district_label(district_raw),
+            "province": province,
+            "serious_crime": serious_crime,
+        })
+
+    hotspots.sort(key=lambda h: h["rank"])
+    return hotspots
+
+
+def _parse_workbook(raw_bytes: bytes) -> tuple[dict, dict, bool]:
+    """Parse province totals and station drill-down from one SAPS workbook."""
+    xls = pd.ExcelFile(io.BytesIO(raw_bytes))
+    province_data = _parse_summary_sheet(raw_bytes)
+    drilldown = _parse_station_drilldown(xls)
+    is_live = any(province_data.values())
+    return province_data, drilldown, is_live
+
+
 def fetch(output_dir: Path) -> dict:
     """Download and parse SAPS crime data; save JSON to output_dir."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -201,14 +363,16 @@ def fetch(output_dir: Path) -> dict:
     province_data: dict
 
     if raw:
-        province_data = _parse_province_totals(raw)
-        is_live = any(province_data.values())
+        province_data, drilldown, parsed_live = _parse_workbook(raw)
+        is_live = parsed_live
         if not is_live:
             log.warning("SAPS download succeeded but parsing returned no rows")
             province_data = _fallback_data()
+            drilldown = {"stations": {}, "districts": {}, "national_hotspots": []}
     else:
         log.warning("Using cached/fallback crime data")
         province_data = _fallback_data()
+        drilldown = {"stations": {}, "districts": {}, "national_hotspots": []}
 
     result = {
         "source": "SAPS",
@@ -218,6 +382,10 @@ def fetch(output_dir: Path) -> dict:
         "period": _extract_period(xlsx_url),
         "provinces": province_data,
         "national_totals": _national_totals(province_data),
+        "crime_types": DASHBOARD_CRIME_TYPES,
+        "stations": drilldown.get("stations", {}),
+        "districts": drilldown.get("districts", {}),
+        "national_hotspots": drilldown.get("national_hotspots", []),
     }
 
     out = output_dir / "crime.json"

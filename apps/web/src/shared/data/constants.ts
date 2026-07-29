@@ -20,7 +20,7 @@ export const TOPICS = [
     id: "crime",
     label: "Crime Statistics",
     shortLabel: "Crime",
-    description: "SAPS quarterly crime data — murders, robbery, burglary by province",
+    description: "SAPS quarterly data — murders, robbery, burglary; drill down to precinct",
     icon: "ShieldAlert",
     cadence: "Quarterly",
   },

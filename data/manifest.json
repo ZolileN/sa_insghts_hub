@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-07-29T16:20:45.944472+00:00",
+  "last_run": "2026-07-29T16:46:56.901333+00:00",
   "topics": {
     "water": {
       "label": "\ud83d\udca7 DWS Dam Levels",
@@ -53,7 +53,7 @@
       "label": "\ud83d\udd34 SAPS Crime Stats",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 38.93,
+      "elapsed_s": 46.3,
       "cadence": "quarterly",
       "schedule": "Jan, Apr, Jul, Oct (Stats SA release schedule)"
     },
