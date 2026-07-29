@@ -6,7 +6,7 @@
     "sync-data": "node scripts/sync-data.mjs",
     "predev": "node scripts/sync-data.mjs",
     "prebuild": "node scripts/sync-data.mjs",
-    "dev": "next dev",
+    "dev": "next dev --hostname 0.0.0.0 -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
