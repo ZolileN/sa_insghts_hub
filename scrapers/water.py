@@ -4,10 +4,9 @@ DWS Dam Levels Scraper
 Source  : https://www.dws.gov.za/Hydrology/Weekly/Province.aspx
 PDF     : https://www.dws.gov.za/Hydrology/Weekly/Weekly.pdf
 Cadence : Weekly (Mondays)
-Notes   : HTML table has province-level summaries + individual dam rows
+Notes   : DWS may block non-SA IPs — last successful scrape stays in cache.
 """
 
-import json
 import logging
 import re
 from pathlib import Path
@@ -15,12 +14,17 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
-from scrapers._common import HEADERS, utc_now_iso
+from scrapers._common import (
+    HEADERS,
+    load_topic_json,
+    save_topic_json,
+    utc_now_iso,
+)
 
 log = logging.getLogger(__name__)
 
 HTML_URL = "https://www.dws.gov.za/Hydrology/Weekly/Province.aspx"
-PDF_URL  = "https://www.dws.gov.za/Hydrology/Weekly/Weekly.pdf"
+PDF_URL = "https://www.dws.gov.za/Hydrology/Weekly/Weekly.pdf"
 
 PROVINCE_MAP = {
     "western cape": "Western Cape",
@@ -37,43 +41,36 @@ PROVINCE_MAP = {
 
 
 def _parse_html_table(html: str) -> dict:
-    """
-    Parse the DWS province summary table.
-    Returns dict: province → {this_week_pct, last_week_pct, last_year_pct}
-    """
     soup = BeautifulSoup(html, "lxml")
     result = {}
 
-    tables = soup.find_all("table")
-    for table in tables:
-        rows = table.find_all("tr")
-        for row in rows:
+    for table in soup.find_all("table"):
+        for row in table.find_all("tr"):
             cells = [td.get_text(strip=True) for td in row.find_all(["td", "th"])]
             if len(cells) < 3:
                 continue
             label = cells[0].lower().replace("\xa0", " ").strip()
-            prov  = PROVINCE_MAP.get(label)
+            prov = PROVINCE_MAP.get(label)
             if not prov:
                 continue
             nums = []
-            for c in cells[1:]:
-                c = c.replace("%", "").replace(",", ".").strip()
+            for cell in cells[1:]:
+                cell = cell.replace("%", "").replace(",", ".").strip()
                 try:
-                    nums.append(float(c))
+                    nums.append(float(cell))
                 except ValueError:
                     pass
             if len(nums) >= 2:
                 result[prov] = {
-                    "this_week_pct":  nums[0],
-                    "last_week_pct":  nums[1] if len(nums) > 1 else None,
-                    "last_year_pct":  nums[2] if len(nums) > 2 else None,
+                    "this_week_pct": nums[0],
+                    "last_week_pct": nums[1] if len(nums) > 1 else None,
+                    "last_year_pct": nums[2] if len(nums) > 2 else None,
                 }
 
     return result
 
 
 def _parse_individual_dams(html: str) -> list[dict]:
-    """Extract individual dam rows from the full HTML table."""
     soup = BeautifulSoup(html, "lxml")
     dams = []
     for table in soup.find_all("table"):
@@ -85,10 +82,10 @@ def _parse_individual_dams(html: str) -> list[dict]:
             if not name or name.lower() in ("name", "dam", "reservoir"):
                 continue
             nums = []
-            for c in cells[1:]:
-                c = c.replace("%", "").replace(",", ".").strip()
+            for cell in cells[1:]:
+                cell = cell.replace("%", "").replace(",", ".").strip()
                 try:
-                    nums.append(float(c))
+                    nums.append(float(cell))
                 except ValueError:
                     pass
             if nums and name and len(name) > 2:
@@ -96,93 +93,72 @@ def _parse_individual_dams(html: str) -> list[dict]:
                     "name": name,
                     "this_week_pct": nums[0] if nums else None,
                     "last_week_pct": nums[1] if len(nums) > 1 else None,
-                    "capacity_mm3":  nums[2] if len(nums) > 2 else None,
+                    "capacity_mm3": nums[2] if len(nums) > 2 else None,
                 })
-    return dams[:50]  # cap at 50 dams
+    return dams[:50]
 
 
 def fetch(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
+    cached = load_topic_json(output_dir, "water")
 
-    provinces = {}
-    dams      = []
-    is_live   = False
+    provinces: dict = {}
+    dams: list = []
+    is_live = False
     report_date = None
 
     try:
-        r = requests.get(HTML_URL, headers=HEADERS, timeout=20)
-        r.raise_for_status()
+        response = requests.get(HTML_URL, headers=HEADERS, timeout=20)
+        response.raise_for_status()
 
-        # Try to extract report date from page
-        m = re.search(r"(\d{1,2}\s+\w+\s+\d{4}|\d{4}-\d{2}-\d{2})", r.text)
-        report_date = m.group(1) if m else None
+        match = re.search(
+            r"(\d{1,2}\s+\w+\s+\d{4}|\d{4}-\d{2}-\d{2})",
+            response.text,
+        )
+        report_date = match.group(1) if match else None
 
-        provinces = _parse_html_table(r.text)
-        dams      = _parse_individual_dams(r.text)
-        is_live   = bool(provinces)
-        log.info(f"DWS: parsed {len(provinces)} provinces, {len(dams)} dams")
+        provinces = _parse_html_table(response.text)
+        dams = _parse_individual_dams(response.text)
+        is_live = bool(provinces)
+        log.info("DWS: parsed %d provinces, %d dams", len(provinces), len(dams))
 
-    except Exception as e:
-        log.error(f"DWS HTML scrape failed: {e}")
+    except Exception as exc:
+        log.error("DWS HTML scrape failed: %s", exc)
 
     if not provinces:
-        log.warning("DWS blocked or unreachable from this network — using latest published fallback")
-        provinces = _fallback_province_data()
-        dams = _fallback_dam_data()
-        report_date = report_date or utc_now_iso()[:10]
+        if not cached.get("provinces"):
+            raise RuntimeError("Water: DWS unreachable and no cached water.json")
+        log.warning("DWS unreachable — keeping last successful province/dam data")
+        provinces = cached.get("provinces", {})
+        dams = cached.get("dams", [])
+        report_date = cached.get("report_date")
 
-    # Compute national average
-    pcts = [v["this_week_pct"] for v in provinces.values() if v.get("this_week_pct")]
-    national_avg = round(sum(pcts) / len(pcts), 1) if pcts else None
+    pcts = [
+        v["this_week_pct"]
+        for v in provinces.values()
+        if v.get("this_week_pct") is not None
+    ]
+    national_avg = round(sum(pcts) / len(pcts), 1) if pcts else cached.get("national_avg_pct")
 
-    result = {
+    result = dict(cached)
+    result.update({
         "source": "DWS Weekly State of Reservoirs",
         "url": HTML_URL,
         "pdf_url": PDF_URL,
         "scraped_at": utc_now_iso(),
-        "report_date": report_date,
+        "report_date": report_date or cached.get("report_date"),
         "is_live": is_live,
         "national_avg_pct": national_avg,
         "provinces": provinces,
         "dams": dams,
-    }
+    })
 
-    out = output_dir / "water.json"
-    out.write_text(json.dumps(result, indent=2))
-    log.info(f"Dam data saved → {out}  |  national avg = {national_avg}%")
+    path = save_topic_json(output_dir, "water", result)
+    log.info("Dam data saved → %s | national avg = %s%% live=%s", path, national_avg, is_live)
     return result
-
-
-def _fallback_province_data() -> dict:
-    return {
-        "Western Cape":  {"this_week_pct": 92.4, "last_week_pct": 91.8, "last_year_pct": 87.2},
-        "Eastern Cape":  {"this_week_pct": 72.1, "last_week_pct": 71.4, "last_year_pct": 61.3},
-        "KwaZulu-Natal": {"this_week_pct": 81.3, "last_week_pct": 80.9, "last_year_pct": 74.2},
-        "Gauteng":       {"this_week_pct": 71.2, "last_week_pct": 70.8, "last_year_pct": 65.1},
-        "Free State":    {"this_week_pct": 83.1, "last_week_pct": 82.4, "last_year_pct": 76.8},
-        "Limpopo":       {"this_week_pct": 68.4, "last_week_pct": 67.9, "last_year_pct": 58.2},
-        "Mpumalanga":    {"this_week_pct": 74.2, "last_week_pct": 73.6, "last_year_pct": 62.4},
-        "North West":    {"this_week_pct": 63.8, "last_week_pct": 63.1, "last_year_pct": 55.9},
-        "Northern Cape": {"this_week_pct": 78.9, "last_week_pct": 78.2, "last_year_pct": 69.3},
-    }
-
-
-def _fallback_dam_data() -> list:
-    return [
-        {"name": "Vaal Dam",           "this_week_pct": 71.2, "last_week_pct": 70.8, "capacity_mm3": 2596},
-        {"name": "Theewaterskloof",    "this_week_pct": 92.4, "last_week_pct": 91.8, "capacity_mm3": 480},
-        {"name": "Gariep Dam",         "this_week_pct": 88.1, "last_week_pct": 87.6, "capacity_mm3": 5341},
-        {"name": "Sterkfontein",       "this_week_pct": 65.3, "last_week_pct": 64.9, "capacity_mm3": 2617},
-        {"name": "Katse (Lesotho)",    "this_week_pct": 82.4, "last_week_pct": 81.9, "capacity_mm3": 1950},
-        {"name": "Vanderkloof",        "this_week_pct": 79.8, "last_week_pct": 79.1, "capacity_mm3": 3200},
-        {"name": "Pongolapoort",       "this_week_pct": 54.1, "last_week_pct": 53.8, "capacity_mm3": 2435},
-        {"name": "Krugersdrift",       "this_week_pct": 61.2, "last_week_pct": 60.8, "capacity_mm3": 190},
-    ]
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     data = fetch(Path("data"))
     print(f"National avg: {data['national_avg_pct']}%")
-    for prov, vals in data["provinces"].items():
-        print(f"  {prov}: {vals['this_week_pct']}%")

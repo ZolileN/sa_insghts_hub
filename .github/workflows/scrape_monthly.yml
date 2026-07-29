@@ -1,0 +1,45 @@
+name: Scrape — Monthly (finance, property, employment, health)
+
+on:
+  schedule:
+    - cron: "0 5 1 * *"
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    name: Monthly topics
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run monthly scrapers
+        run: |
+          mkdir -p data logs
+          python run_scrapers.py --topics finance property employment health
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "data: monthly update — finance, property, employment, health [skip ci]"
+          file_pattern: "data/finance.json data/property.json data/employment.json data/health.json data/manifest.json"
+          commit_user_name: "Libo Insights Bot"
+          commit_user_email: "actions@libo-insights.co.za"
+          skip_dirty_check: false

@@ -1,6 +1,6 @@
 {
-  "source": "Eskom LoadShedding API + community calendar",
-  "scraped_at": "2026-07-29T20:41:17.259486",
+  "source": "Eskom LoadShedding API \u00b7 Eskom media \u00b7 community calendar",
+  "scraped_at": "2026-07-29T21:20:40.292367+00:00",
   "is_live": true,
   "current_stage": 0,
   "stage_label": "No load shedding",
@@ -44,7 +44,8 @@
     "2021": 1160,
     "2022": 3776,
     "2023": 6932,
-    "2024": 2140
+    "2024": 2140,
+    "2025": 26
   },
   "electricity_tariff_history": {
     "2015": 112.5,
@@ -66,5 +67,17 @@
     "Solar": 10,
     "Gas/Diesel": 8,
     "Imports": 12
+  },
+  "stage_source": "loadshedding.eskom.co.za",
+  "fy_stats": {
+    "source_url": "https://www.eskom.co.za/eskoms-power-system-remains-stable-and-supporting-the-return-to-work-strengthened-by-increasing-plant-availability-and-sustained-reduction-in-unplanned-outages/",
+    "loadshedding_hours_fy": 26,
+    "consecutive_days_without": 245,
+    "eaf_pct": 60.99,
+    "calendar_year_hours": {
+      "2025": 26
+    },
+    "current_fy_hours": 0,
+    "source": "eskom.co.za media statements"
   }
 }

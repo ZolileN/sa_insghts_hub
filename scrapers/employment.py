@@ -15,7 +15,9 @@ from scrapers._common import (
     HEADERS,
     extract_pdf_text,
     fetch_statssa_pdf,
+    load_topic_json,
     parse_sa_decimal,
+    save_topic_json,
     utc_now_iso,
 )
 from scrapers.sources.qlfs_provinces import parse_provincial_qlfs_table
@@ -29,18 +31,6 @@ QLFS_PDF_CANDIDATES = [
     "P0211Media Release QLFS Q1 2026.pdf",
     "P0211June2026.pdf",
 ]
-
-MEDIAN_INCOME_FALLBACK = {
-    "Western Cape": 14800,
-    "Gauteng": 11200,
-    "KwaZulu-Natal": 9800,
-    "Eastern Cape": 6400,
-    "Limpopo": 5200,
-    "Mpumalanga": 5800,
-    "North West": 5400,
-    "Free State": 6100,
-    "Northern Cape": 8900,
-}
 
 
 def _parse_qlfs_pdf(text: str) -> dict:
@@ -143,6 +133,7 @@ def _fetch_qlfs_pdf() -> dict | None:
 
 def fetch(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
+    cached = load_topic_json(output_dir, "employment")
 
     live = _fetch_qlfs_pdf() or _scrape_statssa_qlfs_html()
     is_live = bool(live)
@@ -153,81 +144,68 @@ def fetch(output_dir: Path) -> dict:
         "labour_gov": False,
     }
 
-    unemployment = (live or {}).get("unemployment_rate_pct", 32.7)
-    youth = (live or {}).get("youth_unemployment_pct", 45.8)
-    expanded = (live or {}).get("expanded_unemployment_pct", 43.7)
-    employed = (live or {}).get("employed_millions", 16.8)
+    unemployment = (live or {}).get("unemployment_rate_pct") or cached.get("unemployment_rate_pct")
+    youth = (live or {}).get("youth_unemployment_pct") or cached.get("youth_unemployment_pct")
+    expanded = (live or {}).get("expanded_unemployment_pct") or cached.get("expanded_unemployment_pct")
+    employed = (live or {}).get("employed_millions") or cached.get("employed_millions")
     parsed_provinces = (live or {}).get("provinces_parsed", {})
 
-    youth_ratio = youth / unemployment if unemployment else 1.4
+    if not unemployment and not cached:
+        raise RuntimeError("Employment: QLFS scrape failed and no cached employment.json")
 
-    fallback_provinces = {
-        "Western Cape": {"unemployment": 19.6, "expanded_unemployment": 24.8},
-        "Eastern Cape": {"unemployment": 44.6, "expanded_unemployment": 54.4},
-        "Northern Cape": {"unemployment": 30.4, "expanded_unemployment": 47.0},
-        "Free State": {"unemployment": 37.8, "expanded_unemployment": 44.3},
-        "KwaZulu-Natal": {"unemployment": 31.2, "expanded_unemployment": 47.2},
-        "North West": {"unemployment": 35.3, "expanded_unemployment": 54.8},
-        "Gauteng": {"unemployment": 34.1, "expanded_unemployment": 40.6},
-        "Mpumalanga": {"unemployment": 36.3, "expanded_unemployment": 49.6},
-        "Limpopo": {"unemployment": 31.7, "expanded_unemployment": 47.0},
-    }
+    youth_ratio = (
+        youth / unemployment
+        if unemployment and youth
+        else cached.get("youth_unemployment_pct", 45) / cached.get("unemployment_rate_pct", 32)
+        if cached.get("unemployment_rate_pct")
+        else 1.4
+    )
 
-    merged_provincial: dict[str, dict[str, float]] = {
-        name: dict(figures) for name, figures in fallback_provinces.items()
-    }
+    provinces: dict[str, dict] = dict(cached.get("provinces", {}))
     for name, figures in parsed_provinces.items():
-        if name not in merged_provincial:
-            merged_provincial[name] = dict(figures)
+        unemp = figures.get("unemployment", 0)
+        if unemp <= 0:
             continue
-        if figures.get("unemployment", 0) > 0:
-            merged_provincial[name]["unemployment"] = figures["unemployment"]
-        if figures.get("expanded_unemployment", 0) > 0:
-            merged_provincial[name]["expanded_unemployment"] = figures[
-                "expanded_unemployment"
-            ]
-
-    provinces: dict[str, dict] = {}
-    for name, figures in merged_provincial.items():
-        unemp = figures["unemployment"]
-        provinces[name] = {
-            "unemployment": unemp,
-            "youth_unemployment": round(unemp * youth_ratio, 1),
-            "median_income_r": MEDIAN_INCOME_FALLBACK.get(name, 8000),
-            "expanded_unemployment": figures["expanded_unemployment"],
-        }
+        entry = provinces.get(name, {})
+        entry["unemployment"] = unemp
+        entry["youth_unemployment"] = round(unemp * youth_ratio, 1)
+        if figures.get("expanded_unemployment"):
+            entry["expanded_unemployment"] = figures["expanded_unemployment"]
+        provinces[name] = entry
 
     if parsed_provinces:
         ingestion["qlfs_provincial_table"] = True
 
-    result = {
-        "source": "Stats SA QLFS Q1 2026 · Wazimap (planned) · labour.gov.za",
+    period = (live or {}).get("period") or cached.get("period", "Unknown")
+    trend = dict(cached.get("trend", {}))
+    if live and unemployment:
+        trend[period.replace(" ", "-")] = unemployment
+
+    result = dict(cached)
+    result.update({
+        "source": "Stats SA QLFS · Wazimap (planned) · labour.gov.za",
         "scraped_at": utc_now_iso(),
         "is_live": is_live,
-        "period": (live or {}).get("period", "Q1 2026"),
+        "period": period,
         "unemployment_rate_pct": unemployment,
         "youth_unemployment_pct": youth,
         "expanded_unemployment_pct": expanded,
         "employed_millions": employed,
-        "gini_coefficient": 0.63,
-        "national_min_wage_hourly_r": 28.79,
         "provinces": provinces,
-        "trend": {
-            "Q1-2022": 34.5, "Q2-2022": 33.9, "Q3-2022": 32.9, "Q4-2022": 32.7,
-            "Q1-2023": 32.9, "Q2-2023": 33.5, "Q3-2023": 31.9, "Q4-2023": 32.1,
-            "Q1-2024": 33.5, "Q2-2024": 33.5, "Q3-2024": 32.9, "Q4-2024": 31.4,
-            "Q1-2025": 32.9, "Q1-2026": unemployment,
-        },
+        "trend": trend,
         "ingestion": ingestion,
-        "data_sources": {
-            "qlfs": "https://www.statssa.gov.za/?page_id=1854&PPN=P0211",
-            "datafirst": "https://www.datafirst.uct.ac.za",
-            "wazimap": "https://wazimap.co.za",
-            "labour": "https://www.labour.gov.za",
-        },
-    }
+        "data_sources": cached.get(
+            "data_sources",
+            {
+                "qlfs": "https://www.statssa.gov.za/?page_id=1854&PPN=P0211",
+                "datafirst": "https://www.datafirst.uct.ac.za",
+                "wazimap": "https://wazimap.co.za",
+                "labour": "https://www.labour.gov.za",
+            },
+        ),
+    })
 
-    (output_dir / "employment.json").write_text(json.dumps(result, indent=2))
+    save_topic_json(output_dir, "employment", result)
     log.info(
         "Employment saved | unemployment=%s%% live=%s provinces=%d",
         result["unemployment_rate_pct"],

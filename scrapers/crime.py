@@ -18,7 +18,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-from scrapers._common import HEADERS, download_bytes, utc_now_iso
+from scrapers._common import HEADERS, download_bytes, load_topic_json, save_topic_json, utc_now_iso
 
 log = logging.getLogger(__name__)
 
@@ -349,6 +349,7 @@ def _parse_workbook(raw_bytes: bytes) -> tuple[dict, dict, bool]:
 def fetch(output_dir: Path) -> dict:
     """Download and parse SAPS crime data; save JSON to output_dir."""
     output_dir.mkdir(parents=True, exist_ok=True)
+    cached = load_topic_json(output_dir, "crime")
 
     xlsx_url: str | None = None
     try:
@@ -371,12 +372,24 @@ def fetch(output_dir: Path) -> dict:
         is_live = parsed_live
         if not is_live:
             log.warning("SAPS download succeeded but parsing returned no rows")
-            province_data = _fallback_data()
-            drilldown = {"stations": {}, "districts": {}, "national_hotspots": []}
     else:
-        log.warning("Using cached/fallback crime data")
-        province_data = _fallback_data()
-        drilldown = {"stations": {}, "districts": {}, "national_hotspots": []}
+        log.warning("SAPS download failed")
+        province_data = {}
+        drilldown = {}
+        is_live = False
+
+    if not is_live and cached:
+        log.warning("Keeping last successful SAPS crime.json (is_live=false)")
+        result = dict(cached)
+        result["scraped_at"] = utc_now_iso()
+        result["is_live"] = False
+        if xlsx_url:
+            result["url"] = xlsx_url
+        save_topic_json(output_dir, "crime", result)
+        return result
+
+    if not is_live:
+        raise RuntimeError("Crime: SAPS fetch/parse failed and no cached crime.json")
 
     result = {
         "source": "SAPS",
@@ -392,9 +405,8 @@ def fetch(output_dir: Path) -> dict:
         "national_hotspots": drilldown.get("national_hotspots", []),
     }
 
-    out = output_dir / "crime.json"
-    out.write_text(json.dumps(result, indent=2))
-    log.info("Crime data saved → %s (live=%s)", out, is_live)
+    path = save_topic_json(output_dir, "crime", result)
+    log.info("Crime data saved → %s (live=%s)", path, is_live)
     return result
 
 
@@ -415,48 +427,6 @@ def _national_totals(provinces: dict) -> dict:
         for cat, val in prov_data.items():
             totals[cat] = totals.get(cat, 0) + val
     return totals
-
-
-def _fallback_data() -> dict:
-    """Q4 2025/26 (Jan–Mar 2026) figures from published SAPS workbook."""
-    return {
-        "Gauteng": {
-            "Murder": 1223, "Carjacking": 2062, "Residential burglary": 6499,
-            "Sexual offences": 2369, "Robbery aggravating": 8625,
-        },
-        "KwaZulu-Natal": {
-            "Murder": 1058, "Carjacking": 446, "Residential burglary": 5986,
-            "Sexual offences": 2589, "Robbery aggravating": 8013,
-        },
-        "Western Cape": {
-            "Murder": 983, "Carjacking": 498, "Residential burglary": 4909,
-            "Sexual offences": 1663, "Robbery aggravating": 5994,
-        },
-        "Eastern Cape": {
-            "Murder": 949, "Carjacking": 189, "Residential burglary": 3724,
-            "Sexual offences": 1853, "Robbery aggravating": 6026,
-        },
-        "Limpopo": {
-            "Murder": 175, "Carjacking": 58, "Residential burglary": 2620,
-            "Sexual offences": 1185, "Robbery aggravating": 2823,
-        },
-        "Mpumalanga": {
-            "Murder": 253, "Carjacking": 212, "Residential burglary": 2260,
-            "Sexual offences": 900, "Robbery aggravating": 2850,
-        },
-        "North West": {
-            "Murder": 271, "Carjacking": 106, "Residential burglary": 2633,
-            "Sexual offences": 887, "Robbery aggravating": 4048,
-        },
-        "Free State": {
-            "Murder": 192, "Carjacking": 32, "Residential burglary": 2408,
-            "Sexual offences": 837, "Robbery aggravating": 3203,
-        },
-        "Northern Cape": {
-            "Murder": 77, "Carjacking": 6, "Residential burglary": 1348,
-            "Sexual offences": 307, "Robbery aggravating": 1994,
-        },
-    }
 
 
 if __name__ == "__main__":

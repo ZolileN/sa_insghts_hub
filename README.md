@@ -112,7 +112,9 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 
 ## Cron automation (production)
 
-Scheduled jobs replace the old GitHub Actions workflows. See **[CRON_SETUP.md](CRON_SETUP.md)**.
+**Primary:** GitHub Actions scrapers (see **[CRON_SETUP.md](CRON_SETUP.md)**) commit refreshed `data/*.json` on schedule.
+
+**Optional:** server cron on a South African host for DWS water when GitHub runners are blocked.
 
 | Frequency | Topics | Script |
 |-----------|--------|--------|

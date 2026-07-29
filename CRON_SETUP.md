@@ -1,8 +1,25 @@
 # Cron Jobs Setup
 
-Libo Insights uses local cron jobs for automated scraping (not GitHub Actions).
+Libo Insights uses **GitHub Actions** for production scraping (recommended) and optional **server cron** for SA-hosted runs (DWS water).
 
-## Quick Setup
+## Production (GitHub Actions)
+
+Workflows in `.github/workflows/` run automatically and commit refreshed `data/*.json` to `master`:
+
+| Workflow | Schedule | Topics |
+|----------|----------|--------|
+| `scrape_realtime.yml` | Every 30 min | forex, energy |
+| `scrape_weekly.yml` | Mondays 06:00 UTC | water |
+| `scrape_monthly.yml` | 1st of month 05:00 UTC | finance, property, employment, health |
+| `scrape_quarterly.yml` | Jan/Apr/Jul/Oct 04:00 UTC | all 10 topics |
+
+**Enable:** push these workflows to `master` (already in repo). In GitHub → **Actions**, confirm workflows are enabled for the repository.
+
+Each data commit triggers a Vercel redeploy (data is synced at build via `prebuild`).
+
+**Manual run:** Actions → pick workflow → **Run workflow**.
+
+## Optional: server cron (SA host)
 
 ```bash
 # Edit LIBO_INSIGHTS_ROOT in cron_setup.txt to your deploy path, then:

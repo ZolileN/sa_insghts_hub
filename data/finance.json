@@ -1,6 +1,6 @@
 {
   "source": "SARB + Stats SA",
-  "scraped_at": "2026-07-29T20:39:59.711563+00:00",
+  "scraped_at": "2026-07-29T21:22:04.571193+00:00",
   "is_live": true,
   "repo_rate_pct": 7.0,
   "prime_rate_pct": 10.5,
@@ -59,7 +59,8 @@
     "2025-10": 3.6,
     "2026-01": 3.5,
     "2026-04": 4.5,
-    "2026-06": 5.0
+    "2026-06": 5.0,
+    "june-2026": 5.0
   },
   "cpi_basket": {
     "Food & non-alcoholic beverages": 6.8,

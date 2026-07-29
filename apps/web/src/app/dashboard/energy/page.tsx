@@ -21,39 +21,93 @@ type EnergyData = {
   stage_label?: string;
   active?: boolean;
   upcoming_outages?: unknown[];
+  monthly_hours_by_year?: Record<string, Record<string, number>>;
   monthly_hours_2024?: Record<string, number>;
   monthly_hours_2023?: Record<string, number>;
   annual_totals?: Record<string, number>;
   electricity_tariff_history?: Record<string, number>;
+  energy_mix_by_year?: Record<string, Record<string, number>>;
   energy_mix_pct_2024?: Record<string, number>;
+  fy_stats?: {
+    loadshedding_hours_fy?: number;
+    consecutive_days_without?: number;
+    eaf_pct?: number;
+    financial_year?: string;
+  };
 };
+
+function monthlyHoursForYear(d: EnergyData, year: string): Record<string, number> {
+  if (d.monthly_hours_by_year?.[year]) return d.monthly_hours_by_year[year];
+  if (year === "2024" && d.monthly_hours_2024) return d.monthly_hours_2024;
+  if (year === "2023" && d.monthly_hours_2023) return d.monthly_hours_2023;
+  return {};
+}
+
+function latestMonthlyYear(d: EnergyData): string | null {
+  const years = Object.keys(d.monthly_hours_by_year ?? {});
+  if (years.length) return years.sort().pop() ?? null;
+  if (d.monthly_hours_2024) return "2024";
+  return null;
+}
+
+function latestTariffYear(d: EnergyData): string | null {
+  const keys = Object.keys(d.electricity_tariff_history ?? {});
+  return keys.length ? keys.sort().pop() ?? null : null;
+}
+
+function energyMix(d: EnergyData): Record<string, number> {
+  const byYear = d.energy_mix_by_year;
+  if (byYear) {
+    const y = Object.keys(byYear).sort().pop();
+    if (y) return byYear[y];
+  }
+  return d.energy_mix_pct_2024 ?? {};
+}
+
+function mixYearLabel(d: EnergyData): string {
+  const byYear = d.energy_mix_by_year;
+  if (byYear && Object.keys(byYear).length) {
+    return Object.keys(byYear).sort().pop() ?? "latest";
+  }
+  return "2024";
+}
 
 export default async function EnergyPage() {
   const d = await loadJson<EnergyData>("energy");
-  const stage = d?.current_stage ?? 0;
-  const hours2024 = Object.values(d?.monthly_hours_2024 ?? {}).reduce(
-    (a, b) => a + b,
-    0,
-  );
-  const hours2023 = Object.values(d?.monthly_hours_2023 ?? {}).reduce(
-    (a, b) => a + b,
-    0,
-  );
-  const hoursReductionPct = pctChange(hours2024, hours2023);
-  const tariff2024 = d?.electricity_tariff_history?.["2024"] ?? 436;
-  const mix = d?.energy_mix_pct_2024 ?? {};
-  const renewablePct =
-    (mix.Solar ?? 0) + (mix.Wind ?? 0) + (mix.Hydro ?? 0) + (mix.Other ?? 0);
-  const upcoming = d?.upcoming_outages?.length ?? 0;
-  const monthlyBill = estimateMonthlyElectricityBill(400, tariff2024);
+  const data: EnergyData = d ?? {};
+  const stage = data.current_stage ?? 0;
 
-  const monthlyCompare = Object.keys(d?.monthly_hours_2024 ?? {}).map((m) => ({
+  const currentYear = latestMonthlyYear(data) ?? String(new Date().getFullYear());
+  const prevYear = String(Number(currentYear) - 1);
+  const hoursCurrent = Object.values(monthlyHoursForYear(data, currentYear)).reduce(
+    (a, b) => a + b,
+    0,
+  );
+  const hoursPrev = Object.values(monthlyHoursForYear(data, prevYear)).reduce(
+    (a, b) => a + b,
+    0,
+  );
+  const annualHours =
+    data.annual_totals?.[currentYear] ??
+    data.fy_stats?.loadshedding_hours_fy ??
+    hoursCurrent;
+  const hoursReductionPct = hoursPrev > 0 ? pctChange(annualHours, hoursPrev) : null;
+
+  const tariffYear = latestTariffYear(data) ?? currentYear;
+  const tariff = data.electricity_tariff_history?.[tariffYear] ?? 0;
+  const mix = energyMix(data);
+  const mixYear = mixYearLabel(data);
+  const upcoming = data.upcoming_outages?.length ?? 0;
+  const monthlyBill = estimateMonthlyElectricityBill(400, tariff);
+  const streak = data.fy_stats?.consecutive_days_without;
+
+  const monthlyCompare = Object.keys(monthlyHoursForYear(data, currentYear)).map((m) => ({
     month: m,
-    "2023": d?.monthly_hours_2023?.[m] ?? 0,
-    "2024": d?.monthly_hours_2024?.[m] ?? 0,
+    [prevYear]: monthlyHoursForYear(data, prevYear)[m] ?? 0,
+    [currentYear]: monthlyHoursForYear(data, currentYear)[m] ?? 0,
   }));
 
-  const annual = Object.entries(d?.annual_totals ?? {}).map(([year, h]) => ({
+  const annual = Object.entries(data.annual_totals ?? {}).map(([year, h]) => ({
     year,
     hours: h,
   }));
@@ -63,7 +117,7 @@ export default async function EnergyPage() {
     pct,
   }));
 
-  const tariffTrend = Object.entries(d?.electricity_tariff_history ?? {}).map(
+  const tariffTrend = Object.entries(data.electricity_tariff_history ?? {}).map(
     ([year, c]) => ({ year, tariff: c }),
   );
 
@@ -77,45 +131,54 @@ export default async function EnergyPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Current load shedding"
-          value={d?.stage_label ?? "Unknown"}
-          hint={d?.active ? "Active outages" : "Grid stable"}
-          trendPositive={!d?.active}
+          value={data.stage_label ?? "Unknown"}
+          hint={data.active ? "Active outages" : "Grid stable"}
+          trendPositive={!data.active}
           trend={stage === 0 ? "No load shedding" : `Stage ${stage}`}
         />
         <KpiCard
-          label="Outage hours 2024"
-          value={formatNumber(hours2024)}
-          hint="Total scheduled outage hours"
-          trendPositive={hours2024 < hours2023}
-          trend={`vs ${formatNumber(hours2023)} hrs in 2023`}
+          label={`Outage hours ${currentYear}`}
+          value={formatNumber(annualHours)}
+          hint={
+            data.fy_stats?.financial_year
+              ? `FY ${data.fy_stats.financial_year} · Eskom media`
+              : "Scheduled outage hours"
+          }
+          trendPositive={hoursPrev > 0 && annualHours < hoursPrev}
+          trend={
+            hoursPrev > 0
+              ? `vs ${formatNumber(hoursPrev)} hrs in ${prevYear}`
+              : undefined
+          }
         />
         <KpiCard
           label="Electricity tariff"
-          value={`${tariff2024} c/kWh`}
-          hint="Homes & business cost pressure"
+          value={tariff ? `${tariff} c/kWh` : "—"}
+          hint={`Latest published (${tariffYear})`}
         />
         <KpiCard
           label="Solar in mix"
-          value={`${mix.Solar ?? 10}%`}
-          hint={`Coal still ${mix.Coal ?? 57}%`}
+          value={`${mix.Solar ?? 0}%`}
+          hint={`Coal ${mix.Coal ?? 0}% · mix ${mixYear}`}
         />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          label="Outage reduction vs 2023"
+          label={`Outage change vs ${prevYear}`}
           value={
             hoursReductionPct != null
               ? `${hoursReductionPct.toFixed(0)}%`
               : "—"
           }
-          hint="Fewer scheduled hours in 2024"
+          hint={`Calendar/FY hours compared to ${prevYear}`}
           trendPositive={hoursReductionPct != null && hoursReductionPct < 0}
-          trend={
-            hoursReductionPct != null && hoursReductionPct < -50
-              ? "Major improvement"
-              : "Still elevated risk"
-          }
+        />
+        <KpiCard
+          label="Days without load shedding"
+          value={streak != null ? formatNumber(streak) : "—"}
+          hint="Consecutive days (Eskom media)"
+          trendPositive={streak != null && streak > 30}
         />
         <KpiCard
           label="Upcoming schedules"
@@ -125,29 +188,25 @@ export default async function EnergyPage() {
         />
         <KpiCard
           label="Est. monthly bill (400 kWh)"
-          value={`R${formatNumber(monthlyBill)}`}
-          hint={`At ${tariff2024} c/kWh — household proxy`}
-        />
-        <KpiCard
-          label="Renewable share"
-          value={`${renewablePct}%`}
-          hint="Solar + wind + hydro + other"
-          trendPositive={renewablePct >= 15}
+          value={tariff ? `R${formatNumber(monthlyBill)}` : "—"}
+          hint={tariff ? `At ${tariff} c/kWh` : "Tariff unavailable"}
         />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel title="Monthly outage hours — 2023 vs 2024">
+        <ChartPanel
+          title={`Monthly outage hours — ${prevYear} vs ${currentYear}`}
+        >
           <MultiBarChart
             data={monthlyCompare}
             xKey="month"
             keys={[
-              { key: "2023", color: "#dc2626", name: "2023" },
-              { key: "2024", color: "#059669", name: "2024" },
+              { key: prevYear, color: "#dc2626", name: prevYear },
+              { key: currentYear, color: "#059669", name: currentYear },
             ]}
           />
         </ChartPanel>
-        <ChartPanel title="Energy generation mix 2024">
+        <ChartPanel title={`Energy generation mix ${mixYear}`}>
           <SimplePieChart data={mixChart} nameKey="name" valueKey="pct" />
         </ChartPanel>
       </div>
@@ -170,9 +229,9 @@ export default async function EnergyPage() {
       </div>
 
       <SourceBadge
-        source="Eskom · CSIR · DMRE fuel prices"
-        scrapedAt={d?.scraped_at}
-        isLive={d?.is_live}
+        source={data.source ?? "Eskom · CSIR · DMRE"}
+        scrapedAt={data.scraped_at}
+        isLive={data.is_live}
       />
     </div>
   );

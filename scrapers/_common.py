@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import io
+import json
 import logging
 import re
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 import requests
 import urllib3
@@ -22,9 +24,60 @@ HEADERS = {
 
 STATSSA_PUBLICATIONS = "https://www.statssa.gov.za/publications"
 
+TOPIC_FILES = {
+    "crime": "crime.json",
+    "forex": "forex.json",
+    "water": "water.json",
+    "finance": "finance.json",
+    "energy": "energy.json",
+    "employment": "employment.json",
+    "health": "health.json",
+    "education": "education.json",
+    "property": "property.json",
+    "fraud": "fraud.json",
+}
+
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def topic_path(output_dir: Path, topic: str) -> Path:
+    filename = TOPIC_FILES.get(topic, f"{topic}.json")
+    return output_dir / filename
+
+
+def load_topic_json(output_dir: Path, topic: str) -> dict:
+    """Load the last committed JSON for a topic (production cache)."""
+    path = topic_path(output_dir, topic)
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text())
+    except json.JSONDecodeError:
+        log.warning("Could not parse cached %s", path)
+        return {}
+
+
+def save_topic_json(output_dir: Path, topic: str, data: dict) -> Path:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = topic_path(output_dir, topic)
+    path.write_text(json.dumps(data, indent=2))
+    return path
+
+
+def merge_preserve(
+    cached: dict,
+    updates: dict,
+    preserve_keys: tuple[str, ...] = (),
+) -> dict:
+    """Apply updates; keep cached subtrees when updates omit or empty them."""
+    merged = dict(cached)
+    for key, value in updates.items():
+        if key in preserve_keys and not value:
+            continue
+        merged[key] = value
+    return merged
 
 
 def download_bytes(
