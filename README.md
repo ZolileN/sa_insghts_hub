@@ -54,6 +54,31 @@ Open **http://localhost:3000** — marketing home at `/`, dashboards at `/dashbo
 
 `npm run dev` syncs `data/*.json` into `apps/web/data` automatically (`predev` hook).
 
+### Deploy to Vercel
+
+One Vercel project serves **both** the marketing landing page (`/`) and all dashboard routes (`/dashboard/*`).
+
+1. Import [github.com/ZolileN/sa_insghts_hub](https://github.com/ZolileN/sa_insghts_hub) in the [Vercel dashboard](https://vercel.com/new).
+2. Set **Root Directory** to `apps/web` (required — the Next.js app lives in the monorepo subfolder).
+3. Framework preset: **Next.js** (detected automatically; `apps/web/vercel.json` is included).
+4. **Environment variables** (Project → Settings → Environment Variables):
+   - `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN` — your Mapbox public token (maps)
+   - `NEXT_PUBLIC_SITE_URL` — optional canonical URL, e.g. `https://your-project.vercel.app` or your custom domain
+5. Deploy. Production URLs:
+   - Landing: `https://<your-domain>/`
+   - Dashboard: `https://<your-domain>/dashboard/crime` (and `/dashboard/property`, etc.)
+
+**CLI link** (optional, from your machine):
+
+```bash
+cd apps/web
+npx vercel link          # connect to your existing Vercel project
+npx vercel env pull      # pull env vars into .env.local
+npx vercel --prod        # production deploy
+```
+
+Data is baked in at build time via `prebuild` → `scripts/sync-data.mjs` (copies repo `data/` into the app). Push updated `data/*.json` to refresh production figures.
+
 ### Legacy Streamlit
 
 ```bash
