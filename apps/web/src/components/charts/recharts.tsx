@@ -34,6 +34,7 @@ export function SimpleBarChart({
   color = CHART_COLORS[0],
   layout = "vertical",
   height = 280,
+  onCategoryClick,
 }: {
   data: Record<string, unknown>[];
   xKey: string;
@@ -41,6 +42,7 @@ export function SimpleBarChart({
   color?: string;
   layout?: "vertical" | "horizontal";
   height?: number;
+  onCategoryClick?: (label: string) => void;
 }) {
   const isVertical = layout === "vertical";
   return (
@@ -76,7 +78,21 @@ export function SimpleBarChart({
             fontSize: 12,
           }}
         />
-        <Bar dataKey={yKey} fill={color} radius={[4, 4, 0, 0]} />
+        <Bar
+          dataKey={yKey}
+          fill={color}
+          radius={[4, 4, 0, 0]}
+          cursor={onCategoryClick ? "pointer" : undefined}
+          onClick={
+            onCategoryClick
+              ? (bar) => {
+                  const payload = bar?.payload as Record<string, unknown> | undefined;
+                  const label = payload?.[xKey];
+                  if (typeof label === "string") onCategoryClick(label);
+                }
+              : undefined
+          }
+        />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -87,11 +103,13 @@ export function MultiBarChart({
   xKey,
   keys,
   height = 280,
+  onCategoryClick,
 }: {
   data: Record<string, unknown>[];
   xKey: string;
   keys: { key: string; color: string; name?: string }[];
   height?: number;
+  onCategoryClick?: (label: string) => void;
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -115,6 +133,16 @@ export function MultiBarChart({
             name={k.name ?? k.key}
             fill={k.color}
             radius={[4, 4, 0, 0]}
+            cursor={onCategoryClick ? "pointer" : undefined}
+            onClick={
+              onCategoryClick
+                ? (bar) => {
+                    const payload = bar?.payload as Record<string, unknown> | undefined;
+                    const label = payload?.[xKey];
+                    if (typeof label === "string") onCategoryClick(label);
+                  }
+                : undefined
+            }
           />
         ))}
       </BarChart>

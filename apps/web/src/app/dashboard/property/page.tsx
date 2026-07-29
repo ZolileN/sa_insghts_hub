@@ -1,4 +1,5 @@
 import { GeoMap } from "@/components/maps/crime-map";
+import { DrillableSimpleBarChart } from "@/components/charts/drillable-simple-bar-chart";
 import {
   ChartPanel,
   KpiCard,
@@ -7,7 +8,6 @@ import {
 } from "@/components/dashboard/page-parts";
 import {
   MultiBarChart,
-  SimpleBarChart,
   SimpleLineChart,
 } from "@/components/charts/recharts";
 import { PROVINCE_LIST } from "@/shared/data/constants";
@@ -215,6 +215,8 @@ export default async function PropertyPage({
   const transferThreshold = nat.transfer_duty_threshold_r ?? 1210000;
   const householdIncome = nat.avg_household_income_r ?? 282000;
   const priceToIncome = Math.round((metrics.median / householdIncome) * 10) / 10;
+  const capRateSpread = Math.round((metrics.yieldPct - prime) * 10) / 10;
+  const annualRent = metrics.rentR * 12;
 
   const scatter = PROVINCE_LIST.map((p) => ({
     province: p,
@@ -313,7 +315,7 @@ export default async function PropertyPage({
         />
       </div>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <KpiCard
           label="Rent vs bond ratio"
           value={`${(rentBuyRatio * 100).toFixed(0)}%`}
@@ -347,11 +349,52 @@ export default async function PropertyPage({
           trendPositive={priceToIncome <= 5}
         />
         <KpiCard
+          label="Cap rate vs prime"
+          value={`${capRateSpread > 0 ? "+" : ""}${capRateSpread}pp`}
+          hint={`Gross yield ${metrics.yieldPct}% vs prime ${prime}%`}
+          trendPositive={capRateSpread > 0}
+          trend={
+            capRateSpread > 0
+              ? "Yield beats borrowing cost"
+              : "Prime exceeds gross yield"
+          }
+        />
+        <KpiCard
+          label="Est. annual rental"
+          value={formatCurrency(annualRent)}
+          hint={`${formatCurrency(metrics.rentR)}/month gross income`}
+          trendPositive={annualRent > monthlyBond * 12}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
           label="Days on market"
           value={formatNumber(metrics.dom)}
           hint={`Bond approval ~${bondApproval}% nationally`}
           trendPositive={metrics.dom < 70}
           trend={metrics.yoy > 0 ? `Prices +${metrics.yoy}% YoY` : "Flat prices"}
+        />
+        <KpiCard
+          label="YoY price growth"
+          value={`${metrics.yoy}%`}
+          trendPositive={metrics.yoy > 0}
+          trend={metrics.yoy > 2 ? "Above inflation target" : "Moderate growth"}
+        />
+        <KpiCard
+          label="Transfer duty threshold"
+          value={formatCurrency(transferThreshold)}
+          hint={
+            metrics.median > transferThreshold
+              ? "Median above zero-duty band"
+              : "Median within zero-duty band"
+          }
+        />
+        <KpiCard
+          label="Bond approval rate"
+          value={`${bondApproval}%`}
+          hint="National mortgage approval proxy"
+          trendPositive={bondApproval >= 60}
         />
       </div>
 
@@ -407,27 +450,12 @@ export default async function PropertyPage({
               }
             />
           )}
-          <KpiCard
-            label="Transfer duty threshold"
-            value={formatCurrency(transferThreshold)}
-            hint={
-              metrics.median > transferThreshold
-                ? "Median above zero-duty band"
-                : "Median within zero-duty band"
-            }
-          />
-          <KpiCard
-            label="YoY price growth"
-            value={`${metrics.yoy}%`}
-            trendPositive={metrics.yoy > 0}
-            trend={metrics.yoy > 2 ? "Above inflation target" : "Moderate growth"}
-          />
         </div>
       )}
 
       <ChartPanel
         title="Property map"
-        description={mapDescription}
+        description={mapDescription + " — click markers to drill down"}
         className="mt-6"
       >
         <GeoMap
@@ -442,26 +470,32 @@ export default async function PropertyPage({
         {province === "All Provinces" ? (
           <ChartPanel
             title="Median price by province (R thousands)"
-            description="Where entry prices differ most"
+            description="Click a bar or map marker to drill into province metros"
           >
-            <SimpleBarChart
+            <DrillableSimpleBarChart
               data={medians}
               xKey="province"
               yKey="median_k"
               color="#2563eb"
+              province={province}
+              city={city}
+              drillLevel="province"
             />
           </ChartPanel>
         ) : city === "All areas" ? (
           <ChartPanel
             title={`Median price by metro — ${province}`}
-            description="City and district medians within the province"
+            description="Click to drill into suburb-level medians"
           >
-            <SimpleBarChart
+            <DrillableSimpleBarChart
               data={metroMedians}
               xKey="metro"
               yKey="median_k"
               layout="vertical"
               color="#2563eb"
+              province={province}
+              city={city}
+              drillLevel="district"
             />
           </ChartPanel>
         ) : (
@@ -469,26 +503,34 @@ export default async function PropertyPage({
             title={`Suburb medians — ${city}`}
             description="Neighbourhood-level price spread"
           >
-            <SimpleBarChart
+            <DrillableSimpleBarChart
               data={suburbMedians}
               xKey="suburb"
               yKey="median_k"
               layout="vertical"
               color="#2563eb"
+              province={province}
+              city={city}
+              drillLevel="district"
             />
           </ChartPanel>
         )}
 
         <ChartPanel
           title="Rental yield by area"
-          description="Gross yield — what income investors compare"
+          description="Gross yield — click bars to drill when at national or provincial view"
         >
-          <SimpleBarChart
+          <DrillableSimpleBarChart
             data={yieldCompare}
             xKey="area"
             yKey="yield"
             layout="vertical"
             color="#059669"
+            province={province}
+            city={city}
+            drillLevel={
+              province === "All Provinces" ? "province" : "district"
+            }
           />
         </ChartPanel>
 

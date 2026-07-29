@@ -1,14 +1,12 @@
 import { CrimeMap } from "@/components/maps/crime-map";
+import { DrillableMultiBarChart } from "@/components/charts/drillable-multi-bar-chart";
+import { DrillableSimpleBarChart } from "@/components/charts/drillable-simple-bar-chart";
 import {
   ChartPanel,
   KpiCard,
   PageHeader,
   SourceBadge,
 } from "@/components/dashboard/page-parts";
-import {
-  MultiBarChart,
-  SimpleBarChart,
-} from "@/components/charts/recharts";
 import { PROVINCE_LIST } from "@/shared/data/constants";
 import {
   CRIME_CHART_PALETTE,
@@ -294,7 +292,7 @@ export default async function CrimePage({
 
       <ChartPanel
         title="Crime map"
-        description={mapDescription}
+        description={mapDescription + " — click markers to drill down"}
         className="mt-6"
       >
         <CrimeMap
@@ -308,27 +306,33 @@ export default async function CrimePage({
         {province === "All Provinces" ? (
           <ChartPanel
             title="Murders by province"
-            description="Absolute murder counts for the reporting quarter"
+            description="Absolute murder counts — click a bar or map marker to drill down"
           >
-            <SimpleBarChart
+            <DrillableSimpleBarChart
               data={provinceMurders}
               xKey="province"
               yKey="murders"
               layout="vertical"
               color="#dc2626"
+              province={province}
+              city={city}
+              drillLevel="province"
             />
           </ChartPanel>
         ) : city === "All areas" ? (
           <ChartPanel
             title={`Murders by area — ${province}`}
-            description="City and metro districts within the province"
+            description="City and metro districts — click to drill into precinct view"
           >
-            <SimpleBarChart
+            <DrillableSimpleBarChart
               data={districtMurders}
               xKey="district"
               yKey="murders"
               layout="vertical"
               color="#dc2626"
+              province={province}
+              city={city}
+              drillLevel="district"
             />
           </ChartPanel>
         ) : (
@@ -336,7 +340,7 @@ export default async function CrimePage({
             title={`Top precincts — ${city}`}
             description="Police station murder counts in the selected area"
           >
-            <SimpleBarChart
+            <DrillableSimpleBarChart
               data={stationRows.map((s) => ({
                 station: s.name,
                 murders: s.murders,
@@ -345,6 +349,9 @@ export default async function CrimePage({
               yKey="murders"
               layout="vertical"
               color="#dc2626"
+              province={province}
+              city={city}
+              drillLevel="district"
             />
           </ChartPanel>
         )}
@@ -353,11 +360,11 @@ export default async function CrimePage({
           title="Violent crime mix"
           description={
             province === "All Provinces"
-              ? "Murder, sexual offences, and carjacking by province"
+              ? "Murder, sexual offences, and carjacking — click to drill down"
               : "Violent crime by city/metro district"
           }
         >
-          <MultiBarChart
+          <DrillableMultiBarChart
             data={violentMix}
             xKey="province"
             keys={[
@@ -373,6 +380,11 @@ export default async function CrimePage({
                 name: "Carjacking",
               },
             ]}
+            province={province}
+            city={city}
+            drillLevel={
+              province === "All Provinces" ? "province" : "district"
+            }
           />
         </ChartPanel>
 
@@ -380,7 +392,7 @@ export default async function CrimePage({
           title="Property & aggravated crime"
           description="Burglary and aggravated robbery volumes"
         >
-          <MultiBarChart
+          <DrillableMultiBarChart
             data={propertyMix}
             xKey="province"
             keys={[
@@ -395,6 +407,11 @@ export default async function CrimePage({
                 name: "Aggravated robbery",
               },
             ]}
+            province={province}
+            city={city}
+            drillLevel={
+              province === "All Provinces" ? "province" : "district"
+            }
           />
         </ChartPanel>
 
