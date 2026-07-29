@@ -53,6 +53,7 @@ export function AreaFilter() {
         const params = new URLSearchParams(searchParams.toString());
         if (value === "All areas") params.delete("city");
         else params.set("city", value);
+        params.delete("suburb");
         const q = params.toString();
         router.push(q ? `${pathname}?${q}` : pathname);
       }}

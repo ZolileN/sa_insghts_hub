@@ -12,7 +12,7 @@ Formerly **SA Insight Hub**. The primary UI is a Next.js app (`apps/web`) with a
 
 ## What It Does
 
-Libo Insights pulls real South African public data across 10 topics, caches it as JSON, and visualises it in interactive dashboards. Crime supports **province → city/metro → police precinct** drill-down (Mapbox maps planned).
+Libo Insights pulls real South African public data across 10 topics, caches it as JSON, and visualises it in interactive dashboards. Crime and Property support **province → city/metro → suburb/precinct** drill-down with Leaflet maps and clickable charts.
 
 | # | Topic | Primary source | Cadence |
 |---|-------|----------------|---------|
@@ -46,7 +46,7 @@ python3 run_scrapers.py
 # Web app
 cd apps/web
 npm install
-cp .env.example .env.local   # add Mapbox token for maps (optional)
+cp .env.example .env.local   # optional; maps use OpenStreetMap by default
 npm run dev
 ```
 
@@ -127,7 +127,7 @@ Scheduled jobs replace the old GitHub Actions workflows. See **[CRON_SETUP.md](C
 |-----------|--------|--------|
 | Every 30 min | forex, energy | `cron_realtime.sh` |
 | Weekly (Mon 06:00 UTC) | water | `cron_weekly.sh` |
-| Monthly (1st 05:00 UTC) | finance, property | `cron_monthly.sh` |
+| Monthly (1st 05:00 UTC) | finance, property, employment, health | `cron_monthly.sh` |
 | Quarterly (Jan/Apr/Jul/Oct) | all 10 | `cron_quarterly.sh` |
 
 ```bash
@@ -160,26 +160,28 @@ sa_insghts_hub/
 
 ---
 
-## Crime drill-down
+## Crime & property drill-down
 
-On `/dashboard/crime`:
+On `/dashboard/crime` and `/dashboard/property`:
 
-1. **Province** filter (header) — all provinces or one province
-2. **City / metro** filter — appears when a province is selected (SAPS district names)
-3. Charts switch from provincial → district → **police precinct** views
-4. **National hotspots** table — SAPS TOP 30 serious-crime precincts
+1. **Province** filter (header) — national or one province
+2. **City / metro** filter — SAPS districts or property metros
+3. **Suburb** filter (property only) — when a metro is selected
+4. Click **map markers** or **chart bars** to drill at the same levels
+5. URL reflects state: `?province=Western+Cape&city=City+of+Cape+Town&suburb=Sea+Point`
 
-`crime.json` includes `provinces`, `districts`, `stations`, and `national_hotspots` parsed from SAPS workbooks.
+Crime adds police precinct views when a city/metro is selected.
 
 ---
 
 ## Key features
 
 - Ten topic dashboards with KPI cards, Recharts visualisations, province filter
-- Live/cached badges with scrape timestamps from `manifest.json`
-- Smart fallback when a source is blocked (e.g. DWS from non-SA IPs)
+- Interactive Leaflet maps with click-to-drill on Crime, Property, Health, Employment, Education, and Water
+- Property suburb drill-down via `?suburb=` URL (e.g. Sea Point within Cape Town)
+- Source list and update date at the bottom of each page
+- Smart fallback when a source is blocked (e.g. DWS from non-SA IPs — run cron on SA host)
 - Marketing landing page with live ticker from cached JSON
-- Optional Mapbox integration for map-based drill-down (token in `.env.local`)
 
 ---
 
@@ -189,11 +191,16 @@ On `/dashboard/crime`:
 - [x] 2026 data refresh (SAPS, QLFS Q1 2026, CPI June 2026, NSC 2025, SARB MPC)
 - [x] Cron schedules (realtime / weekly / monthly / quarterly)
 - [x] Crime province → city → precinct drill-down
+- [x] Property province → metro → suburb drill-down with maps and charts
+- [x] Province drill-down maps on Health, Employment, Education, Water
+- [x] NICD, Cape Town ArcGIS, Frankfurter forex ingestion
 - [x] `DATA_SOURCES.md` publisher catalog
-- [ ] Mapbox choropleth + precinct markers on crime page
-- [ ] Wire FNB / PayProp scrapes into property dashboard
+- [ ] Choropleth province boundaries (filled regions vs markers)
+- [ ] Vulekamali / eTenders live budget feeds (SA-hosted cron)
+- [ ] Inside Airbnb listing enrichment (Cape Town only on source site)
 - [ ] Alerts (email/WhatsApp) for dam levels and crime spikes
 - [ ] Public read API over `data/*.json`
+- [ ] AI Q&A panel in Next.js dashboard
 
 ---
 

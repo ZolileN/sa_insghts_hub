@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { AreaFilter } from "@/components/layout/area-filter";
+import { SuburbFilter } from "@/components/layout/suburb-filter";
 import { ProvinceFilter } from "@/components/layout/province-filter";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +31,9 @@ export default function DashboardLayout({
             </Suspense>
             <Suspense fallback={null}>
               <AreaFilter />
+            </Suspense>
+            <Suspense fallback={null}>
+              <SuburbFilter />
             </Suspense>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/">Marketing site</Link>

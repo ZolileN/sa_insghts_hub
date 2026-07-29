@@ -19,6 +19,7 @@ import {
   estimateMonthlyRent,
   rentVsBuyRatio,
   resolveCity,
+  resolveSuburb,
   scopeLabel,
   type PropertyMetro,
   type PropertyNational,
@@ -53,6 +54,7 @@ function scopeMetrics(
   d: PropertyData,
   province: string,
   city: string,
+  suburb: string,
 ): {
   median: number;
   yieldPct: number;
@@ -85,6 +87,34 @@ function scopeMetrics(
 
   if (city !== "All areas" && metroMap[city]) {
     const metro = metroMap[city];
+    const suburbs = metro.suburbs ?? {};
+
+    if (suburb !== "All suburbs" && suburbs[suburb]) {
+      const sub = suburbs[suburb];
+      const median =
+        sub.median_price_r ??
+        metro.median_price_r ??
+        d.provinces?.[province]?.median_price_r ??
+        nationalMedian;
+      const yieldPct =
+        sub.rental_yield_pct ?? metro.rental_yield_pct ?? 8.2;
+      const rentR =
+        sub.estimated_monthly_rent_r ?? estimateMonthlyRent(median, yieldPct);
+      return {
+        median,
+        yieldPct,
+        yoy: metro.yoy_growth_pct ?? d.provinces?.[province]?.yoy_growth_pct ?? 2,
+        dom:
+          sub.days_on_market ??
+          metro.days_on_market ??
+          d.provinces?.[province]?.days_on_market ??
+          72,
+        rentR,
+        airbnb: metro.airbnb_listings,
+        buildingPlans: metro.building_plans_yoy_pct,
+      };
+    }
+
     const median = metro.median_price_r ?? d.provinces?.[province]?.median_price_r ?? nationalMedian;
     const yieldPct =
       metro.rental_yield_pct ?? d.provinces?.[province]?.rental_yield_pct ?? 8.2;
@@ -119,6 +149,7 @@ function buildMapMarkers(
   d: PropertyData,
   province: string,
   city: string,
+  suburb: string,
 ): CrimeMapMarker[] {
   const provData = d.provinces ?? {};
 
@@ -151,6 +182,22 @@ function buildMapMarkers(
 
   const metro = metroMap[city];
   const suburbs = metro?.suburbs ?? {};
+
+  if (suburb !== "All suburbs" && suburbs[suburb]) {
+    const sub = suburbs[suburb];
+    const [lng, lat] = districtCoords(city, province, 0);
+    return [
+      {
+        id: `${city}-${suburb}`,
+        label: suburb,
+        longitude: lng,
+        latitude: lat,
+        value: (sub.median_price_r ?? 0) / 1000,
+        kind: "suburb" as const,
+      },
+    ].filter((m) => m.value > 0);
+  }
+
   if (Object.keys(suburbs).length > 0) {
     return Object.entries(suburbs).map(([name, sub], i) => {
       const [lng, lat] = districtCoords(city, province, i);
@@ -181,9 +228,13 @@ function buildMapMarkers(
 export default async function PropertyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ province?: string; city?: string }>;
+  searchParams: Promise<{ province?: string; city?: string; suburb?: string }>;
 }) {
-  const { province: provinceParam, city: cityParam } = await searchParams;
+  const {
+    province: provinceParam,
+    city: cityParam,
+    suburb: suburbParam,
+  } = await searchParams;
   const province = resolveProvince(provinceParam);
   const d = await loadJson<PropertyData>("property");
   const nat = d?.national ?? {};
@@ -195,8 +246,15 @@ export default async function PropertyPage({
       : [];
 
   const city = resolveCity(cityParam, metroNames);
-  const label = scopeLabel(province, city);
-  const metrics = scopeMetrics(d ?? {}, province, city);
+  const suburbNames =
+    city !== "All areas"
+      ? Object.keys(metroMap[city]?.suburbs ?? {}).sort((a, b) =>
+          a.localeCompare(b),
+        )
+      : [];
+  const suburb = resolveSuburb(suburbParam, suburbNames);
+  const label = scopeLabel(province, city, suburb);
+  const metrics = scopeMetrics(d ?? {}, province, city, suburb);
 
   const nationalMedian = nat.median_price_r ?? 1320000;
   const prime = nat.prime_rate_pct ?? 10.5;
@@ -247,13 +305,15 @@ export default async function PropertyPage({
     Gauteng: d?.price_trend?.Gauteng?.[q] ?? 0,
   }));
 
-  const mapMarkers = buildMapMarkers(d ?? {}, province, city);
+  const mapMarkers = buildMapMarkers(d ?? {}, province, city, suburb);
   const mapDescription =
     province === "All Provinces"
       ? "Median price (R thousands) by province — blue markers scale with price"
       : city === "All areas"
         ? `Metro median prices in ${province} — orange markers`
-        : `Suburb medians in ${city} — red markers`;
+        : suburb !== "All suburbs"
+          ? `Suburb focus — ${suburb} in ${city}`
+          : `Suburb medians in ${city} — red markers`;
 
   const yieldCompare =
     province === "All Provinces"
@@ -423,6 +483,7 @@ export default async function PropertyPage({
           markers={mapMarkers}
           province={province}
           city={city}
+          suburb={suburb}
           valueLabel="median (R thousands)"
         />
       </ChartPanel>

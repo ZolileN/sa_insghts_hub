@@ -9,8 +9,24 @@ export function resolveCity(
   return "All areas";
 }
 
-export function scopeLabel(province: Province, city: string): string {
+export function resolveSuburb(
+  suburbParam: string | undefined,
+  allowed: string[],
+): string {
+  if (!suburbParam || suburbParam === "All suburbs") return "All suburbs";
+  if (allowed.includes(suburbParam)) return suburbParam;
+  return "All suburbs";
+}
+
+export function scopeLabel(
+  province: Province,
+  city: string,
+  suburb = "All suburbs",
+): string {
   if (province === "All Provinces") return "National";
+  if (suburb !== "All suburbs" && city !== "All areas") {
+    return `${suburb}, ${city}`;
+  }
   if (city !== "All areas") return `${city}, ${province}`;
   return province;
 }

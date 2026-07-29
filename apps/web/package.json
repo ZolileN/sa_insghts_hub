@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "sync-data": "node scripts/sync-data.mjs",
+    "verify-data": "node scripts/verify-data.mjs",
     "predev": "node scripts/sync-data.mjs",
     "prebuild": "node scripts/sync-data.mjs",
     "dev": "next dev --hostname 0.0.0.0 -p 3000",

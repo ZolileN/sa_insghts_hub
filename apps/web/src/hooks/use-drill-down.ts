@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-/** PowerBI-style URL drill-down for province → city/metro pages. */
+/** PowerBI-style URL drill-down for province → city/metro → suburb. */
 export function useDrillDown() {
   const router = useRouter();
   const pathname = usePathname();
@@ -10,6 +10,7 @@ export function useDrillDown() {
 
   const province = searchParams.get("province") ?? "All Provinces";
   const city = searchParams.get("city") ?? "All areas";
+  const suburb = searchParams.get("suburb") ?? "All suburbs";
 
   function pushParams(mutate: (params: URLSearchParams) => void) {
     const params = new URLSearchParams(searchParams.toString());
@@ -22,16 +23,28 @@ export function useDrillDown() {
     pushParams((params) => {
       params.set("province", name);
       params.delete("city");
+      params.delete("suburb");
     });
   }
 
   function drillToCity(name: string) {
     pushParams((params) => {
       params.set("city", name);
+      params.delete("suburb");
+    });
+  }
+
+  function drillToSuburb(name: string) {
+    pushParams((params) => {
+      params.set("suburb", name);
     });
   }
 
   function drillUp() {
+    if (suburb !== "All suburbs") {
+      pushParams((params) => params.delete("suburb"));
+      return;
+    }
     if (city !== "All areas") {
       pushParams((params) => params.delete("city"));
       return;
@@ -40,6 +53,7 @@ export function useDrillDown() {
       pushParams((params) => {
         params.delete("province");
         params.delete("city");
+        params.delete("suburb");
       });
     }
   }
@@ -47,9 +61,14 @@ export function useDrillDown() {
   return {
     province,
     city,
+    suburb,
     drillToProvince,
     drillToCity,
+    drillToSuburb,
     drillUp,
-    canDrillUp: city !== "All areas" || province !== "All Provinces",
+    canDrillUp:
+      suburb !== "All suburbs" ||
+      city !== "All areas" ||
+      province !== "All Provinces",
   };
 }

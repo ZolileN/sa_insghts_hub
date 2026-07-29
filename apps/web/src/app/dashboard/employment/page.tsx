@@ -4,6 +4,8 @@ import {
   PageHeader,
   SourceBadge,
 } from "@/components/dashboard/page-parts";
+import { DrillableSimpleBarChart } from "@/components/charts/drillable-simple-bar-chart";
+import { GeoMap } from "@/components/maps/crime-map";
 import {
   SimpleBarChart,
   SimpleLineChart,
@@ -11,6 +13,7 @@ import {
 import { PROVINCE_LIST } from "@/shared/data/constants";
 import { provinceRank } from "@/shared/data/intelligence";
 import { loadJson } from "@/shared/data/load";
+import { buildProvinceMarkers } from "@/shared/data/province-map";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
 import { formatNumber } from "@/shared/utils";
 
@@ -81,6 +84,8 @@ export default async function EmploymentPage({
 
   const monthlyMinWage = Math.round(minWage * 160);
 
+  const mapMarkers = buildProvinceMarkers(unempByProv);
+
   return (
     <div>
       <PageHeader
@@ -149,21 +154,46 @@ export default async function EmploymentPage({
         />
       </div>
 
+      <ChartPanel
+        title="Employment map"
+        description="Unemployment % by province — click to focus a region"
+        className="mt-6"
+      >
+        <GeoMap
+          markers={mapMarkers}
+          province={province}
+          city="All areas"
+          valueLabel="unemployment %"
+        />
+      </ChartPanel>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel title="Unemployment rate by province">
-          <SimpleBarChart
+        <ChartPanel
+          title="Unemployment rate by province"
+          description="Click a bar to drill into provincial labour market"
+        >
+          <DrillableSimpleBarChart
             data={unempByProvChart}
             xKey="province"
             yKey="rate"
             color="#dc2626"
+            province={province}
+            city="All areas"
+            drillLevel="province"
           />
         </ChartPanel>
-        <ChartPanel title="Median monthly income by province (R)">
-          <SimpleBarChart
+        <ChartPanel
+          title="Median monthly income by province (R)"
+          description="Click a bar to drill into provincial income"
+        >
+          <DrillableSimpleBarChart
             data={incomeByProv}
             xKey="province"
             yKey="income"
             color="#059669"
+            province={province}
+            city="All areas"
+            drillLevel="province"
           />
         </ChartPanel>
       </div>

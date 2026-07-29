@@ -4,12 +4,16 @@ import {
   PageHeader,
   SourceBadge,
 } from "@/components/dashboard/page-parts";
+import { DrillableMultiBarChart } from "@/components/charts/drillable-multi-bar-chart";
+import { DrillableSimpleBarChart } from "@/components/charts/drillable-simple-bar-chart";
+import { GeoMap } from "@/components/maps/crime-map";
 import {
   ColoredBarChart,
   MultiBarChart,
 } from "@/components/charts/recharts";
 import { PROVINCE_LIST } from "@/shared/data/constants";
 import { loadJson } from "@/shared/data/load";
+import { buildProvinceMarkers } from "@/shared/data/province-map";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
 import { formatNumber } from "@/shared/utils";
 
@@ -92,6 +96,11 @@ export default async function WaterPage({
     { name: "—", level: 100 },
   );
 
+  const damByProv = Object.fromEntries(
+    PROVINCE_LIST.map((p) => [p, d?.provinces?.[p]?.this_week_pct ?? 0]),
+  );
+  const mapMarkers = buildProvinceMarkers(damByProv);
+
   return (
     <div>
       <PageHeader
@@ -159,31 +168,56 @@ export default async function WaterPage({
         />
       </div>
 
+      <ChartPanel
+        title="Water map"
+        description="Dam storage % by province — click to compare regions"
+        className="mt-6"
+      >
+        <GeoMap
+          markers={mapMarkers}
+          province={province}
+          city="All areas"
+          valueLabel="dam level %"
+        />
+      </ChartPanel>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <ChartPanel title="Major dam levels (%)">
           <ColoredBarChart data={dams} xKey="name" yKey="level" />
         </ChartPanel>
-        <ChartPanel title="Province dam levels — week on week">
-          <MultiBarChart
+        <ChartPanel
+          title="Province dam levels — week on week"
+          description="Click a province group to drill down"
+        >
+          <DrillableMultiBarChart
             data={provinceLevels}
             xKey="province"
             keys={[
               { key: "thisWeek", color: "#2563eb", name: "This week" },
               { key: "lastWeek", color: "#94a3b8", name: "Last week" },
             ]}
+            province={province}
+            city="All areas"
+            drillLevel="province"
           />
         </ChartPanel>
       </div>
 
       <div className="mt-6">
-        <ChartPanel title="Province dam levels — vs last year">
-          <MultiBarChart
+        <ChartPanel
+          title="Province dam levels — vs last year"
+          description="Year-on-year storage comparison by province"
+        >
+          <DrillableMultiBarChart
             data={provinceLevels}
             xKey="province"
             keys={[
               { key: "thisWeek", color: "#2563eb", name: "This week" },
               { key: "lastYear", color: "#d97706", name: "Last year" },
             ]}
+            province={province}
+            city="All areas"
+            drillLevel="province"
           />
         </ChartPanel>
       </div>

@@ -23,6 +23,7 @@ type GeoMapProps = {
   markers: CrimeMapMarker[];
   province: string;
   city: string;
+  suburb?: string;
   height?: number;
   valueLabel?: string;
 };
@@ -35,15 +36,18 @@ function displayLabel(label: string) {
 function MapDrillBar({
   province,
   city,
+  suburb = "All suburbs",
 }: {
   province: string;
   city: string;
+  suburb?: string;
 }) {
   const { drillUp, canDrillUp } = useDrillDown();
 
   const crumbs = [
-  province === "All Provinces" ? "South Africa" : province,
+    province === "All Provinces" ? "South Africa" : province,
     city !== "All areas" ? displayLabel(city) : null,
+    suburb !== "All suburbs" ? suburb : null,
   ].filter(Boolean);
 
   return (
@@ -76,6 +80,7 @@ export function GeoMap({
   markers,
   province,
   city,
+  suburb = "All suburbs",
   height = 420,
   valueLabel = "value",
 }: GeoMapProps) {
@@ -103,12 +108,13 @@ export function GeoMap({
       className="overflow-hidden rounded-lg border border-[var(--border)] bg-white"
       style={{ height }}
     >
-      <MapDrillBar province={province} city={city} />
+      <MapDrillBar province={province} city={city} suburb={suburb} />
       <div style={{ height: height - 36 }}>
         <LeafletMapView
           markers={markers}
           province={province}
           city={city}
+          suburb={suburb}
           height={height - 36}
           valueLabel={valueLabel}
         />

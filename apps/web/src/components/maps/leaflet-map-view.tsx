@@ -18,6 +18,7 @@ type LeafletMapViewProps = {
   markers: CrimeMapMarker[];
   province: string;
   city: string;
+  suburb?: string;
   height: number;
   valueLabel: string;
 };
@@ -57,10 +58,11 @@ export default function LeafletMapView({
   markers,
   province,
   city,
+  suburb = "All suburbs",
   height,
   valueLabel,
 }: LeafletMapViewProps) {
-  const { drillToProvince, drillToCity } = useDrillDown();
+  const { drillToProvince, drillToCity, drillToSuburb } = useDrillDown();
 
   const maxValue = useMemo(
     () => Math.max(...markers.map((m) => m.value), 1),
@@ -68,6 +70,13 @@ export default function LeafletMapView({
   );
 
   const { center, zoom } = useMemo(() => {
+    if (suburb !== "All suburbs" && markers.length > 0) {
+      const m = markers[0];
+      return {
+        center: [m.latitude, m.longitude] as LatLngExpression,
+        zoom: 13,
+      };
+    }
     if (city !== "All areas" && markers.length > 0) {
       const m = markers[0];
       return {
@@ -88,7 +97,7 @@ export default function LeafletMapView({
       center: [SA_CENTER[1], SA_CENTER[0]] as LatLngExpression,
       zoom: 5.5,
     };
-  }, [markers, province, city]);
+  }, [markers, province, city, suburb]);
 
   function handleDrill(marker: CrimeMapMarker) {
     if (marker.kind === "province") {
@@ -97,12 +106,17 @@ export default function LeafletMapView({
     }
     if (marker.kind === "district") {
       drillToCity(marker.label);
+      return;
+    }
+    if (marker.kind === "suburb") {
+      drillToSuburb(marker.label);
     }
   }
 
   function canDrill(marker: CrimeMapMarker) {
     if (marker.kind === "province") return true;
     if (marker.kind === "district") return true;
+    if (marker.kind === "suburb") return true;
     return false;
   }
 

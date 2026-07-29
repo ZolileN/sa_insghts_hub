@@ -18,7 +18,7 @@ Libo Insights uses local cron jobs for automated scraping (not GitHub Actions).
 |-----------|--------|----------|--------|
 | Realtime | forex, energy | Every 30 minutes | `cron_realtime.sh` |
 | Weekly | water | Mondays 06:00 UTC | `cron_weekly.sh` |
-| Monthly | finance, property, employment | 1st of month 05:00 UTC | `cron_monthly.sh` |
+| Monthly | finance, property, employment, health | 1st of month 05:00 UTC | `cron_monthly.sh` |
 | Quarterly | All 10 topics | 1st of Jan, Apr, Jul, Oct 04:00 UTC | `cron_quarterly.sh` |
 
 Cadence matches each source’s publication schedule:

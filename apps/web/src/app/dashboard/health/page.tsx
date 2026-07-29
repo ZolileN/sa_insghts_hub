@@ -4,12 +4,14 @@ import {
   PageHeader,
   SourceBadge,
 } from "@/components/dashboard/page-parts";
+import { DrillableSimpleBarChart } from "@/components/charts/drillable-simple-bar-chart";
+import { GeoMap } from "@/components/maps/crime-map";
 import {
-  SimpleBarChart,
   SimpleLineChart,
 } from "@/components/charts/recharts";
 import { PROVINCE_LIST } from "@/shared/data/constants";
 import { loadJson } from "@/shared/data/load";
+import { buildProvinceMarkers } from "@/shared/data/province-map";
 import { provinceLabel, resolveProvince } from "@/shared/data/province";
 import { formatNumber } from "@/shared/utils";
 
@@ -99,6 +101,11 @@ export default async function HealthPage({
   }));
 
   const surv = d?.surveillance ?? {};
+
+  const hivByProvMap = Object.fromEntries(
+    PROVINCE_LIST.map((p) => [p, d?.provinces?.[p]?.hiv_prevalence_pct ?? 0]),
+  );
+  const mapMarkers = buildProvinceMarkers(hivByProvMap);
 
   return (
     <div>
@@ -212,21 +219,46 @@ export default async function HealthPage({
         />
       </div>
 
+      <ChartPanel
+        title="Health map"
+        description="HIV prevalence by province — click a marker or chart bar to focus a province"
+        className="mt-6"
+      >
+        <GeoMap
+          markers={mapMarkers}
+          province={province}
+          city="All areas"
+          valueLabel="HIV prevalence %"
+        />
+      </ChartPanel>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartPanel title="Doctors per 100k by province">
-          <SimpleBarChart
+        <ChartPanel
+          title="Doctors per 100k by province"
+          description="Click a bar to drill into provincial view"
+        >
+          <DrillableSimpleBarChart
             data={doctorsByProv}
             xKey="province"
             yKey="doctors"
             color="#2563eb"
+            province={province}
+            city="All areas"
+            drillLevel="province"
           />
         </ChartPanel>
-        <ChartPanel title="TB incidence by province">
-          <SimpleBarChart
+        <ChartPanel
+          title="TB incidence by province"
+          description="Click a bar to drill into provincial view"
+        >
+          <DrillableSimpleBarChart
             data={tbByProv}
             xKey="province"
             yKey="tb"
             color="#dc2626"
+            province={province}
+            city="All areas"
+            drillLevel="province"
           />
         </ChartPanel>
       </div>
