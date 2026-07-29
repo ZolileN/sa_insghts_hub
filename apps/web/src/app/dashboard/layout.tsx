@@ -4,6 +4,10 @@ import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { ProvinceFilter } from "@/components/layout/province-filter";
 import { Button } from "@/components/ui/button";
 
+export const metadata = {
+  title: "Dashboard",
+};
+
 export default function DashboardLayout({
   children,
 }: {
@@ -19,12 +23,15 @@ export default function DashboardLayout({
           <p className="text-sm text-[var(--muted-foreground)]">
             South African public data — province-aware views
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Suspense fallback={null}>
               <ProvinceFilter />
             </Suspense>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/">Marketing site</Link>
+            </Button>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/">Home</Link>
+              <Link href="/dashboard/crime">Dashboard</Link>
             </Button>
           </div>
         </header>

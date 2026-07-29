@@ -7,6 +7,7 @@ const NAV = [
   { href: "#audience", label: "Who it's for" },
   { href: "#pricing", label: "Pricing" },
   { href: "#ai", label: "AI Analyst" },
+  { href: "/dashboard/crime", label: "Dashboard" },
 ] as const;
 
 export function MarketingNav() {

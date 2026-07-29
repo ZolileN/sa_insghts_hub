@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { getSiteUrl } from "@/shared/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Libo Insights — Area intelligence for South Africa",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: "Libo Insights — Area intelligence for South Africa",
+    template: "%s · Libo Insights",
+  },
   description:
     "Crime, property, employment, energy, health, education, forex, and water data in one dashboard.",
+  openGraph: {
+    title: "Libo Insights",
+    description:
+      "South African public data — marketing site and live dashboards on one app.",
+    siteName: "Libo Insights",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

@@ -218,6 +218,9 @@ export function MarketingFooter() {
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
         <LiboLogo href="/" showWordmark size="lg" />
         <div className="flex flex-wrap gap-6 text-sm text-[var(--muted-foreground)]">
+          <Link href="/dashboard/crime" className="hover:text-[var(--foreground)]">
+            Dashboard
+          </Link>
           <Link href="#topics" className="hover:text-[var(--foreground)]">Topics</Link>
           <Link href="#pricing" className="hover:text-[var(--foreground)]">Pricing</Link>
           <Link href="https://github.com/ZolileN/sa_insghts_hub" className="hover:text-[var(--foreground)]">
