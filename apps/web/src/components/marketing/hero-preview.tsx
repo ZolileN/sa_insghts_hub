@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { provinceAxisLabel } from "@/shared/data/province";
 import { cn } from "@/shared/utils";
 
 type ProvinceMurder = { province: string; murders: number };
@@ -46,7 +47,7 @@ export function HeroPreview({
           {top4.map((p) => (
             <div key={p.province} className="mb-2 flex items-center gap-2 last:mb-0">
               <span className="w-20 shrink-0 text-right font-mono text-[9px] text-[var(--muted-foreground)]">
-                {p.province.replace("KwaZulu-Natal", "KZN").replace("Western Cape", "WC").replace("Eastern Cape", "EC").replace("Gauteng", "GP")}
+                {provinceAxisLabel(p.province)}
               </span>
               <div className="h-2 flex-1 overflow-hidden rounded bg-white/80">
                 <div

@@ -35,6 +35,7 @@ export function SimpleBarChart({
   layout = "vertical",
   height = 280,
   onCategoryClick,
+  categoryFormatter,
 }: {
   data: Record<string, unknown>[];
   xKey: string;
@@ -43,6 +44,7 @@ export function SimpleBarChart({
   layout?: "vertical" | "horizontal";
   height?: number;
   onCategoryClick?: (label: string) => void;
+  categoryFormatter?: (value: string) => string;
 }) {
   const isVertical = layout === "vertical";
   return (
@@ -60,13 +62,19 @@ export function SimpleBarChart({
               type="category"
               dataKey={xKey}
               tick={{ fontSize: 11 }}
+              tickFormatter={categoryFormatter}
               stroke="var(--muted)"
               width={72}
             />
           </>
         ) : (
           <>
-            <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke="var(--muted)" />
+            <XAxis
+              dataKey={xKey}
+              tick={{ fontSize: 11 }}
+              tickFormatter={categoryFormatter}
+              stroke="var(--muted)"
+            />
             <YAxis tick={{ fontSize: 11 }} stroke="var(--muted)" />
           </>
         )}
@@ -104,18 +112,25 @@ export function MultiBarChart({
   keys,
   height = 280,
   onCategoryClick,
+  categoryFormatter,
 }: {
   data: Record<string, unknown>[];
   xKey: string;
   keys: { key: string; color: string; name?: string }[];
   height?: number;
   onCategoryClick?: (label: string) => void;
+  categoryFormatter?: (value: string) => string;
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 8, right: 16, left: 8, bottom: 8 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-        <XAxis dataKey={xKey} tick={{ fontSize: 11 }} stroke="var(--muted)" />
+        <XAxis
+          dataKey={xKey}
+          tick={{ fontSize: 11 }}
+          tickFormatter={categoryFormatter}
+          stroke="var(--muted)"
+        />
         <YAxis tick={{ fontSize: 11 }} stroke="var(--muted)" />
         <Tooltip
           contentStyle={{

@@ -2,6 +2,7 @@
 
 import { MultiBarChart } from "@/components/charts/recharts";
 import { useDrillDown } from "@/hooks/use-drill-down";
+import { provinceAxisLabel } from "@/shared/data/province";
 
 type DrillableMultiBarChartProps = {
   data: Record<string, unknown>[];
@@ -35,6 +36,9 @@ export function DrillableMultiBarChart({
     else drillToCity(label);
   }
 
+  const categoryFormatter =
+    drillLevel === "province" ? provinceAxisLabel : undefined;
+
   return (
     <div>
       <MultiBarChart
@@ -43,6 +47,7 @@ export function DrillableMultiBarChart({
         keys={keys}
         height={height}
         onCategoryClick={interactive ? onCategoryClick : undefined}
+        categoryFormatter={categoryFormatter}
       />
       {interactive && (
         <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">

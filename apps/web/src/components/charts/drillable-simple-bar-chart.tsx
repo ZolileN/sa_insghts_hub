@@ -2,6 +2,7 @@
 
 import { SimpleBarChart } from "@/components/charts/recharts";
 import { useDrillDown } from "@/hooks/use-drill-down";
+import { provinceAxisLabel } from "@/shared/data/province";
 
 type DrillableSimpleBarChartProps = {
   data: Record<string, unknown>[];
@@ -40,6 +41,9 @@ export function DrillableSimpleBarChart({
     else drillToCity(label);
   }
 
+  const categoryFormatter =
+    drillLevel === "province" ? provinceAxisLabel : undefined;
+
   return (
     <div>
       <SimpleBarChart
@@ -50,6 +54,7 @@ export function DrillableSimpleBarChart({
         layout={layout}
         height={height}
         onCategoryClick={interactive ? onCategoryClick : undefined}
+        categoryFormatter={categoryFormatter}
       />
       {interactive && (
         <p className="mt-2 text-[11px] text-[var(--muted-foreground)]">
