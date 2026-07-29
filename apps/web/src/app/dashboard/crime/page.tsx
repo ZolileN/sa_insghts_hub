@@ -217,6 +217,22 @@ export default async function CrimePage({
             districtMap[row.district]?.["Robbery aggravating"] ?? 0,
         }));
 
+  const contactMix =
+    province === "All Provinces"
+      ? PROVINCE_LIST.map((p) => ({
+          province: p,
+          "Assault GBH": provData[p]?.["Assault GBH"] ?? 0,
+          "Attempted murder": provData[p]?.["Attempted murder"] ?? 0,
+          "Common robbery": provData[p]?.["Common robbery"] ?? 0,
+        }))
+      : districtMurders.map((row) => ({
+          province: row.district,
+          "Assault GBH": districtMap[row.district]?.["Assault GBH"] ?? 0,
+          "Attempted murder":
+            districtMap[row.district]?.["Attempted murder"] ?? 0,
+          "Common robbery": districtMap[row.district]?.["Common robbery"] ?? 0,
+        }));
+
   const hotspots = (d?.national_hotspots ?? []).slice(0, 15);
 
   const mapMarkers = buildMapMarkers(
@@ -415,12 +431,49 @@ export default async function CrimePage({
           />
         </ChartPanel>
 
-        {hotspots.length > 0 && (
-          <ChartPanel
-            title="National serious-crime hotspots"
-            description="SAPS TOP 30 precincts — community-reported serious crime (all categories)"
-            className="lg:col-span-2"
-          >
+        <ChartPanel
+          title="Contact & street crime"
+          description={
+            province === "All Provinces"
+              ? "Assault GBH, attempted murder, and street robbery — click to drill down"
+              : "Street-level contact crime by city/metro district"
+          }
+        >
+          <DrillableMultiBarChart
+            data={contactMix}
+            xKey="province"
+            keys={[
+              {
+                key: "Assault GBH",
+                color: CRIME_CHART_PALETTE[5],
+                name: "Assault GBH",
+              },
+              {
+                key: "Attempted murder",
+                color: CRIME_CHART_PALETTE[6],
+                name: "Attempted murder",
+              },
+              {
+                key: "Common robbery",
+                color: CRIME_CHART_PALETTE[7],
+                name: "Common robbery",
+              },
+            ]}
+            province={province}
+            city={city}
+            drillLevel={
+              province === "All Provinces" ? "province" : "district"
+            }
+          />
+        </ChartPanel>
+      </div>
+
+      {hotspots.length > 0 && (
+        <ChartPanel
+          title="National serious-crime hotspots"
+          description="SAPS TOP 30 precincts — community-reported serious crime (all categories)"
+          className="mt-6"
+        >
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -452,9 +505,8 @@ export default async function CrimePage({
                 </tbody>
               </table>
             </div>
-          </ChartPanel>
-        )}
-      </div>
+        </ChartPanel>
+      )}
 
       <SourceBadge
         source={`${d?.source ?? "SAPS"} · Lightstone/ISS insights listed in DATA_SOURCES.md`}
