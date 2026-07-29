@@ -110,25 +110,21 @@ Scraper modules live in `scrapers/` with shared helpers in `scrapers/_common.py`
 
 ---
 
-## Cron automation (production)
+## Refreshing production data (manual)
 
-Scrapers run on your **VPS** when **[cron-job.org](https://cron-job.org)** calls the webhook (`webhook_server.py`). Commits push `data/*.json` to `master`; Vercel redeploys on push.
-
-Full setup: **[CRON_SETUP.md](CRON_SETUP.md)** (cron-job.org URLs, schedules, HTTPS).
-
-| cron-job.org schedule | Endpoint | Topics |
-|----------------------|----------|--------|
-| Every 30 min | `/cron/realtime` | forex, energy |
-| Mon 06:00 UTC | `/cron/weekly` | water |
-| 1st 05:00 UTC | `/cron/monthly` | finance, property, employment, health |
-| Jan/Apr/Jul/Oct 04:00 UTC | `/cron/quarterly` | all 10 |
+Run scrapers on your machine, push to GitHub; Vercel redeploys. See **[CRON_SETUP.md](CRON_SETUP.md)**.
 
 ```bash
-cp .env.example .env   # set CRON_WEBHOOK_SECRET
-./scripts/start-webhook.sh
+source .venv/bin/activate
+./scripts/refresh-data.sh              # all topics
+./scripts/refresh-data.sh forex energy   # quick realtime topics
+
+git add data/
+git commit -m "data: manual refresh"
+git push origin master
 ```
 
-Alternative: local crontab via `./cron_manager.sh install`.
+Optional automation (local cron, cron-job.org): also in `CRON_SETUP.md` — not required.
 
 ---
 

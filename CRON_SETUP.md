@@ -1,140 +1,94 @@
-# Cron Jobs Setup — cron-job.org
+# Data refresh guide
 
-Production scraping uses **[cron-job.org](https://cron-job.org)** to HTTP-call a small webhook on your server. The webhook runs `cron_*.sh` (scrapers + git push to `master`). **No GitHub Actions** (no Actions billing). **No server crontab** required.
+How to update dashboard figures. **Default: run scrapers on your machine**, commit, push. No VPS, GitHub Actions, or cron-job.org required.
 
-Vercel redeploys when data commits land on `master`.
-
----
-
-## Architecture
-
-```
-cron-job.org  --HTTP GET-->  your VPS webhook_server.py  -->  cron_realtime.sh  -->  git push
-```
+Vercel rebuilds the site when `data/*.json` changes land on `master`.
 
 ---
 
-## 1. Server setup (once)
-
-On a Linux VPS (SA recommended for DWS water):
+## One-time setup (your machine)
 
 ```bash
-git clone https://github.com/ZolileN/sa_insghts_hub.git /opt/libo-insights
-cd /opt/libo-insights
-git checkout master
+git clone https://github.com/ZolileN/sa_insghts_hub.git
+cd sa_insghts_hub
 
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
-chmod +x cron_*.sh scripts/*.sh webhook_server.py
-
-# Secrets
-cp .env.example .env
-# Edit .env — set CRON_WEBHOOK_SECRET to a long random string
-
-# Git push access (deploy key on GitHub)
-git remote set-url origin git@github.com:ZolileN/sa_insghts_hub.git
-
-# Test webhook locally
-./scripts/start-webhook.sh
-curl "http://127.0.0.1:8765/health"
-curl "http://127.0.0.1:8765/cron/realtime?token=YOUR_SECRET"
 ```
 
-### HTTPS (required for cron-job.org)
+---
 
-Expose port `8765` with **HTTPS** using one of:
+## Refresh data (manual)
 
-- **Caddy** or **nginx** reverse proxy → `https://scrapers.yourdomain.com`
-- **Cloudflare Tunnel** (free) → public URL without opening ports
-
-cron-job.org must reach your URL over the internet.
-
-### Keep webhook running
+**All 10 topics** (~2 minutes, some sources may be slow):
 
 ```bash
-# Option A: systemd (see deploy/cron-webhook.service)
-sudo cp deploy/cron-webhook.service /etc/systemd/system/
-# Edit User= and paths in the unit file
-sudo systemctl enable --now cron-webhook
+source .venv/bin/activate
+./scripts/refresh-data.sh
+```
 
-# Option B: screen/tmux for testing
-./scripts/start-webhook.sh
+**Specific topics only:**
+
+```bash
+./scripts/refresh-data.sh forex energy
+./scripts/refresh-data.sh crime
+./scripts/refresh-data.sh water
+```
+
+Or without the helper script:
+
+```bash
+python3 run_scrapers.py                    # all topics
+python3 run_scrapers.py --topics crime forex
+python3 run_scrapers.py --parallel         # faster full run
+python3 run_scrapers.py --schedule         # show recommended cadence
 ```
 
 ---
 
-## 2. cron-job.org jobs
+## Publish to production
 
-Sign up at [cron-job.org](https://console.cron-job.org/). Create **four** cron jobs:
+After scrapers finish:
 
-Replace `BASE` and `TOKEN`:
-
-```
-BASE=https://scrapers.yourdomain.com
-TOKEN=your-CRON_WEBHOOK_SECRET
-```
-
-| Job title | URL | Schedule (cron-job.org) | UTC |
-|-----------|-----|-------------------------|-----|
-| Libo realtime | `{BASE}/cron/realtime?token={TOKEN}` | `*/30 * * * *` | Every 30 min |
-| Libo weekly water | `{BASE}/cron/weekly?token={TOKEN}` | `0 6 * * 1` | Mon 06:00 |
-| Libo monthly | `{BASE}/cron/monthly?token={TOKEN}` | `0 5 1 * *` | 1st 05:00 |
-| Libo quarterly | `{BASE}/cron/quarterly?token={TOKEN}` | `0 4 1 1,4,7,10 *` | Jan/Apr/Jul/Oct 04:00 |
-
-**Settings for each job:**
-
-- Method: **GET** (or POST)
-- Timeout: 30 seconds (webhook returns immediately; scrape runs in background)
-- Enabled: yes
-- Request failed notifications: optional email from cron-job.org
-
-### Test from cron-job.org
-
-Use **“Perform test run”** on each job. Expect HTTP **202** with JSON:
-
-```json
-{"status":"accepted","job":"realtime","script":"cron_realtime.sh"}
+```bash
+git add data/
+git commit -m "data: manual refresh"
+git push origin master
 ```
 
-Check server logs: `logs/webhook_realtime.log`, `logs/realtime_cron.log`
+Vercel deploys automatically (Root Directory: `apps/web`). New figures appear after the deploy completes (~1–2 min).
+
+**You do not need `git pull` on your laptop for Vercel** — push from the same machine you ran scrapers on, or pull elsewhere only if you use multiple clones.
 
 ---
 
-## 3. Webhook endpoints
+## Suggested cadence (when you choose to run)
 
-| Path | Script | Topics |
-|------|--------|--------|
-| `/health` | — | Liveness (no token) |
-| `/cron/realtime` | `cron_realtime.sh` | forex, energy |
-| `/cron/weekly` | `cron_weekly.sh` | water |
-| `/cron/monthly` | `cron_monthly.sh` | finance, property, employment, health |
-| `/cron/quarterly` | `cron_quarterly.sh` | all 10 topics |
-
-Auth: `?token=SECRET` or header `X-Cron-Token: SECRET`
+| When | Command |
+|------|---------|
+| Often | `./scripts/refresh-data.sh forex energy` |
+| Weekly | `./scripts/refresh-data.sh water` |
+| Monthly | `./scripts/refresh-data.sh finance property employment health` |
+| Quarterly | `./scripts/refresh-data.sh` (all topics) |
 
 ---
 
-## 4. Logs
+## Notes
 
-| File | Contents |
-|------|----------|
-| `logs/webhook_*.log` | Webhook-triggered run output |
-| `logs/*_cron.log` | Scraper cron script output |
-| `logs/scraper.log` | Orchestrator log |
+- Scrapers merge **live API/PDF data** with the last `data/*.json` if a source fails (no fake hardcoded numbers).
+- **DWS water** may fail outside South Africa; last successful water file stays until you run from an SA network or VPN.
+- **Local dashboard dev:** `cd apps/web && npm run dev` syncs `data/` automatically.
 
 ---
 
-## Alternative: server crontab
+## Optional automation (not required)
 
-If you prefer not to use cron-job.org, `./cron_manager.sh install` still works (local crontab). See `cron_setup.template`.
+If you later want schedules without GitHub Actions:
 
----
+| Method | Doc |
+|--------|-----|
+| Local crontab | `./cron_manager.sh install` |
+| cron-job.org + webhook | `webhook_server.py` + `.env` — see repo history / `deploy/` |
 
-## Security
-
-- Use a long random `CRON_WEBHOOK_SECRET` (32+ chars).
-- Do not commit `.env`.
-- Prefer HTTPS only; do not expose the webhook without TLS on a public IP.
-- GitHub Actions scraping remains **disabled** in this repo.
+GitHub Actions scraping is **disabled** in this repo.
