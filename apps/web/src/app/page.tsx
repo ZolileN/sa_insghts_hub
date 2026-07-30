@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
+import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import {
+  ContactModalTrigger,
+  MarketingModalsProvider,
+} from "@/components/marketing/marketing-modals";
 import { DataTicker, type TickerItem } from "@/components/marketing/data-ticker";
 import {
   AiChatMock,
-  MarketingFooter,
   MarketingHero,
   PricingCard,
   SectionEyebrow,
@@ -73,9 +77,10 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="precision-ops min-h-screen">
-      <MarketingNav />
-      <DataTicker items={tickerItems} />
+    <MarketingModalsProvider>
+      <div className="precision-ops min-h-screen">
+        <MarketingNav />
+        <DataTicker items={tickerItems} />
 
       <MarketingHero preview={preview} />
 
@@ -227,17 +232,17 @@ export default async function HomePage() {
             >
               Open free dashboard →
             </Link>
-            <Link
-              href="mailto:zolile@mlkcomputer.com"
+            <ContactModalTrigger
               className="inline-flex h-10 items-center rounded-lg border border-[var(--border)] px-6 text-sm font-medium hover:bg-[var(--accent)]"
             >
               Get in touch
-            </Link>
+            </ContactModalTrigger>
           </div>
         </div>
       </section>
 
       <MarketingFooter />
-    </div>
+      </div>
+    </MarketingModalsProvider>
   );
 }

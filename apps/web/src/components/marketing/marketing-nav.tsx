@@ -1,13 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LiboLogo } from "@/components/brand/libo-logo";
+import { PricingModalTrigger } from "@/components/marketing/marketing-modals";
 
 const NAV = [
-  { href: "#topics", label: "Topics" },
-  { href: "#audience", label: "Who it's for" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#ai", label: "AI Analyst" },
-  { href: "/dashboard/crime", label: "Dashboard" },
+  { href: "#topics", label: "Topics", modal: null },
+  { href: "#audience", label: "Who it's for", modal: null },
+  { href: "#pricing", label: "Pricing", modal: "pricing" as const },
+  { href: "#ai", label: "AI Analyst", modal: null },
+  { href: "/dashboard/crime", label: "Dashboard", modal: null },
 ] as const;
 
 export function MarketingNav() {
@@ -17,15 +20,24 @@ export function MarketingNav() {
         <LiboLogo href="/" size="md" />
 
         <nav className="hidden items-center gap-8 md:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {NAV.map((item) =>
+            item.modal === "pricing" ? (
+              <PricingModalTrigger
+                key={item.label}
+                className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+              >
+                {item.label}
+              </PricingModalTrigger>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
         </nav>
 
         <Button asChild size="sm">

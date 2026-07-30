@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/shared/utils";
+import { formatCurrency, formatNumber } from "@/shared/utils";
 
 /** User-facing labels — hide scraper/cron/fallback jargon from the UI. */
 export function isTechnicalMetadata(text: string): boolean {

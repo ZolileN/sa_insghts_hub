@@ -165,16 +165,24 @@ export default async function WaterPage({
         />
         <KpiCard
           label="Drought-stress provinces"
-          value={formatNumber(droughtStress)}
+          value={dashNum(droughtStress)}
           hint="Provinces below 60% storage"
           trendPositive={droughtStress === 0}
         />
         <KpiCard
           label="Most stressed major dam"
           value={lowestDam.name}
-          hint={`${lowestDam.level}% full this week`}
-          trendPositive={lowestDam.level >= 60}
-          trend={lowestDam.level < 60 ? "Below comfort threshold" : "Adequate storage"}
+          hint={
+            lowestDam.level != null
+              ? `${lowestDam.level}% full this week`
+              : "Major dam storage"
+          }
+          trendPositive={lowestDam.level != null ? lowestDam.level >= 60 : undefined}
+          trend={
+            lowestDam.level != null && lowestDam.level < 60
+              ? "Below comfort threshold"
+              : "Adequate storage"
+          }
         />
       </div>
 

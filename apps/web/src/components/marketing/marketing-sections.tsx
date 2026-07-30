@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LiboLogo } from "@/components/brand/libo-logo";
 import { HeroPreview } from "./hero-preview";
 import { cn } from "@/shared/utils";
 
@@ -209,31 +208,5 @@ export function PricingCard({
         <Link href={href}>{cta}</Link>
       </Button>
     </Card>
-  );
-}
-
-export function MarketingFooter() {
-  return (
-    <footer className="border-t border-[var(--border)] px-6 py-10 lg:px-10">
-      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-        <LiboLogo href="/" showWordmark size="lg" />
-        <div className="flex flex-wrap gap-6 text-sm text-[var(--muted-foreground)]">
-          <Link href="/dashboard/crime" className="hover:text-[var(--foreground)]">
-            Dashboard
-          </Link>
-          <Link href="#topics" className="hover:text-[var(--foreground)]">Topics</Link>
-          <Link href="#pricing" className="hover:text-[var(--foreground)]">Pricing</Link>
-          <Link href="https://github.com/ZolileN/sa_insghts_hub" className="hover:text-[var(--foreground)]">
-            GitHub
-          </Link>
-          <Link href="mailto:zolile@mlkcomputer.com" className="hover:text-[var(--foreground)]">
-            Contact
-          </Link>
-        </div>
-        <p className="font-mono text-xs text-[var(--muted-foreground)]">
-          Built by Zolile Nonzapa · Cape Town
-        </p>
-      </div>
-    </footer>
   );
 }
