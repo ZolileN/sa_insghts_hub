@@ -1,3 +1,5 @@
+import { buildHelloMailto } from "./mailto";
+
 export const AUDIENCE = [
   {
     num: "01",
@@ -77,7 +79,7 @@ export const PRICING_PLANS = [
     featured: true,
     badge: "MOST POPULAR",
     cta: "Start Pro trial",
-    href: "mailto:zolile@mlkcomputer.com",
+    href: buildHelloMailto("pro"),
     primary: true,
     features: [
       { text: "Everything in Free", included: true },
@@ -96,7 +98,7 @@ export const PRICING_PLANS = [
     period: "5 seats · API access included",
     featured: false,
     cta: "Contact for access",
-    href: "mailto:zolile@mlkcomputer.com",
+    href: buildHelloMailto("business"),
     primary: false,
     features: [
       { text: "Everything in Pro", included: true },

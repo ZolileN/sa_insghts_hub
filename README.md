@@ -205,4 +205,4 @@ MIT — free to use, fork, and build on.
 ---
 
 Built by **Zolile Nonzapa** | Cape Town, South Africa  
-[GitHub](https://github.com/ZolileN/sa_insghts_hub) · [Email](mailto:zolile@mlkcomputer.com)
+[GitHub](https://github.com/ZolileN/sa_insghts_hub) · [Email](mailto:hello@mlkcomputer.com?subject=Libo%20Insights%20%E2%80%94%20general%20enquiry)

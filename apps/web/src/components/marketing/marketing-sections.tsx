@@ -205,7 +205,11 @@ export function PricingCard({
         variant={primary ? "default" : "outline"}
         asChild
       >
-        <Link href={href}>{cta}</Link>
+        {href.startsWith("mailto:") ? (
+          <a href={href}>{cta}</a>
+        ) : (
+          <Link href={href}>{cta}</Link>
+        )}
       </Button>
     </Card>
   );

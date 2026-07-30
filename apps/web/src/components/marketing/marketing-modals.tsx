@@ -19,7 +19,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PRICING_PLANS } from "@/shared/marketing/content";
+import {
+  buildHelloMailto,
+  MLK_HELLO_EMAIL,
+} from "@/shared/marketing/mailto";
 import { cn } from "@/shared/utils";
+
+const CONTACT_MAILTO = buildHelloMailto("contact");
 
 type ModalId = "contact" | "pricing" | null;
 
@@ -65,14 +71,14 @@ export function MarketingModalsProvider({ children }: { children: ReactNode }) {
 
           <div className="space-y-4">
             <a
-              href="mailto:hello@mlkcomputer.com"
+              href={CONTACT_MAILTO}
               className="flex items-start gap-3 rounded-lg border border-[var(--border)] p-4 transition-colors hover:bg-[var(--accent)]/50"
             >
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
               <div>
                 <p className="text-sm font-medium">Email</p>
                 <p className="text-sm text-[var(--muted-foreground)]">
-                  hello@mlkcomputer.com
+                  {MLK_HELLO_EMAIL}
                 </p>
               </div>
             </a>
@@ -101,7 +107,7 @@ export function MarketingModalsProvider({ children }: { children: ReactNode }) {
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button className="flex-1" asChild>
-              <a href="mailto:hello@mlkcomputer.com?subject=Libo%20Insights%20enquiry">
+              <a href={CONTACT_MAILTO}>
                 Send email
                 <ArrowRight className="h-4 w-4" />
               </a>
@@ -192,9 +198,9 @@ export function MarketingModalsProvider({ children }: { children: ReactNode }) {
                     className="mt-4 w-full"
                     size="sm"
                     variant={plan.primary ? "default" : "outline"}
-                    onClick={() => setActive("contact")}
+                    asChild
                   >
-                    {plan.cta}
+                    <a href={plan.href}>{plan.cta}</a>
                   </Button>
                 )}
               </div>
