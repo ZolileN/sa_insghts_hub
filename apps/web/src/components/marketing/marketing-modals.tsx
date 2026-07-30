@@ -65,14 +65,14 @@ export function MarketingModalsProvider({ children }: { children: ReactNode }) {
 
           <div className="space-y-4">
             <a
-              href="mailto:info@mlkcomputer.com"
+              href="mailto:hello@mlkcomputer.com"
               className="flex items-start gap-3 rounded-lg border border-[var(--border)] p-4 transition-colors hover:bg-[var(--accent)]/50"
             >
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
               <div>
                 <p className="text-sm font-medium">Email</p>
                 <p className="text-sm text-[var(--muted-foreground)]">
-                  info@mlkcomputer.com
+                  hello@mlkcomputer.com
                 </p>
               </div>
             </a>
@@ -101,7 +101,7 @@ export function MarketingModalsProvider({ children }: { children: ReactNode }) {
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button className="flex-1" asChild>
-              <a href="mailto:info@mlkcomputer.com?subject=Libo%20Insights%20enquiry">
+              <a href="mailto:hello@mlkcomputer.com?subject=Libo%20Insights%20enquiry">
                 Send email
                 <ArrowRight className="h-4 w-4" />
               </a>
