@@ -1,6 +1,6 @@
 {
   "source": "NICD \u00b7 SANAC annual \u00b7 NDOH TB Recovery Plan \u00b7 NDOH DHIS2",
-  "scraped_at": "2026-07-29T23:37:11.912794+00:00",
+  "scraped_at": "2026-08-01T05:04:08.745630+00:00",
   "is_live": true,
   "dhis2_connected": false,
   "hiv": {
@@ -140,6 +140,16 @@
   "surveillance": {
     "latest_reports": [
       {
+        "title": "Diphtheria situational report (week 30 of 2026)",
+        "url": "https://www.nicd.ac.za/diphtheria-situational-report-week-30-of-2026/",
+        "date": "2026-07-31T14:08:19"
+      },
+      {
+        "title": "There is no typhoid outbreak in South Africa",
+        "url": "https://www.nicd.ac.za/there-is-no-typhoid-outbreak-in-south-africa/",
+        "date": "2026-07-30T09:08:00"
+      },
+      {
         "title": "NICD strengthens wastewater and environmental surveillance capacity on the continent",
         "url": "https://www.nicd.ac.za/nicd-strengthens-wastewater-and-environmental-surveillance-capacity-on-the-continent/",
         "date": "2026-07-27T12:26:12"
@@ -159,16 +169,6 @@
         "title": "Diphtheria situational report (week 27 of 2026)",
         "url": "https://www.nicd.ac.za/diphtheria-situational-report-week-27-of-2026/",
         "date": "2026-07-10T13:53:54"
-      },
-      {
-        "title": "Weekly measles and rubella situation report (week 25 of 2026)",
-        "url": "https://www.nicd.ac.za/weekly-measles-and-rubella-situation-report-week-25-of-2026/",
-        "date": "2026-06-30T12:37:11"
-      },
-      {
-        "title": "Situational update on the Ebola disease outbreak caused by Bundibugyo virus (26 June 2026)",
-        "url": "https://www.nicd.ac.za/situational-update-on-the-ebola-disease-outbreak-caused-by-bundibugyo-virus/",
-        "date": "2026-06-29T11:09:19"
       }
     ],
     "ingestion_source": "NICD WordPress API",
