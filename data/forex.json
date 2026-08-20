@@ -1,26 +1,26 @@
 {
   "source": "open.er-api.com \u00b7 Frankfurter \u00b7 SARB",
-  "scraped_at": "2026-08-19T07:00:58.731674+00:00",
+  "scraped_at": "2026-08-20T07:02:41.269608+00:00",
   "live_rates": {
-    "usd_zar": 16.2537,
-    "eur_zar": 18.8151,
-    "gbp_zar": 21.9989,
-    "usd_bwp": 13.6431,
-    "usd_ngn": 1351.0519,
-    "usd_kes": 129.4957,
+    "usd_zar": 16.118,
+    "eur_zar": 18.7759,
+    "gbp_zar": 21.9034,
+    "usd_bwp": 13.6964,
+    "usd_ngn": 1350.132,
+    "usd_kes": 129.5007,
     "all_vs_usd": {
-      "ZAR": 16.2537,
-      "EUR": 0.8639,
-      "GBP": 0.7388,
-      "JPY": 159.5908,
-      "AUD": 1.4099,
-      "CNY": 6.7569,
-      "NGN": 1351.0519,
-      "KES": 129.4957,
-      "BWP": 13.6431
+      "ZAR": 16.118,
+      "EUR": 0.8584,
+      "GBP": 0.7359,
+      "JPY": 158.5485,
+      "AUD": 1.4072,
+      "CNY": 6.7461,
+      "NGN": 1350.132,
+      "KES": 129.5007,
+      "BWP": 13.6964
     },
-    "timestamp": "Wed, 19 Aug 2026 00:02:31 +0000",
-    "next_update": "Thu, 20 Aug 2026 00:13:01 +0000"
+    "timestamp": "Thu, 20 Aug 2026 00:02:31 +0000",
+    "next_update": "Fri, 21 Aug 2026 00:13:01 +0000"
   },
   "sarb_data": null,
   "is_live": true,
@@ -37,10 +37,10 @@
     "2026-05": 16.2241,
     "2026-06": 16.3721,
     "2026-07": 16.575,
-    "2026-08": 16.2196
+    "2026-08": 16.2443
   },
   "intelligence": {
-    "import_cost_per_usd_1000_r": 16254,
+    "import_cost_per_usd_1000_r": 16118,
     "sarb_official_url": "https://www.resbank.co.za/en/home/what-we-do/statistics/key-statistics/selected-historical-rates",
     "frankfurter_api": "https://api.frankfurter.app"
   },

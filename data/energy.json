@@ -1,7 +1,7 @@
 {
   "source": "Eskom LoadShedding API \u00b7 Eskom media \u00b7 community calendar",
-  "scraped_at": "2026-08-19T07:01:10.115126+00:00",
-  "is_live": true,
+  "scraped_at": "2026-08-20T07:03:48.880875+00:00",
+  "is_live": false,
   "current_stage": 0,
   "stage_label": "No load shedding",
   "active": false,
