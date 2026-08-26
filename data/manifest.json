@@ -1,11 +1,11 @@
 {
-  "last_run": "2026-08-25T07:02:36.635096+00:00",
+  "last_run": "2026-08-26T07:04:00.523230+00:00",
   "topics": {
     "forex": {
       "label": "\ud83d\udcb1 ZAR Exchange Rate",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 1.77,
+      "elapsed_s": 1.96,
       "cadence": "realtime",
       "schedule": "Once daily (forex + energy, 07:00 UTC)"
     },
@@ -13,7 +13,7 @@
       "label": "\u26a1 Eskom Load Shedding",
       "status": "success",
       "is_live": true,
-      "elapsed_s": 10.44,
+      "elapsed_s": 10.59,
       "cadence": "realtime",
       "schedule": "Once daily (forex + energy, 07:00 UTC)"
     },
